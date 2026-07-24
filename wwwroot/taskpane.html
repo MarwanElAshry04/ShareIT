@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Simple Ticket Button</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h3>Simple Ticket System</h3>
+    <p>Click the button to send this email to our system</p>
+
+    <button id="sendBtn">Send to System</button>
+    <div id="status"></div>
+
+    <div id="status" class="status"></div>
+
+    <script src="taskpane.js"></script>
+</body>
+</html>

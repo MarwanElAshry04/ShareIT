@@ -1,0 +1,252 @@
+﻿@model ShareIT.Models.Company
+
+@{
+    ViewData["Title"] = "Create Company";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">Create New Company</h1>
+                    <p class="text-muted">Add a new company to the system</p>
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Company Information</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" id="createCompanyForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="Region" class="control-label font-weight-bold">
+                                        <i class="fas fa-globe-americas text-primary mr-1"></i> Region
+                                    </label>
+                                    <input asp-for="Region" class="form-control" placeholder="Enter region (e.g., North America, Europe)" />
+                                    <span asp-validation-for="Region" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label font-weight-bold">
+                                        <i class="fas fa-building text-primary mr-1"></i> Company Name
+                                    </label>
+                                    <input asp-for="Name" class="form-control" placeholder="Enter company name" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="status" class="control-label font-weight-bold">
+                                        <i class="fas fa-toggle-on text-primary mr-1"></i> Status
+                                    </label>
+                                    <select asp-for="status" class="form-control">
+                                        <option value="">Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                    <span asp-validation-for="status" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="CreatedBy" class="control-label font-weight-bold">
+                                        <i class="fas fa-user-plus text-primary mr-1"></i> Created By
+                                    </label>
+                                    <input asp-for="CreatedBy" class="form-control" placeholder="Enter creator name" />
+                                    <span asp-validation-for="CreatedBy" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="CreatedOn" class="control-label font-weight-bold">
+                                        <i class="fas fa-calendar-plus text-primary mr-1"></i> Created On
+                                    </label>
+                                    <input asp-for="CreatedOn" type="datetime-local" class="form-control" />
+                                    <span asp-validation-for="CreatedOn" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label asp-for="UpdatedBy" class="control-label font-weight-bold">
+                                        <i class="fas fa-user-edit text-primary mr-1"></i> Updated By
+                                    </label>
+                                    <input asp-for="UpdatedBy" class="form-control" placeholder="Enter updater name" />
+                                    <span asp-validation-for="UpdatedBy" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label asp-for="UpdatedOn" class="control-label font-weight-bold">
+                                        <i class="fas fa-calendar-check text-primary mr-1"></i> Updated On
+                                    </label>
+                                    <input asp-for="UpdatedOn" type="datetime-local" class="form-control" />
+                                    <span asp-validation-for="UpdatedOn" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group pt-3 border-top">
+                            <div class="d-flex justify-content-between">
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo-alt"></i> Reset Form
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus-circle"></i> Create Company
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-lightbulb mr-1"></i> Quick Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li class="small">Ensure all required fields are filled before submission</li>
+                        <li class="small">Use descriptive company names for easy identification</li>
+                        <li class="small">Set appropriate status based on company's current state</li>
+                        <li class="small">Created/Updated timestamps are automatically recorded when left empty</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-xl-6 d-none d-lg-block">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-info-circle mr-1"></i> Form Guidelines
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-dark mb-3">Field Explanations:</h6>
+                    
+                    <div class="mb-3">
+                        <span class="font-weight-bold text-dark">Region:</span>
+                        <p class="small text-muted mb-0">Geographical region where the company operates.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="font-weight-bold text-dark">Company Name:</span>
+                        <p class="small text-muted mb-0">Official name of the company as registered.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="font-weight-bold text-dark">Status:</span>
+                        <p class="small text-muted mb-0">Current operational status of the company.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="font-weight-bold text-dark">Created By/On:</span>
+                        <p class="small text-muted mb-0">User who created the record and creation timestamp.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="font-weight-bold text-dark">Updated By/On:</span>
+                        <p class="small text-muted mb-0">User who last updated the record and update timestamp.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Set default datetime values to current time if empty
+        document.addEventListener('DOMContentLoaded', function() {
+            const createdOnField = document.getElementById('CreatedOn');
+            const updatedOnField = document.getElementById('UpdatedOn');
+            
+            // Format date for datetime-local input
+            function getCurrentDateTime() {
+                const now = new Date();
+                const timezoneOffset = now.getTimezoneOffset() * 60000; // offset in milliseconds
+                const localISOTime = new Date(now - timezoneOffset).toISOString().slice(0, 16);
+                return localISOTime;
+            }
+            
+            // Set current datetime if fields are empty
+            if (createdOnField && !createdOnField.value) {
+                createdOnField.value = getCurrentDateTime();
+            }
+            
+            if (updatedOnField && !updatedOnField.value) {
+                updatedOnField.value = getCurrentDateTime();
+            }
+            
+            // Auto-fill CreatedBy and UpdatedBy with current user if empty
+            // This would typically come from server-side session/authentication
+            const createdByField = document.getElementById('CreatedBy');
+            const updatedByField = document.getElementById('UpdatedBy');
+            
+            // Example: You can replace this with actual user data from your system
+            const currentUser = "Admin User"; // This should come from your authentication system
+            
+            if (createdByField && !createdByField.value.trim()) {
+                createdByField.value = currentUser;
+            }
+            
+            if (updatedByField && !updatedByField.value.trim()) {
+                updatedByField.value = currentUser;
+            }
+        });
+        
+        // Form validation enhancement
+        document.getElementById('createCompanyForm').addEventListener('submit', function(e) {
+            const companyName = document.getElementById('Name').value;
+            const region = document.getElementById('Region').value;
+            
+            if (!companyName.trim()) {
+                e.preventDefault();
+                alert('Please enter a company name.');
+                return;
+            }
+            
+            if (!region.trim()) {
+                e.preventDefault();
+                alert('Please enter a region.');
+                return;
+            }
+            
+            // You can add additional client-side validation here
+        });
+    </script>
+}

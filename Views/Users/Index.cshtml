@@ -1,0 +1,587 @@
+﻿@using ShareIT.Models.ViewModel
+@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .page-title i {
+            color: #c4252a;
+            font-size: 28px;
+        }
+
+    .btn-add-user {
+        background: linear-gradient(135deg, #c4252a, #a01e22);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+        .btn-add-user:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(196, 37, 42, 0.25);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-add-user i {
+            font-size: 16px;
+        }
+
+    .users-table {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+        .users-table table {
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        .users-table thead {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+        }
+
+        .users-table th {
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .users-table td {
+            padding: 16px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .users-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+            .users-table tbody tr:hover {
+                background: #f8fafc;
+            }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #c4252a, #a01e22);
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        margin-right: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 15px;
+    }
+
+    .badge-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .btn-delete {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 20px;
+    }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+        }
+
+    .search-box {
+        margin-bottom: 24px;
+        max-width: 400px;
+    }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+            .search-box input:focus {
+                outline: none;
+                border-color: #c4252a;
+                box-shadow: 0 0 0 3px rgba(196, 37, 42, 0.1);
+            }
+
+    .stats-badge {
+        background: #f1f5f9;
+        padding: 8px 16px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #475569;
+    }
+
+        .stats-badge i {
+            color: #c4252a;
+        }
+
+    .table-footer {
+        padding: 16px 20px;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .role-badge {
+        background: #e0e7ff;
+        color: #4f46e5;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    /* Modal Styles */
+    .modal-custom {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content-custom {
+        background: white;
+        border-radius: 20px;
+        max-width: 450px;
+        width: 90%;
+        padding: 0;
+        animation: slideIn 0.3s ease;
+    }
+
+    @@keyframes slideIn {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header-custom {
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #dc2626, #991b1b);
+        color: white;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .modal-header-custom h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-header-custom .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+    .modal-body-custom {
+        padding: 24px;
+    }
+
+        .modal-body-custom p {
+            margin: 0;
+            color: #334155;
+            font-size: 15px;
+        }
+
+        .modal-body-custom .warning-text {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+    .modal-footer-custom {
+        padding: 16px 24px;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .btn-confirm-delete {
+        background: #dc2626;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .btn-confirm-delete:hover {
+            background: #991b1b;
+            transform: translateY(-1px);
+        }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .users-table {
+            overflow-x: auto;
+        }
+
+            .users-table th, .users-table td {
+                white-space: nowrap;
+            }
+
+        .search-box {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-users"></i>
+            <span>User Management</span>
+            <div class="stats-badge">
+                <i class="fas fa-user-check"></i>
+                <span>Total: @Model.Count() users</span>
+            </div>
+        </div>
+        <a class="btn-add-user" asp-area="Identity" asp-page="/Account/Register">
+            <i class="fas fa-plus-circle"></i>
+            Add New User
+        </a>
+    </div>
+
+    <!-- Search Box -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Search by name, email or department..." />
+    </div>
+
+    <!-- Users Table -->
+    <div class="users-table">
+        <table class="table" id="userTable">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Default Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    @(user.UserName?.Length > 0 ? user.UserName.Substring(0, 1).ToUpper() : "U")
+                                </div>
+                                <div class="user-name">@user.UserName</div>
+                            </div>
+                        </td>
+                       
+                        <td>
+                            <i class="fas fa-envelope" style="color: #94a3b8; margin-right: 6px; font-size: 12px;"></i>
+                            @user.Email
+                        </td>
+               
+                        <td>
+                            <span class="role-badge">
+                                <i class="fas fa-user-tag" style="font-size: 10px; margin-right: 4px;"></i>
+                                User
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-delete" onclick="showDeleteModal('@user.Id', '@user.UserName')">
+                                <i class="fas fa-trash-alt"></i>
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <i class="fas fa-user-slash"></i>
+                <h3>No Users Found</h3>
+                <p>Get started by adding your first user.</p>
+                <a class="btn-add-user" asp-area="Identity" asp-page="/Account/Register" style="display: inline-flex; margin-top: 20px;">
+                    <i class="fas fa-plus-circle"></i>
+                    Add New User
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-footer">
+                <div>
+                    <i class="fas fa-info-circle" style="color: #c4252a;"></i>
+                    Showing @Model.Count() user(s)
+                </div>
+                <div>
+                    <i class="fas fa-shield-alt"></i>
+                    All users have "User" role by default
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h3>
+                <i class="fas fa-exclamation-triangle"></i> Confirm Removal
+            </h3>
+            <button class="close-modal" onclick="closeDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body-custom">
+            <p>Are you sure you want to remove user <strong id="userNameToDelete"></strong>?</p>
+            <div class="warning-text">
+                <i class="fas fa-info-circle"></i>
+                This action cannot be undone. The user will be permanently deleted.
+            </div>
+        </div>
+        <div class="modal-footer-custom">
+            <button class="btn-cancel" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="btn-confirm-delete" id="confirmDeleteBtn">
+                <i class="fas fa-trash-alt"></i> Yes, Remove User
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for delete submission -->
+<form id="deleteUserForm" method="post" asp-action="DeleteUser" style="display: none;">
+    <input type="hidden" name="id" id="deleteUserId" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        let currentUserId = null;
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#userTable tbody tr');
+            let visibleCount = 0;
+
+            tableRows.forEach(row => {
+                const userName = row.querySelector('.user-name')?.innerText.toLowerCase() || '';
+                const userEmail = row.cells[2]?.innerText.toLowerCase() || '';
+                const userDept = row.cells[1]?.innerText.toLowerCase() || '';
+
+                if (userName.includes(searchValue) || userEmail.includes(searchValue) || userDept.includes(searchValue)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update visible count in footer
+            const footer = document.querySelector('.table-footer');
+            if (footer && visibleCount !== @Model.Count()) {
+                const firstDiv = footer.querySelector('div:first-child');
+                if (firstDiv) {
+                    firstDiv.innerHTML = `<i class="fas fa-info-circle" style="color: #c4252a;"></i> Showing ${visibleCount} of ${@Model.Count()} user(s)`;
+                }
+            } else if (footer && visibleCount === @Model.Count()) {
+                const firstDiv = footer.querySelector('div:first-child');
+                if (firstDiv) {
+                    firstDiv.innerHTML = `<i class="fas fa-info-circle" style="color: #c4252a;"></i> Showing @Model.Count() user(s)`;
+                }
+            }
+        });
+
+        // Show delete modal
+        function showDeleteModal(userId, userName) {
+            currentUserId = userId;
+            document.getElementById('userNameToDelete').innerText = userName;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            currentUserId = null;
+        }
+
+        // Confirm delete
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (currentUserId) {
+                document.getElementById('deleteUserId').value = currentUserId;
+                document.getElementById('deleteUserForm').submit();
+            }
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+    </script>
+}

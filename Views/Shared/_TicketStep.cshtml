@@ -1,0 +1,254 @@
+﻿@using ShareIT.Models.ViewModel
+@model NewTicketViewModel
+
+<div class="step-content">
+    <div class="alert alert-dark border-danger mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle fa-2x text-danger me-3"></i>
+            <div>
+                <h6 class="mb-1">Important: Please provide accurate information</h6>
+                <p class="mb-0 text-muted">Complete all required fields to ensure proper handling of your ticket.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Kind -->
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h6 class="mb-0"><i class="fas fa-tags me-2"></i> What would you like to submit?</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3" role="radiogroup" aria-label="Submission kind">
+                @{
+                    var kinds = new[]
+                    {
+                        (Value: ShareIT.Models.TicketKind.Complaint,  Icon: "fa-triangle-exclamation", Label: "Complaint",  Blurb: "Report a concern, violation, or misconduct."),
+                        (Value: ShareIT.Models.TicketKind.Suggestion,  Icon: "fa-lightbulb",           Label: "Suggestion", Blurb: "Propose an improvement or new idea."),
+                        (Value: ShareIT.Models.TicketKind.Feedback,    Icon: "fa-comment-dots",        Label: "Feedback",   Blurb: "Share general feedback or a comment.")
+                    };
+                }
+                @foreach (var k in kinds)
+                {
+                    <div class="col-md-4">
+                        <input type="radio" class="btn-check" name="Kind" id="kind-@k.Value"
+                               value="@k.Value" autocomplete="off"
+                               @(Model.Kind == k.Value ? "checked" : "") />
+                        <label class="btn btn-outline-danger w-100 h-100 text-start p-3" for="kind-@k.Value" style="color:#111;">
+                            <span class="d-block fw-bold mb-1 text-dark"><i class="fas @k.Icon me-2"></i>@k.Label</span>
+                            <small class="text-secondary">@k.Blurb</small>
+                        </label>
+                    </div>
+                }
+            </div>
+            <span asp-validation-for="Kind" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <!-- Ticket Description -->
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h6 class="mb-0"><i class="fas fa-align-left me-2"></i> Ticket Details</h6>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">
+                    <i class="fas fa-file-alt me-2 text-danger"></i>Description
+                </label>
+                <span class="text-danger">*</span>
+                <div class="description-wrapper">
+                    <textarea asp-for="Description" class="form-control" rows="6" 
+                              placeholder="Please provide detailed information including:
+• Date and time of incident
+• Location
+• Persons involved
+• What happened
+• Any witnesses
+• Supporting evidence available"></textarea>
+                    <div class="description-footer mt-2 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span id="charCount">0</span> / 5000 characters
+                        </div>
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Be as specific as possible</small>
+                    </div>
+                </div>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Concerning -->
+    <div class="card mb-4 border-dark">
+        <div class="card-header bg-dark text-white">
+            <h6 class="mb-0"><i class="fas fa-bullseye me-2"></i> Concerning</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-light border-danger mb-4">
+                <i class="fas fa-info-circle text-danger me-2"></i>
+                Identify the company, department, or person this ticket concerns (if applicable).
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label asp-for="ConcerningCompanyId" class="form-label">
+                        <i class="fas fa-building me-2 text-danger"></i>Company
+                    </label>
+                    <span class="text-danger concerning-star">*</span>
+                    <select asp-for="ConcerningCompanyId" class="form-select">
+                        <option value="">-- Select Company --</option>
+                        @if (Model.Companies != null)
+                        {
+                            foreach (var company in Model.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="ConcerningCompanyId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label asp-for="ConcerningDepartmentId" class="form-label">
+                        <i class="fas fa-sitemap me-2 text-danger"></i>Department
+                    </label>
+                    <span class="text-danger concerning-star">*</span>
+                    <select asp-for="ConcerningDepartmentId" class="form-select">
+                        <option value="">-- Select Department --</option>
+                        @if (Model.Departments != null)
+                        {
+                            foreach (var dept in Model.Departments)
+                            {
+                                <option value="@dept.Id">@dept.Name</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="ConcerningDepartmentId" class="text-danger small"></span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="form-group">
+                        <label asp-for="ConcerningPerson" class="form-label">
+                            <i class="fas fa-user me-2 text-danger"></i>Person Involved
+                        </label>
+                        <input asp-for="ConcerningPerson" class="form-control" placeholder="Name of the person involved">
+                        <small class="text-muted">If known</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="form-group">
+                        <label asp-for="ConcerningOtherSuppliers" class="form-label">
+                            <i class="fas fa-users me-2 text-danger"></i>Other Related Parties
+                        </label>
+                        <input asp-for="ConcerningOtherSuppliers" class="form-control" placeholder="Additional parties involved">
+                        <small class="text-muted">Suppliers, contractors, etc.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .description-wrapper {
+        position: relative;
+    }
+    
+    .description-footer {
+        font-size: 14px;
+    }
+    
+    #charCount {
+        font-weight: bold;
+        color: #c4252a;
+    }
+    
+    textarea.form-control {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+    }
+    
+    textarea.form-control:focus {
+        border-color: #c4252a;
+        box-shadow: 0 0 0 0.25rem rgba(196, 37, 42, 0.25);
+    }
+    
+    .form-label i {
+        width: 20px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    // Character counter for description
+    const descriptionTextarea = document.querySelector('textarea[name="Description"]');
+    const charCount = document.getElementById('charCount');
+    
+    if (descriptionTextarea) {
+        descriptionTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length > 5000) {
+                charCount.classList.add('text-danger');
+                this.value = this.value.substring(0, 5000);
+            } else if (length > 4500) {
+                charCount.classList.add('text-warning');
+            } else {
+                charCount.classList.remove('text-danger', 'text-warning');
+            }
+        });
+        
+        // Initialize counter
+        charCount.textContent = descriptionTextarea.value.length;
+    }
+    
+    // Handle ticket type change to load sub-types
+    const ticketTypeSelectEl = document.getElementById('ticketTypeSelect');
+    if (ticketTypeSelectEl) ticketTypeSelectEl.addEventListener('change', function() {
+        const typeId = this.value;
+        const subTypeSelect = document.getElementById('subTypeSelect');
+
+        if (typeId) {
+            subTypeSelect.disabled = false;
+            subTypeSelect.classList.add('loading');
+            
+            fetch(`/Ticket/GetSubTypes?typeId=${typeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    subTypeSelect.innerHTML = '<option value="">-- Select Sub Category --</option>';
+                    data.forEach(item => {
+                        const option = new Option(item.name, item.id);
+                        subTypeSelect.appendChild(option);
+                    });
+                    subTypeSelect.classList.remove('loading');
+                })
+                .catch(error => {
+                    console.error('Error loading sub-types:', error);
+                    subTypeSelect.innerHTML = '<option value="">-- Error loading --</option>';
+                    subTypeSelect.classList.remove('loading');
+                });
+        } else {
+            subTypeSelect.disabled = true;
+            subTypeSelect.innerHTML = '<option value="">-- Select main type first --</option>';
+        }
+    });
+
+    // "Concerning" company/department are only required for Complaints.
+    // Toggle the required asterisks live as the user picks a Kind.
+    (function () {
+        const kindRadios = document.querySelectorAll('input[name="Kind"]');
+        const stars = document.querySelectorAll('.concerning-star');
+
+        function selectedKind() {
+            const checked = document.querySelector('input[name="Kind"]:checked');
+            return checked ? checked.value : 'Complaint';
+        }
+        function applyKindRequirement() {
+            const isComplaint = selectedKind() === 'Complaint';
+            stars.forEach(s => s.style.display = isComplaint ? '' : 'none');
+        }
+
+        kindRadios.forEach(r => r.addEventListener('change', applyKindRequirement));
+        applyKindRequirement();
+    })();
+</script>

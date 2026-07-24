@@ -1,0 +1,115 @@
+﻿@model Video
+
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewData["Title"] = "Delete Video";
+}
+
+<div class="container">
+    <h1>Delete Video</h1>
+
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Are you sure you want to delete this video?</h3>
+        <p>This action cannot be undone. The video file will be permanently removed from the server.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Video Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.VideoPath))
+                    {
+                        <div class="mb-3">
+                            <video width="400" controls>
+                                <source src="@Model.VideoPath" type="video/@Model.FileType?.ToLower()">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle"></i> Video file not found
+                        </div>
+                    }
+
+                    <dl class="row">
+                        <dt class="col-sm-3">ID</dt>
+                        <dd class="col-sm-9">@Model.Id</dd>
+
+                        <dt class="col-sm-3">Section</dt>
+                        <dd class="col-sm-9">@Model.Section</dd>
+
+                        <dt class="col-sm-3">File Name</dt>
+                        <dd class="col-sm-9">@Model.FileName</dd>
+
+                        <dt class="col-sm-3">File Type</dt>
+                        <dd class="col-sm-9">@Model.FileType</dd>
+
+                        <dt class="col-sm-3">File Size</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.FileSize >= 1024 * 1024 * 1024)
+                            {
+                                @($"{Model.FileSize / (1024.0 * 1024 * 1024):F2} GB")
+                            }
+                            else if (Model.FileSize >= 1024 * 1024)
+                            {
+                                @($"{Model.FileSize / (1024.0 * 1024):F2} MB")
+                            }
+                            else if (Model.FileSize >= 1024)
+                            {
+                                @($"{Model.FileSize / 1024.0:F2} KB")
+                            }
+                            else
+                            {
+                                @($"{Model.FileSize} bytes")
+                            }
+                        </dd>
+
+                        @if (!string.IsNullOrEmpty(Model.Duration))
+                        {
+                            <dt class="col-sm-3">Duration</dt>
+                            <dd class="col-sm-9">@Model.Duration</dd>
+                        }
+
+                        <dt class="col-sm-3">Upload Date</dt>
+                        <dd class="col-sm-9">@Model.CreatedOn.ToString()</dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Confirm Delete
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Warning</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p class="mb-0 mt-2">
+                            <strong>This action is permanent!</strong><br />
+                            The video file will be permanently deleted from the server and cannot be recovered.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

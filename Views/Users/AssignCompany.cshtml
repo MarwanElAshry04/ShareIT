@@ -1,0 +1,103 @@
+﻿@using ShareIT.Models.ViewModel
+@* Views/Users/AssignCompany.cshtml *@
+@model UserCompanyViewModel
+<style>
+    .checkbox-wrapper-22 .switch {
+        display: inline-block;
+        height: 34px;
+        position: relative;
+        width: 60px;
+    }
+
+        .checkbox-wrapper-22 .switch input {
+            display: none;
+        }
+
+    .checkbox-wrapper-22 .slider {
+        background-color: #ccc;
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: .4s;
+    }
+
+        .checkbox-wrapper-22 .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+        }
+
+    .checkbox-wrapper-22 input:checked + .slider {
+        background-color: #66bb6a;
+    }
+
+        .checkbox-wrapper-22 input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+    .checkbox-wrapper-22 .slider.round {
+        border-radius: 34px;
+    }
+
+        .checkbox-wrapper-22 .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+
+<h2>Assign Companies to @Model.UserName</h2>
+
+<form asp-action="AssignCompany" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="Email" />    
+    <input type="hidden" asp-for="UserName" />
+
+    <div class="form-group">
+        <label asp-for="SelectedDepartment"></label>
+        <select asp-for="SelectedDepartment" class="form-control">
+            <option value="">-- Select Primary Company --</option>
+            @foreach (var company in Model.AvailableCompanies)
+            {
+                <option value="@company.Name">@company.Name</option>
+            }
+        </select>
+        <span asp-validation-for="SelectedDepartment" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Additional Companies</label>
+        @foreach (var company in Model.AvailableCompanies)
+        {
+            
+            if (company.Id!=Model.SelectedDepartment) {
+                <div class="checkbox-wrapper-22">
+                    <label class="switch" for="@company.Name">
+
+               @*  <input class="form-check-input"
+                    id="@company.Name"
+                       type="checkbox"
+                       name="SelectedAdditionalCompanies"
+                       value="@company.Name"
+                @(Model.SelectedAdditionalCompanies.Contains(company.Name) ? "checked" : "") /> *@
+                        <div class="slider round"> </div>
+
+                    </label>
+
+                <label class="form-check-label">@company.Name</label>
+            </div>
+        <br />
+        <br />
+            }
+            }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

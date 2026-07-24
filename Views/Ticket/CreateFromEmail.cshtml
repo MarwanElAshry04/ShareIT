@@ -1,0 +1,576 @@
+﻿@model ShareIT.Models.ViewModel.EmailTicketViewModel
+@{
+    ViewData["Title"] = "Create Ticket from Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .email-info-card {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-left: 4px solid #c4252a;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .email-subject {
+        font-weight: 600;
+        color: #c4252a;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .email-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .email-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .email-meta-item i {
+            width: 24px;
+            color: #c4252a;
+        }
+
+    .email-body {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 15px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .attachments-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .attachment-badge {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .attachment-badge i {
+            color: #c4252a;
+        }
+
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+
+    .step {
+        position: relative;
+        z-index: 2;
+        background: white;
+        padding: 0 15px;
+        text-align: center;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .step.active .step-number {
+        background: #c4252a;
+        border-color: #c4252a;
+        color: white;
+    }
+
+    .step.completed .step-number {
+        background: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
+
+    .step-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .step.active .step-label {
+        color: #c4252a;
+        font-weight: 600;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+        color: #c4252a;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        padding: 10px 15px;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #c4252a;
+            box-shadow: 0 0 0 0.2rem rgba(196, 37, 42, 0.25);
+        }
+
+    .btn-primary {
+        background: #c4252a;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: #a61e23;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+    .alert-info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        border-radius: 6px;
+        padding: 15px;
+    }
+
+    .reporter-info {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .reporter-info-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .reporter-info-item i {
+            width: 20px;
+            color: #c4252a;
+        }
+
+    @@media (max-width: 768px) {
+        .email-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .step-indicator {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+            .step-indicator::before {
+                display: none;
+            }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .step-number {
+            margin: 0;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-label">Email Details</div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-label">Ticket Info</div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">Review & Submit</div>
+        </div>
+    </div>
+
+    <!-- Email Information Card -->
+    <div class="email-info-card">
+        <h5 class="email-subject">
+            <i class="fas fa-envelope me-2"></i>
+            @Model.EmailSubject
+        </h5>
+
+        <div class="email-meta">
+            <div class="email-meta-item">
+                <i class="fas fa-user"></i>
+                <span><strong>From:</strong> @Model.EmailSender</span>
+            </div>
+            <div class="email-meta-item">
+                <i class="fas fa-calendar"></i>
+                <span><strong>Date:</strong> @Model.EmailDate.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+
+        <div class="email-body">
+            @Html.Raw(Model.EmailBody?.Replace("\n", "<br/>"))
+        </div>
+
+        @if (Model.EmailAttachments != null && Model.EmailAttachments.Any())
+        {
+            <div class="attachments-preview">
+                @foreach (var att in Model.EmailAttachments)
+                {
+                    <span class="attachment-badge">
+                        <i class="fas fa-paperclip"></i>
+                        @att.Name
+                        <small>(@(att.Size > 0 ? (att.Size / 1024).ToString("N0") + " KB" : "Unknown"))</small>
+                    </span>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Main Form -->
+    <form asp-action="CreateFromEmail" method="post" id="ticketForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="TempEmailId" />
+        <input type="hidden" asp-for="ReporterName" />
+        <input type="hidden" asp-for="ReporterEmail" />
+        <input type="hidden" asp-for="EmailSubject" />
+        <input type="hidden" asp-for="EmailBody" />
+        <input type="hidden" asp-for="EmailSender" />
+        <input type="hidden" asp-for="EmailDate" />
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Please correct the errors below.
+                <div asp-validation-summary="All" class="text-danger mt-2"></div>
+            </div>
+        }
+
+        <!-- Reporter Information (Auto-filled) -->
+        <div class="form-section">
+            <h5 class="section-title">
+                <i class="fas fa-user me-2"></i>
+                Reporter Information (Auto-filled from Email)
+            </h5>
+
+            <div class="reporter-info">
+                <div class="reporter-info-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span><strong>Name:</strong> @Model.ReporterName</span>
+                </div>
+                <div class="reporter-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span><strong>Email:</strong> @Model.ReporterEmail</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ReporterMobile" class="form-label">
+                            <i class="fas fa-phone me-1"></i> Mobile (Optional)
+                        </label>
+                        <input asp-for="ReporterMobile" class="form-control" placeholder="Enter mobile number" />
+                        <span asp-validation-for="ReporterMobile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="EmpCode" class="form-label">
+                            <i class="fas fa-id-card me-1"></i> Employee Code (Optional)
+                        </label>
+                        <input asp-for="EmpCode" class="form-control" placeholder="If employee" />
+                        <span asp-validation-for="EmpCode" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Information -->
+        <div class="form-section">
+            <h5 class="section-title">
+                <i class="fas fa-file-alt me-2"></i>
+                Ticket Information
+            </h5>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TicketTypeId" class="form-label">
+                            <i class="fas fa-tag me-1"></i> Ticket Type *
+                        </label>
+                        <select asp-for="TicketTypeId" class="form-select" required>
+                            <option value="">Select Ticket Type</option>
+                            @if (ViewBag.TicketTypes != null)
+                            {
+                                @foreach (var type in ViewBag.TicketTypes)
+                                {
+                                    <option value="@type.Id">@type.ComplainType</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ComSubTypeId" class="form-label">
+                            <i class="fas fa-layer-group me-1"></i> Sub Type (Optional)
+                        </label>
+                        <select asp-for="ComSubTypeId" class="form-select" id="subTypeSelect">
+                            <option value="">Select Sub Type</option>
+                        </select>
+                        <span asp-validation-for="ComSubTypeId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConcerningCompany" class="form-label">
+                            <i class="fas fa-building me-1"></i> Concerning Company (Optional)
+                        </label>
+                        <input asp-for="ConcerningCompany" class="form-control" placeholder="Company name" />
+                        <span asp-validation-for="ConcerningCompany" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConcerningDepartment" class="form-label">
+                            <i class="fas fa-sitemap me-1"></i> Concerning Department (Optional)
+                        </label>
+                        <input asp-for="ConcerningDepartment" class="form-control" placeholder="Department name" />
+                        <span asp-validation-for="ConcerningDepartment" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConcerningPerson" class="form-label">
+                            <i class="fas fa-user me-1"></i> Concerning Person (Optional)
+                        </label>
+                        <input asp-for="ConcerningPerson" class="form-control" placeholder="Person name" />
+                        <span asp-validation-for="ConcerningPerson" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConcerningOther" class="form-label">
+                            <i class="fas fa-users me-1"></i> Other Parties (Optional)
+                        </label>
+                        <input asp-for="ConcerningOther" class="form-control" placeholder="Other suppliers/related parties" />
+                        <span asp-validation-for="ConcerningOther" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Desc" class="form-label">
+                    <i class="fas fa-align-left me-1"></i> Description (Optional - leave empty to use email body)
+                </label>
+                <textarea asp-for="Desc" class="form-control" rows="5" placeholder="Enter additional details..."></textarea>
+                <span asp-validation-for="Desc" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Security Section -->
+        <div class="form-section">
+            <h5 class="section-title">
+                <i class="fas fa-lock me-2"></i>
+                Security
+            </h5>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Please create a password to access and track your ticket in the future.
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">
+                            <i class="fas fa-key me-1"></i> Password *
+                        </label>
+                        <input asp-for="Password" type="password" class="form-control" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">
+                            <i class="fas fa-key me-1"></i> Confirm Password *
+                        </label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" required />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LangFlag" class="form-label">
+                    <i class="fas fa-language me-1"></i> Language
+                </label>
+                <select asp-for="LangFlag" class="form-select">
+                    <option value="E">English</option>
+                    <option value="A">Arabic</option>
+                </select>
+                <span asp-validation-for="LangFlag" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check me-2"></i> Create Ticket
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Load sub types when ticket type changes
+            $('#TicketTypeId').change(function() {
+                var typeId = $(this).val();
+                if (typeId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubTypes", "Ticket")',
+                        data: { typeId: typeId },
+                        success: function(data) {
+                            var select = $('#subTypeSelect');
+                            select.empty();
+                            select.append('<option value="">Select Sub Type</option>');
+                            $.each(data, function(index, item) {
+                                select.append('<option value="' + item.id + '">' + item.name + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#subTypeSelect').empty().append('<option value="">Select Sub Type</option>');
+                }
+            });
+
+            // Auto-resize textarea
+            $('textarea').each(function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            }).on('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Confirm before leaving with unsaved changes
+            var formChanged = false;
+            $('#ticketForm input, #ticketForm select, #ticketForm textarea').change(function() {
+                formChanged = true;
+            });
+
+            $(window).on('beforeunload', function() {
+                if (formChanged) {
+                    return 'You have unsaved changes. Are you sure you want to leave?';
+                }
+            });
+
+            $('#ticketForm').submit(function() {
+                $(window).off('beforeunload');
+            });
+        });
+    </script>
+}

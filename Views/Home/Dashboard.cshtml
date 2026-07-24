@@ -1,0 +1,137 @@
+﻿@model ShareIT.Models.ViewModel.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <h2 class="mb-4">ShareIT Dashboard</h2>
+
+    <div class="row mb-4 g-3">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Submissions</h6>
+                    <h2 class="fw-bold">@Model.TotalTickets</h2>
+                </div>
+            </div>
+        </div>
+        @{
+            int KindCount(string label) =>
+                Model.KindBreakdown.FirstOrDefault(k => k.Label == label)?.Value ?? 0;
+            var kindCards = new[]
+            {
+                (Label: "Complaint",  Plural: "Complaints",  Color: "text-danger"),
+                (Label: "Suggestion", Plural: "Suggestions", Color: "text-primary"),
+                (Label: "Feedback",   Plural: "Feedback",    Color: "text-success")
+            };
+        }
+        @foreach (var c in kindCards)
+        {
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted">@c.Plural</h6>
+                        <h2 class="fw-bold @c.Color">@KindCount(c.Label)</h2>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">Submissions by Company</div>
+                <div class="card-body"><canvas id="byCompanyChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">Submissions by Type &amp; Status</div>
+                <div class="card-body"><canvas id="byTypeStatusChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">Top Recurring Ticket Types</div>
+                <div class="card-body"><canvas id="topTypesChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">Status Breakdown</div>
+                <div class="card-body"><canvas id="statusChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const byCompanyLabels = @Html.Raw(Json.Serialize(Model.SubmissionsByCompany.Select(x => x.Label)));
+        const byCompanyValues = @Html.Raw(Json.Serialize(Model.SubmissionsByCompany.Select(x => x.Value)));
+
+        new Chart(document.getElementById('byCompanyChart'), {
+            type: 'bar',
+            data: {
+                labels: byCompanyLabels,
+                datasets: [{ label: 'Submissions', data: byCompanyValues, backgroundColor: '#c4252a' }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        const typeLabels = @Html.Raw(Json.Serialize(Model.TypeLabels));
+        const stackedDatasets = @Html.Raw(Json.Serialize(Model.SubmissionsByTypeAndStatus.Select(s => new
+                    {
+                        label = s.StatusLabel,
+                        data = s.Values
+                })));
+        const stackedColors = ['#c4252a', '#6c757d', '#198754', '#ffc107', '#0d6efd', '#6610f2'];
+        stackedDatasets.forEach((ds, i) => ds.backgroundColor = stackedColors[i % stackedColors.length]);
+
+        new Chart(document.getElementById('byTypeStatusChart'), {
+            type: 'bar',
+            data: { labels: typeLabels, datasets: stackedDatasets },
+            options: {
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        const topTypesLabels = @Html.Raw(Json.Serialize(Model.TopTicketTypes.Select(x => x.Label)));
+        const topTypesValues = @Html.Raw(Json.Serialize(Model.TopTicketTypes.Select(x => x.Value)));
+
+        new Chart(document.getElementById('topTypesChart'), {
+            type: 'bar',
+            data: {
+                labels: topTypesLabels,
+                datasets: [{ label: 'Count', data: topTypesValues, backgroundColor: '#0d6efd' }]
+            },
+            options: {
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        const statusLabels = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Select(x => x.Label)));
+        const statusValues = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Select(x => x.Value)));
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{ data: statusValues, backgroundColor: ['#c4252a', '#ffc107', '#0d6efd', '#198754', '#6c757d'] }]
+            }
+        });
+    </script>
+}

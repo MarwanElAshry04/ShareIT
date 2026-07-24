@@ -1,0 +1,2065 @@
+﻿@model ShareIT.Models.ViewModel.TicketSearchModel
+@{
+    ViewData["Title"] = "Search Ticket - ELSEWEDY ELECTRIC";
+}
+
+<style>
+    :root {
+        --primary-red: #c4252a;
+        --primary-black: #302e2d;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+    }
+
+    .search-card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .search-header {
+        background: #f8f9fa;
+        color: black;
+        padding: 25px;
+        border-bottom: 4px solid var(--primary-red);
+    }
+
+    .search-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        margin: 0 auto 20px;
+        box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+    }
+
+    .form-control-custom {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: white;
+    }
+
+        .form-control-custom:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 0.25rem rgba(196, 37, 42, 0.25);
+            transform: translateY(-2px);
+        }
+
+    .input-group-custom {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-red);
+        z-index: 3;
+    }
+
+    .input-with-icon {
+        padding-left: 45px;
+    }
+
+    .btn-search {
+        background: linear-gradient(135deg, var(--primary-red), #e02020);
+        border: none;
+        border-radius: 10px;
+        padding: 15px 30px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s;
+        color: white;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-search:hover {
+            background: linear-gradient(135deg, #e02020, var(--primary-red));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(196, 37, 42, 0.3);
+        }
+
+        .btn-search:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-search:disabled {
+            background: #6c757d;
+            transform: none;
+            box-shadow: none;
+        }
+
+    .alert-custom {
+        border-radius: 10px;
+        border-left: 4px solid;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success-custom {
+        background: linear-gradient(to right, #d4edda, #f0f9f2);
+        border-left-color: #28a745;
+        color: #155724;
+    }
+
+    .alert-danger-custom {
+        background: linear-gradient(to right, #f8d7da, #fdf2f3);
+        border-left-color: #dc3545;
+        color: #721c24;
+    }
+
+    .alert-warning-custom {
+        background: linear-gradient(to right, #fff3cd, #fffdf6);
+        border-left-color: #ffc107;
+        color: #856404;
+    }
+
+    .alert-info-custom {
+        background: linear-gradient(to right, #d1ecf1, #f2f9fa);
+        border-left-color: #17a2b8;
+        color: #0c5460;
+    }
+
+    .forgot-password-link {
+        color: var(--primary-red);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .forgot-password-link:hover {
+            color: #e02020;
+            text-decoration: underline;
+            transform: translateX(3px);
+        }
+
+    /* Ticket Details Card */
+    .ticket-details-card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header.bg-dark {
+        background: linear-gradient(135deg, var(--primary-black), #000) !important;
+        border-bottom: 4px solid var(--primary-red);
+    }
+
+    .header-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-red);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+    }
+
+    .case-reference-banner {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 20px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .reference-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--primary-black);
+        margin: 0;
+        background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .case-info-box {
+        display: inline-flex;
+        gap: 20px;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .case-info-item {
+        text-align: center;
+    }
+
+        .case-info-item .label {
+            display: block;
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .case-info-item .value {
+            display: block;
+            font-weight: 700;
+            color: var(--primary-black);
+        }
+
+    .priority-medium {
+        color: #fd7e14;
+        font-weight: 600;
+    }
+
+    /* Status Badges */
+    .status-badge-large {
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 16px;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-open {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-investigation {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+    }
+
+    .badge-pending {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        color: white;
+    }
+
+    .badge-resolved {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+    }
+
+    .badge-closed {
+        background: linear-gradient(135deg, #343a40, #000);
+        color: white;
+    }
+
+    /* Detail Cards */
+    .detail-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .detail-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+    .detail-card-header {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 2px solid var(--primary-red);
+        font-weight: 600;
+        color: var(--primary-black);
+        font-size: 16px;
+    }
+
+    .detail-card-body {
+        padding: 20px;
+    }
+
+    .detail-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        flex: 0 0 160px;
+        font-weight: 500;
+        color: #495057;
+        font-size: 14px;
+    }
+
+    .detail-value {
+        flex: 1;
+        font-weight: 500;
+        color: var(--primary-black);
+    }
+
+    .language-badge {
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+        .language-badge.english {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .language-badge.arabic {
+            background: #d4edda;
+            color: #155724;
+        }
+
+    /* Description Box */
+    .ticket-description {
+        line-height: 1.8;
+        color: #343a40;
+        font-size: 15px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    /* Timeline */
+    .timeline-vertical {
+        position: relative;
+        padding-left: 30px;
+    }
+
+        .timeline-vertical::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary-red), #6c757d);
+        }
+
+    .timeline-event {
+        position: relative;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .timeline-point {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        position: absolute;
+        left: -38px;
+        top: 0;
+        font-size: 12px;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+        .timeline-point.bg-success {
+            background: #28a745;
+        }
+
+        .timeline-point.bg-primary {
+            background: #007bff;
+        }
+
+        .timeline-point.bg-warning {
+            background: #ffc107;
+        }
+
+        .timeline-point.bg-danger {
+            background: #dc3545;
+        }
+
+        .timeline-point.bg-info {
+            background: #17a2b8;
+        }
+
+        .timeline-point.bg-dark {
+            background: #343a40;
+        }
+
+    .timeline-content {
+        flex: 1;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .timeline-date {
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+    .timeline-desc {
+        color: #495057;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Updates List */
+    .updates-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .update-item {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .update-item:hover {
+            border-color: var(--primary-red);
+            background: #fff5f5;
+        }
+
+    .update-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .update-author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .author-avatar {
+        width: 30px;
+        height: 30px;
+        background: var(--primary-red);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    .update-time {
+        color: #6c757d;
+        font-size: 12px;
+    }
+
+    .update-content {
+        color: #343a40;
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* Attachments Grid */
+    .attachments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .attachment-card {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+        .attachment-card:hover {
+            background: white;
+            border-color: var(--primary-red);
+            transform: translateX(5px);
+        }
+
+    .attachment-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 18px;
+    }
+
+    .attachment-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .attachment-name {
+        font-weight: 500;
+        color: var(--primary-black);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+    }
+
+    .attachment-meta {
+        font-size: 12px;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .attachment-download {
+        width: 35px;
+        height: 35px;
+        border: 1px solid var(--primary-red);
+        background: white;
+        color: var(--primary-red);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .attachment-download:hover {
+            background: var(--primary-red);
+            color: white;
+        }
+
+    /* Empty States */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+
+        .empty-state i {
+            opacity: 0.5;
+        }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Chat Styles */
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .chat-input-area {
+        background: white;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .chat-input {
+        resize: none;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+        .chat-input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 0.2rem rgba(196, 37, 42, 0.25);
+        }
+
+    /* Message Bubbles */
+    .message-bubble {
+        max-width: 80%;
+        margin-bottom: 15px;
+        position: relative;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .message-user {
+        margin-left: auto;
+    }
+
+    .message-compliance {
+        margin-right: auto;
+    }
+
+    .message-content {
+        padding: 12px 16px;
+        border-radius: 18px;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .message-user .message-content {
+        background: linear-gradient(135deg, var(--primary-red), #e02020);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message-compliance .message-content {
+        background: white;
+        color: var(--primary-black);
+        border: 1px solid #dee2e6;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .message-sender {
+        font-weight: 600;
+    }
+
+    .message-time {
+        color: #6c757d;
+    }
+
+    .message-text {
+        line-height: 1.5;
+    }
+
+    .message-attachment {
+        margin-top: 10px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    .attachment-preview {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        margin-top: 5px;
+    }
+
+    .attachment-icon-chat {
+        width: 30px;
+        height: 30px;
+        background: var(--primary-red);
+        color: white;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+
+    .attachment-info-chat {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .attachment-name-chat {
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .attachment-download-chat {
+        color: var(--primary-red);
+        text-decoration: none;
+    }
+
+        .attachment-download-chat:hover {
+            text-decoration: underline;
+        }
+
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #dee2e6;
+        width: fit-content;
+        margin-bottom: 15px;
+    }
+
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: #6c757d;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+    /* Chat Date Separator */
+    .date-separator {
+        text-align: center;
+        margin: 20px 0;
+        position: relative;
+    }
+
+        .date-separator::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+
+    .date-label {
+        background: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        border: 1px solid #dee2e6;
+        color: #6c757d;
+        font-size: 12px;
+        font-weight: 500;
+        position: relative;
+        z-index: 2;
+        display: inline-block;
+    }
+
+    /* Empty Chat State */
+    .empty-chat {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+        .empty-chat i {
+            font-size: 48px;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .empty-chat h5 {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .empty-chat p {
+            color: #adb5bd;
+            font-size: 14px;
+        }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-4px);
+        }
+    }
+
+    /* Scrollbar Styling */
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: var(--primary-red);
+        border-radius: 3px;
+    }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #e02020;
+        }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        z-index: 3;
+    }
+
+        .password-toggle:hover {
+            color: var(--primary-red);
+        }
+
+    .brand-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .brand-logo {
+        width: 160px;
+        margin-bottom: 15px;
+    }
+
+    .security-note {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-left: 4px solid var(--primary-red);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .search-header {
+            padding: 20px 15px;
+        }
+
+        .form-control-custom {
+            padding: 12px;
+        }
+
+        .btn-search {
+            padding: 12px 20px;
+        }
+
+        .search-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+
+        .reference-number {
+            font-size: 1.8rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            flex: none;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .case-info-box {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons {
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .timeline-vertical {
+            padding-left: 20px;
+        }
+
+        .timeline-point {
+            left: -30px;
+        }
+
+        .chat-container {
+            height: 300px;
+        }
+
+        .message-bubble {
+            max-width: 90%;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+        }
+
+        .attachments-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+        <div class="col-lg-12 col-xl-12">
+            <!-- Search Card -->
+            <div class="search-card mt-3">
+                <!-- Header -->
+                <div class="search-header text-center">
+                    <img src="~/ShareIt-logo.png" alt="ELSEWEDY ELECTRIC" class="brand-logo" />
+                    <h2 class="h4 mb-2">Track Your Ticket</h2>
+                    <p class="mb-0 opacity-75">Enter your ticket reference and password to check status</p>
+                </div>
+
+                <!-- Search Form -->
+                <div class="p-4 p-md-5">
+                    <form asp-action="Index" method="post" id="searchForm" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <!-- Messages -->
+                        @if (!string.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert-custom alert-@(Model.MessageType ?? "info")-custom mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas @GetAlertIcon(Model.MessageType) me-3 fa-lg"></i>
+                                    <div>
+                                        <div class="fw-bold mb-1">@GetAlertTitle(Model.MessageType)</div>
+                                        <div class="small">@Html.Raw(Model.Message)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row g-4">
+                            <!-- Ticket Reference -->
+                            <div class="col-12">
+                                <label asp-for="TicketRef" class="form-label fw-bold mb-2">
+                                    <i class="fas fa-hashtag text-danger me-2"></i>Ticket Reference Number
+                                </label>
+                                <div class="input-group-custom">
+                                    <i class="fas fa-file-invoice input-icon"></i>
+                                    <input asp-for="TicketRef"
+                                           class="form-control form-control-custom input-with-icon"
+                                           placeholder="Enter your ticket reference number"
+                                           required />
+                                </div>
+                                <span asp-validation-for="TicketRef" class="text-danger small mt-1"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-12">
+                                <label asp-for="Password" class="form-label fw-bold mb-2">
+                                    <i class="fas fa-key text-danger me-2"></i>Password
+                                </label>
+                                <div class="input-group-custom">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input asp-for="Password"
+                                           type="password"
+                                           class="form-control form-control-custom input-with-icon password-field"
+                                           placeholder="Enter your password"
+                                           required
+                                           id="passwordInput" />
+                                    <button type="button" class="password-toggle" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small mt-1"></span>
+                            </div>
+
+                            <!-- Forgot Password Link -->
+                            @if (Model.ShowForgetPasswordLink)
+                            {
+                                <div class="col-12 text-center">
+                                    <form asp-action="ForgetPassword" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="ticketRef" value="@Model.TicketRef" />
+                                        <button type="submit" class="forgot-password-link">
+                                            <i class="fas fa-question-circle me-1"></i>Forgot your password?
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+
+                            <!-- Submit Button -->
+                            <div class="col-12">
+                                <button type="submit" class="btn-search" id="searchButton">
+                                    <span id="buttonText">
+                                        <i class="fas fa-search me-2"></i>Search Ticket
+                                    </span>
+                                    <span id="loadingSpinner" class="d-none">
+                                        <span class="loading-spinner me-2"></span>Searching...
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Security Note -->
+                    <div class="security-note mt-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shield-alt text-danger me-3"></i>
+                            <div class="small">
+                                <strong>Security Notice:</strong> Your information is protected with 256-bit encryption.
+                                All data transmission is secure and confidential.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket Details Section -->
+            @if (Model.ShowTicketDetails && Model.TicketDetails != null)
+            {
+                var ticket = Model.TicketDetails.Ticket;
+
+                <div class="mt-5" id="ticketDetails">
+                    <div class="card ticket-details-card border-0 shadow-lg">
+                        <!-- Top Header -->
+                        <div class="card-header bg-dark text-white py-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center">
+                                        <div class="header-icon me-3">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="mb-1 fw-bold">Ticket Case Details</h4>
+                                            <p class="mb-0 small opacity-75">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                Created: @ticket.CreatedOn.ToString()
+                                                @if (ticket.UpdatedOn.HasValue)
+                                                {
+                                                    <span class="ms-3">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        Updated: @ticket.UpdatedOn.Value.ToString()
+                                                    </span>
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    @{
+                                        var statusClass = ticket.validation?.ToLower() switch
+                                        {
+                                            "open" => "badge-open",
+                                            "investigation" => "badge-investigation",
+                                            "pending" => "badge-pending",
+                                            "resolved" => "badge-resolved",
+                                            "closed" => "badge-closed",
+                                            _ => "badge-pending"
+                                        };
+                                    }
+                                    <div class="@statusClass status-badge-large">
+                                        <i class="fas fa-circle me-1"></i>
+                                        @ticket.validation?.ToUpper()
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Case Reference Banner -->
+                        <div class="case-reference-banner">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h2 class="reference-number">
+                                        <i class="fas fa-hashtag me-2"></i>
+                                        @ticket.RefNo
+                                    </h2>
+                                    <small class="text-muted">Case Reference Number</small>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <div class="case-info-box">
+                                        <div class="case-info-item">
+                                            <span class="label">Case ID</span>
+                                            <span class="value">#@ticket.RefNo</span>
+                                        </div>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Content Area -->
+                        <div class="card-body p-4">
+                            <!-- Row 1: Basic Information -->
+                            <div class="row g-4 mb-4">
+                                <!-- Ticket Details Card -->
+                                <div class="col-lg-6">
+                                    <div class="detail-card">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Ticket Information
+                                        </div>
+                                        <div class="detail-card-body">
+                                            <div class="detail-row">
+                                                <div class="detail-label">Ticket Type:</div>
+                                                <div class="detail-value">
+                                                    <i class="fas fa-folder text-danger me-1"></i>
+                                                    @ticket.TicketType?.ComplainType
+                                                </div>
+                                            </div>
+
+                                            @if (ticket.Status!=null)
+                                            {
+                                                <div class="detail-row">
+                                                    <div class="detail-label">Sub Category:</div>
+                                                    <div class="detail-value">
+                                                        <i class="fas fa-layer-group text-danger me-1"></i>
+                                                        @ticket.TicketType?.ComplainType
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <div class="detail-row">
+                                                <div class="detail-label">Language:</div>
+                                                <div class="detail-value">
+                                                    @if (ticket.langFlag == "E")
+                                                    {
+                                                        <span class="language-badge english">
+                                                            <i class="fas fa-globe-americas me-1"></i>English
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="language-badge arabic">
+                                                            <i class="fas fa-globe-africa me-1"></i>Arabic
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Concerning Party Card -->
+                                <div class="col-lg-6">
+                                    <div class="detail-card">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-user-slash me-2"></i>
+                                            Ticket Concerning
+                                        </div>
+                                        <div class="detail-card-body">
+                                            @if (!string.IsNullOrEmpty(ticket.ConcerningCompany))
+                                            {
+                                                <div class="detail-row">
+                                                    <div class="detail-label">Company:</div>
+                                                    <div class="detail-value">
+                                                        <i class="fas fa-building text-danger me-1"></i>
+                                                        @ticket.ConcerningCompany
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(ticket.ConcerningDepartment))
+                                            {
+                                                <div class="detail-row">
+                                                    <div class="detail-label">Department:</div>
+                                                    <div class="detail-value">
+                                                        <i class="fas fa-sitemap text-danger me-1"></i>
+                                                        @ticket.ConcerningDepartment
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(ticket.ConcerningPerson))
+                                            {
+                                                <div class="detail-row">
+                                                    <div class="detail-label">Person Involved:</div>
+                                                    <div class="detail-value">
+                                                        <i class="fas fa-user text-danger me-1"></i>
+                                                        @ticket.ConcerningPerson
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (string.IsNullOrEmpty(ticket.ConcerningCompany) &&
+                                                                                    string.IsNullOrEmpty(ticket.ConcerningDepartment) &&
+                                                                                    string.IsNullOrEmpty(ticket.ConcerningPerson))
+                                            {
+                                                <div class="text-center py-3">
+                                                    <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                                                    <p class="text-muted mb-0">No specific party mentioned</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Description -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="detail-card">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-align-left me-2"></i>
+                                            Ticket Description
+                                        </div>
+                                        <div class="detail-card-body">
+                                            @if (!string.IsNullOrEmpty(ticket.Desc))
+                                            {
+                                                <div class="ticket-description">
+                                                    @Html.Raw(ticket.Desc.Replace("\n", "<br />"))
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="empty-state">
+                                                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted mb-0">No description provided</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Timeline & Updates -->
+                            <div class="row g-4">
+                                <!-- Timeline Column -->
+                                <div class="col-lg-8">
+                                    <div class="detail-card h-100">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-history me-2"></i>
+                                            Case Timeline
+                                            <span class="badge bg-light text-dark ms-2">
+                                                @(Model.TicketDetails.Timeline?.Count ?? 0) events
+                                            </span>
+                                        </div>
+                                        <div class="detail-card-body">
+                                            @if (Model.TicketDetails.Timeline?.Any() == true)
+                                            {
+                                                <div class="timeline-vertical">
+                                                    @foreach (var eventItem in Model.TicketDetails.Timeline)
+                                                    {
+                                                        <div class="timeline-event">
+                                                            <div class="timeline-point bg-@eventItem.Color">
+                                                                <i class="@eventItem.Icon"></i>
+                                                            </div>
+                                                            <div class="timeline-content">
+                                                                <div class="timeline-header">
+                                                                    <h6 class="mb-0">@eventItem.Title</h6>
+                                                                    <span class="timeline-date">@eventItem.Date.ToString("dd MMM yyyy")</span>
+                                                                </div>
+                                                                <p class="timeline-desc mb-2">@eventItem.Description</p>
+                                                                <div class="timeline-footer">
+                                                                    <small class="text-muted">
+                                                                        <i class="far fa-clock me-1"></i>
+                                                                        @eventItem.TimeAgo
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="empty-state">
+                                                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted mb-0">No timeline events available</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Updates Column -->
+                                <div class="col-lg-4">
+                                    <div class="detail-card h-100">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-comment-dots me-2"></i>
+                                            Recent Updates
+                                            @if (Model.TicketDetails.RecentMessages?.Any() == true)
+                                            {
+                                                <span class="badge bg-danger ms-2">@Model.TicketDetails.RecentMessages.Count new</span>
+                                            }
+                                        </div>
+                                        <div class="detail-card-body">
+                                            @if (Model.TicketDetails.RecentMessages?.Any() == true)
+                                            {
+                                                <div class="updates-list">
+                                                    @foreach (var message in Model.TicketDetails.RecentMessages)
+                                                    {
+                                                        <div class="update-item">
+                                                            <div class="update-header">
+                                                                <div class="update-author">
+                                                                    <div class="author-avatar">
+                                                                        <i class="fas fa-user"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <strong>@message.CreatedBy</strong>
+                                                                        <small>@message.CreatedOn?.ToString("dd MMM")</small>
+                                                                    </div>
+                                                                </div>
+                                                                <small class="update-time">@message.CreatedOn?.ToString("HH:mm")</small>
+                                                            </div>
+                                                            <p class="update-content">@message.Comment</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="empty-state">
+                                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted mb-0">No updates available</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attachments Section -->
+                            @if (Model.TicketDetails.Attachments?.Any() == true)
+                            {
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="detail-card">
+                                            <div class="detail-card-header">
+                                                <i class="fas fa-paperclip me-2"></i>
+                                                Attachments
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    @Model.TicketDetails.Attachments.Count files
+                                                </span>
+                                            </div>
+                                            <div class="detail-card-body">
+                                                <div class="attachments-grid">
+                                                    @foreach (var attachment in Model.TicketDetails.Attachments)
+                                                    {
+                                                        var fileName = System.IO.Path.GetFileName(attachment.filePath);
+                                                        var extension = System.IO.Path.GetExtension(fileName)?.ToLower();
+
+                                                        <div class="attachment-card">
+                                                            <div class="attachment-icon">
+                                                                <i class="@GetFileIcon(extension)"></i>
+                                                            </div>
+                                                            <div class="attachment-info">
+                                                                <div class="attachment-name" title="@fileName">
+                                                                    @fileName
+                                                                </div>
+                                                                <div class="attachment-meta">
+                                                                    <span>@extension</span>
+                                                                    <span>•</span>
+                                                                </div>
+                                                            </div>
+                                                            <button class="attachment-download" onclick="downloadAttachment('@attachment.filePath', '@fileName')">
+                                                                <i class="fas fa-download"></i>
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Chat with Compliance Team -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="detail-card">
+                                        <div class="detail-card-header">
+                                            <i class="fas fa-comments me-2"></i>
+                                            Chat with Compliance Team
+                                            <span class="badge bg-danger ms-2" id="unreadCount" style="display: none;">0 new</span>
+                                        </div>
+                                        <div class="detail-card-body p-0">
+                                            <!-- Chat Container -->
+                                            <div class="chat-container">
+                                                <!-- Chat Messages Area -->
+                                                <div class="chat-messages" id="chatMessages">
+                                                    <div class="chat-loading text-center py-4">
+                                                        <div class="spinner-border text-danger" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                        <p class="text-muted mt-2">Loading messages...</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Chat Input Area -->
+                                                <div class="chat-input-area p-3 border-top">
+                                                    <div class="row g-2">
+                                                        <div class="col-auto">
+                                                            <div class="file-upload-wrapper">
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="attachFileBtn" title="Attach file">
+                                                                    <i class="fas fa-paperclip"></i>
+                                                                </button>
+                                                                <input type="file" id="fileInput" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="input-group">
+                                                                <textarea class="form-control chat-input"
+                                                                      id="messageInput"
+                                                                      placeholder="Type your message here..."
+                                                                      rows="1"></textarea>
+                                                                <button class="btn btn-danger" type="button" id="sendMessageBtn">
+                                                                    <i class="fas fa-paper-plane"></i>
+                                                                </button>
+                                                            </div>
+                                                            <small class="text-muted">Press Enter to send, Shift+Enter for new line</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Upload Progress -->
+                                                    <div class="upload-progress mt-2" style="display: none;">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                                 role="progressbar"
+                                                                 style="width: 0%"></div>
+                                                        </div>
+                                                        <small class="text-muted">Uploading...</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="card-footer bg-light border-top">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Last refreshed: @DateTime.Now.ToString("dd MMM yyyy HH:mm:ss")
+                                    </small>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div class="action-buttons">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="printTicket()">
+                                            <i class="fas fa-print me-1"></i>Print
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm ms-2" onclick="scrollToTop()">
+                                            <i class="fas fa-arrow-up me-1"></i>Top
+                                        </button>
+                                        <button class="btn btn-danger btn-sm ms-2" onclick="newSearch()">
+                                            <i class="fas fa-search me-1"></i>New Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Help Section -->
+            <div class="mt-5">
+                <div class="card border-0 bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-dark mb-3">
+                            <i class="fas fa-circle-question me-2 text-danger"></i>Need Help?
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start">
+                                    <div class="bg-white p-2 rounded me-3">
+                                        <i class="fas fa-phone text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Contact Support</h6>
+                                        <p class="small text-muted mb-0">+20 123 456 7890</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start">
+                                    <div class="bg-white p-2 rounded me-3">
+                                        <i class="fas fa-envelope text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Email Support</h6>
+                                        <p class="small text-muted mb-0">compliance@elsewedyelectric.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+@functions {
+    public string GetAlertIcon(string messageType)
+    {
+        return messageType switch
+        {
+            "success" => "fa-check-circle",
+            "danger" => "fa-exclamation-circle",
+            "warning" => "fa-exclamation-triangle",
+            _ => "fa-info-circle"
+        };
+    }
+
+    public string GetAlertTitle(string messageType)
+    {
+        return messageType switch
+        {
+            "success" => "Success",
+            "danger" => "Attention Required",
+            "warning" => "Warning",
+            _ => "Information"
+        };
+    }
+
+    public string GetFileIcon(string extension)
+    {
+        return extension switch
+        {
+            ".docx" or ".doc" => "fas fa-file-word text-primary",
+            ".pdf" => "fas fa-file-pdf text-danger",
+            ".xlsx" or ".xls" => "fas fa-file-excel text-success",
+            ".jpg" or ".jpeg" or ".png" => "fas fa-file-image text-info",
+            ".mp3" or ".wav" => "fas fa-file-audio text-warning",
+            ".mp4" or ".avi" => "fas fa-file-video text-purple",
+            _ => "fas fa-file text-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Password visibility toggle
+            $('#togglePassword').click(function () {
+                const passwordInput = $('#passwordInput');
+                const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+                passwordInput.attr('type', type);
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+
+            // Form submission handling
+            $('#searchForm').on('submit', function (e) {
+                if ($(this)[0].checkValidity()) {
+                    // Show loading state
+                    $('#buttonText').addClass('d-none');
+                    $('#loadingSpinner').removeClass('d-none');
+                    $('#searchButton').prop('disabled', true);
+
+                    // Auto-hide alert after 8 seconds
+                    setTimeout(function () {
+                        $('.alert-custom').fadeOut(500);
+                    }, 8000);
+                }
+            });
+
+            // Auto-focus on first input
+            $('#TicketRef').focus();
+
+            // Form validation styling
+            $('.form-control-custom').on('blur', function () {
+                if ($(this).val().trim() !== '') {
+                    $(this).removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-valid').addClass('is-invalid');
+                }
+            });
+
+            // Input animation on focus
+            $('.form-control-custom').on('focus', function () {
+                $(this).parent().css('transform', 'translateY(-2px)');
+            }).on('blur', function () {
+                $(this).parent().css('transform', 'translateY(0)');
+            });
+
+            // Chat functionality
+            const ticketId = @(Model.TicketDetails?.Ticket?.Id ?? 0);
+            let isTyping = false;
+            let currentDate = '';
+            let messageCount = 0;
+
+            // Initialize chat if ticket exists
+            if (ticketId > 0) {
+                loadChatMessages();
+                startPolling();
+            }
+
+            // Load chat messages
+            function loadChatMessages() {
+                $('#chatMessages').html(`
+                    <div class="chat-loading text-center py-4">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted mt-2">Loading messages...</p>
+                    </div>
+                `);
+
+                $.ajax({
+                    url: '@Url.Action("GetChatMessages", "Search")',
+                    type: 'GET',
+                    data: { ticketId: ticketId },
+                    success: function (response) {
+                        if (response.success) {
+                            messageCount = response.messages.length;
+                            renderMessages(response.messages);
+                            scrollToBottom();
+                        }
+                    },
+                    error: function () {
+                        $('#chatMessages').html(`
+                            <div class="empty-chat">
+                                <i class="fas fa-comment-slash"></i>
+                                <h5>Failed to load messages</h5>
+                                <p>Please try again later</p>
+                            </div>
+                        `);
+                    }
+                });
+            }
+
+            // Render messages
+            function renderMessages(messages) {
+                if (messages.length === 0) {
+                    $('#chatMessages').html(`
+                        <div class="empty-chat">
+                            <i class="fas fa-comments"></i>
+                            <h5>No messages yet</h5>
+                            <p>Start the conversation with compliance team</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                let html = '';
+                currentDate = '';
+                let previousDate = '';
+
+                messages.forEach(function (message) {
+                    const messageDate = new Date(message.createdOn).toDateString();
+
+                    // Add date separator if date changed
+                    if (currentDate !== messageDate) {
+                        currentDate = messageDate;
+                        const formattedDate = new Date(message.createdOn).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        html += `
+                            <div class="date-separator">
+                                <span class="date-label">${formattedDate}</span>
+                            </div>
+                        `;
+                    }
+
+                    const messageClass = message.senderType === 'user' ? 'message-user' : 'message-compliance';
+                    const senderName = message.senderType === 'user' ? 'You' : 'Compliance Team';
+
+                    html += `
+                        <div class="message-bubble ${messageClass}">
+                            <div class="message-header">
+                                <span class="message-sender">${senderName}</span>
+                                <span class="message-time">${formatTime(new Date(message.createdOn))}</span>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-text">${escapeHtml(message.comment)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                $('#chatMessages').html(html);
+            }
+
+            // Send message
+            $('#sendMessageBtn').click(sendMessage);
+
+            $('#messageInput').keydown(function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                const message = $('#messageInput').val().trim();
+
+                if (!message || isTyping) return;
+
+                if (message.length > 1000) {
+                    showAlert('Message cannot exceed 1000 characters', 'danger');
+                    return;
+                }
+
+                isTyping = true;
+                $('#sendMessageBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+                $.ajax({
+                    url: '@Url.Action("SendMessage", "Search")',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    data: {
+                        TicketId: ticketId,
+                        Message: message
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Add message to chat
+                            const newMessage = {
+                                id: response.chatId,
+                                comment: message,
+                                sender: 'You',
+                                senderType: 'user',
+                                createdOn: new Date(),
+                                formattedTime: response.time,
+                                formattedDate: response.date
+                            };
+
+                            $('#chatMessages .empty-chat').remove();
+                            const messageHtml = renderSingleMessage(newMessage);
+                            $('#chatMessages').append(messageHtml);
+                            $('#messageInput').val('');
+                            scrollToBottom();
+                            messageCount++;
+
+                            showAlert('Message sent successfully', 'success');
+                        } else {
+                            showAlert(response.message || 'Failed to send message', 'danger');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showAlert('Error sending message: ' + error, 'danger');
+                    },
+                    complete: function () {
+                        isTyping = false;
+                        $('#sendMessageBtn').prop('disabled', false).html('<i class="fas fa-paper-plane"></i>');
+                    }
+                });
+            }
+
+            // File attachment
+            $('#attachFileBtn').click(function () {
+                $('#fileInput').click();
+            });
+
+            $('#fileInput').change(function () {
+                if (this.files.length > 0) {
+                    uploadFile(this.files[0]);
+                }
+            });
+
+            function uploadFile(file) {
+                const formData = new FormData();
+                formData.append('ticketId', ticketId);
+                formData.append('file', file);
+
+                $('.upload-progress').show();
+                const progressBar = $('.upload-progress .progress-bar');
+
+                $.ajax({
+                    url: '@Url.Action("UploadChatAttachment", "Search")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function () {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                const percent = Math.round((e.loaded / e.total) * 100);
+                                progressBar.css('width', percent + '%').text(percent + '%');
+                            }
+                        });
+                        return xhr;
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showAlert('File uploaded successfully', 'success');
+                            loadChatMessages(); // Reload messages to show attachment
+                        } else {
+                            showAlert(response.message || 'Failed to upload file', 'danger');
+                        }
+                    },
+                    error: function () {
+                        showAlert('Error uploading file', 'danger');
+                    },
+                    complete: function () {
+                        $('.upload-progress').hide();
+                        progressBar.css('width', '0%').text('');
+                        $('#fileInput').val('');
+                    }
+                });
+            }
+
+            // Auto-refresh messages every 30 seconds
+            function startPolling() {
+                setInterval(function () {
+                    if (document.hasFocus()) {
+                        checkNewMessages();
+                    }
+                }, 30000);
+            }
+
+            function checkNewMessages() {
+                $.ajax({
+                    url: '@Url.Action("GetChatMessages", "Search")',
+                    type: 'GET',
+                    data: { ticketId: ticketId },
+                    success: function (response) {
+                        if (response.success) {
+                            const newCount = response.messages.length;
+                            if (newCount > messageCount) {
+                                const newMessagesCount = newCount - messageCount;
+                                messageCount = newCount;
+                                loadChatMessages();
+                                showNotification('New message received from compliance team');
+                                updateUnreadCount(newMessagesCount);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateUnreadCount(count) {
+                if (count > 0) {
+                    $('#unreadCount').text(count + ' new').show();
+                } else {
+                    $('#unreadCount').hide();
+                }
+            }
+
+            function showNotification(message) {
+                if (!("Notification" in window)) return;
+
+                if (Notification.permission === "granted") {
+                    new Notification("ELSEWEDY Compliance", {
+                        body: message,
+                        icon: '/ShareIt-logo.png'
+                    });
+                }
+                else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then(function (permission) {
+                        if (permission === "granted") {
+                            new Notification("ELSEWEDY Compliance", {
+                                body: message,
+                                icon: '/ShareIt-logo.png'
+                            });
+                        }
+                    });
+                }
+            }
+
+            // Render single message
+            function renderSingleMessage(message) {
+                const messageDate = new Date(message.createdOn).toDateString();
+                let html = '';
+
+                // Check if we need date separator
+                if (currentDate !== messageDate) {
+                    currentDate = messageDate;
+                    const formattedDate = new Date(message.createdOn).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    html += `
+                        <div class="date-separator">
+                            <span class="date-label">${formattedDate}</span>
+                        </div>
+                    `;
+                }
+
+                const messageClass = message.senderType === 'user' ? 'message-user' : 'message-compliance';
+                const senderName = message.senderType === 'user' ? 'You' : 'Compliance Team';
+
+                html += `
+                    <div class="message-bubble ${messageClass}">
+                        <div class="message-header">
+                            <span class="message-sender">${senderName}</span>
+                            <span class="message-time">${formatTime(new Date(message.createdOn))}</span>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">${escapeHtml(message.comment)}</div>
+                        </div>
+                    </div>
+                `;
+
+                return html;
+            }
+
+            // Helper functions
+            function scrollToBottom() {
+                const chatMessages = $('#chatMessages')[0];
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+
+            function formatTime(date) {
+                return date.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+
+                $('.chat-container').before(alertHtml);
+
+                setTimeout(function () {
+                    $('.alert').alert('close');
+                }, 5000);
+            }
+
+            // Auto-expand textarea
+            $('#messageInput').on('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Initialize textarea height
+            $('#messageInput').trigger('input');
+
+            @if (Model.ShowTicketDetails)
+            {
+                    <text>
+                    // Scroll to ticket details after successful search
+                    setTimeout(function() {
+                        $('html, body').animate({
+                            scrollTop: $('#ticketDetails').offset().top - 100
+                        }, 800);
+                    }, 500);
+                    </text>
+            }
+        });
+
+        // Print ticket details
+        function printTicket() {
+            const printContent = document.getElementById('ticketDetails').innerHTML;
+            const originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 500);
+        }
+
+        // Download attachment
+        function downloadAttachment(filePath, fileName) {
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Clear form and start new search
+        function newSearch() {
+            $('#TicketRef').val('');
+            $('#Password').val('');
+            $('#ticketDetails').fadeOut(300, function () {
+                $(this).remove();
+                $('#TicketRef').focus();
+            });
+        }
+
+        // Re-enable button if form validation fails
+        document.addEventListener('invalid', (function () {
+            return function (e) {
+                e.preventDefault();
+                $('#loadingSpinner').addClass('d-none');
+                $('#buttonText').removeClass('d-none');
+                $('#searchButton').prop('disabled', false);
+            };
+        })(), true);
+    </script>
+}

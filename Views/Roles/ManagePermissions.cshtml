@@ -1,0 +1,107 @@
+﻿@using ShareIT.Models.ViewModel
+@model PermissionsFormViewModel
+
+@{
+    ViewData["Title"] = "Manage Permissions";
+}
+<style>
+    .checkbox-wrapper-22 .switch {
+        display: inline-block;
+        height: 34px;
+        position: relative;
+        width: 60px;
+    }
+
+        .checkbox-wrapper-22 .switch input {
+            display: none;
+        }
+
+    .checkbox-wrapper-22 .slider {
+        background-color: #ccc;
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: .4s;
+    }
+
+        .checkbox-wrapper-22 .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+        }
+
+    .checkbox-wrapper-22 input:checked + .slider {
+        background-color: #66bb6a;
+    }
+
+        .checkbox-wrapper-22 input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+    .checkbox-wrapper-22 .slider.round {
+        border-radius: 34px;
+    }
+
+        .checkbox-wrapper-22 .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+
+<form asp-action="ManagePermissions" method="post">
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>@Model.RoleName</h2>
+            Add/Remove Permissions
+        </div>
+        <div class="card-body">
+            <input type="hidden" asp-for="RoleId" />
+            <table class="table table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Module</th>
+                        <th>Permission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.RoleCalims.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <div class="form-check m-1">
+                                    <input type="hidden" asp-for="@Model.RoleCalims[i].DisplayValue" />
+@*                                     <input class="form-check-input" />
+ *@                                    <div class="checkbox-wrapper-22">
+                                        <label class="switch" for="@Model.RoleCalims[i].DisplayValue">
+                                            <input asp-for="@Model.RoleCalims[i].IsSelected" type="checkbox" id="@Model.RoleCalims[i].DisplayValue" />
+                                            <div class="slider round"> </div>
+                                        </label>
+                                    </div>
+
+                                    @*<label class="form-check-label" asp-for="@Model.Roles[i].IsSelected">
+                                            @Model.Roles[i].DisplayValue
+                                        </label>*@
+                                </div>
+                            </td>
+                            <td>@Model.RoleCalims[i].DisplayValue.Split('.')[1]</td>
+                            <td>@Model.RoleCalims[i].DisplayValue.Split('.')[2]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "Ticket Submitted - ELSEWEDY ELECTRIC";
+    var refNo = ViewBag.RefNo as string;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="confirmation-wrapper">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+
+                <!-- Success Card -->
+                <div class="card shadow-lg border-0 text-center confirmation-card">
+                    <div class="card-body p-5">
+
+                        <!-- Animated checkmark -->
+                        <div class="success-icon-wrapper mb-4">
+                            <div class="success-circle">
+                                <i class="fas fa-check success-check"></i>
+                            </div>
+                        </div>
+
+                        <h2 class="fw-bold text-dark mb-2">Ticket Submitted Successfully</h2>
+                        <p class="text-muted mb-4">
+                            Your ticket has been received and is now under review by our Compliance team.
+                        </p>
+
+                        <!-- Reference Number Box -->
+                        <div class="ref-box mb-4">
+                            <div class="ref-label">YOUR CASE REFERENCE NUMBER</div>
+                            <div class="ref-number" id="refNumber">@refNo</div>
+                            <button class="btn btn-sm btn-outline-danger mt-3" onclick="copyRef()">
+                                <i class="fas fa-copy me-1"></i> Copy Reference Number
+                            </button>
+                            <div id="copyFeedback" class="copy-feedback d-none">
+                                <i class="fas fa-check-circle me-1"></i> Copied!
+                            </div>
+                        </div>
+
+                        <!-- What happens next -->
+                        <div class="next-steps text-start mb-4">
+                            <h6 class="fw-bold text-dark mb-3">
+                                <i class="fas fa-list-ol me-2 text-danger"></i>What Happens Next
+                            </h6>
+                            <div class="next-step-item">
+                                <div class="step-dot bg-danger">1</div>
+                                <div>
+                                    <strong>Case Assigned</strong>
+                                    <p class="text-muted mb-0">Your ticket will be assigned to a compliance Team.</p>
+                                </div>
+                            </div>
+                            <div class="next-step-item">
+                                <div class="step-dot bg-dark">2</div>
+                                <div>
+                                    <strong>Investigation</strong>
+                                    <p class="text-muted mb-0">Our team will review all details and conduct a thorough investigation.</p>
+                                </div>
+                            </div>
+                            <div class="next-step-item">
+                                <div class="step-dot bg-danger">3</div>
+                                <div>
+                                    <strong>Resolution</strong>
+                                    <p class="text-muted mb-0">You will be notified of the outcome using your reference number and password.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important reminder -->
+                        <div class="alert alert-warning border-danger text-start mb-4">
+                            <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                            <strong>Important:</strong> Save your reference number and the password you created.
+                            You will need both to track your case status.
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2">
+                            <a href="/FollowTicket/Index" class="btn btn-danger btn-lg">
+                                <i class="fas fa-search me-2"></i> Track My Case
+                            </a>
+                            <a href="/Ticket/New" class="btn btn-outline-dark">
+                                <i class="fas fa-plus me-2"></i> Submit Another Ticket
+                            </a>
+                           @*  <button class="btn btn-outline-secondary" onclick="window.print()">
+                                <i class="fas fa-print me-2"></i> Print This Page
+                            </button> *@
+                        </div>
+                    </div>
+
+                    <!-- Footer strip -->
+                    <div class="card-footer bg-dark text-white py-3">
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <img src="~/ShareIt-logo.png" style="height:32px;" alt="ShareIT" />
+                            <span class="text-white-50">|</span>
+                            <small class="text-white-50">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                All reports are handled with strict confidentiality
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .confirmation-wrapper {
+        background: #f4f4f4;
+        min-height: 100vh;
+    }
+
+    .confirmation-card {
+        border-radius: 16px;
+        overflow: hidden;
+        animation: slideUp 0.5s ease;
+    }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Success icon */
+    .success-icon-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .success-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #c4252a, #e84545);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 24px rgba(196, 37, 42, 0.35);
+    }
+
+    @@keyframes popIn {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        70% {
+            transform: scale(1.15);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .success-check {
+        color: white;
+        font-size: 38px;
+    }
+
+    /* Reference box */
+    .ref-box {
+        background: linear-gradient(135deg, #fff5f5, #fff0f0);
+        border: 2px dashed #c4252a;
+        border-radius: 12px;
+        padding: 24px;
+    }
+
+    .ref-label {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        color: #6c757d;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .ref-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #c4252a;
+        letter-spacing: 2px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .copy-feedback {
+        color: #28a745;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 6px;
+    }
+
+    /* Next steps */
+    .next-steps {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .next-step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+        .next-step-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .step-dot {
+        min-width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    /* Print */
+    @@media print {
+        .btn, .card-footer {
+            display: none !important;
+        }
+
+        .confirmation-wrapper {
+            background: white;
+        }
+
+        .ref-number {
+            color: #000 !important;
+        }
+    }
+</style>
+
+<script>
+    function copyRef() {
+        const refNo = document.getElementById('refNumber').textContent.trim();
+        navigator.clipboard.writeText(refNo).then(() => {
+            const feedback = document.getElementById('copyFeedback');
+            feedback.classList.remove('d-none');
+            setTimeout(() => feedback.classList.add('d-none'), 2500);
+        });
+    }
+</script>

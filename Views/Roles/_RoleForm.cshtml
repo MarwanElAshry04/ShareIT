@@ -1,0 +1,15 @@
+﻿@using ShareIT.Models.ViewModel
+@model RoleFormViewModel
+
+<form method="post" asp-action="Add">
+    <div class="row">
+ 
+        <div class="input-group mb-3 col-4">
+        <input asp-for="Name" class="form-control" placeholder="Role name..." />
+        </div>
+        <div class="input-group-append col-4">
+            <button type="submit" class="btn btn-primary">Add New Role</button>
+        </div>
+    </div>
+    <span asp-validation-for="Name" class="text-danger"></span>
+</form>

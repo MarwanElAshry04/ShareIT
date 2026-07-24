@@ -1,0 +1,670 @@
+﻿@using ShareIT.Models.ViewModel
+@model NewTicketViewModel
+@{
+    ViewData["Title"] = "New Ticket - ELSEWEDY ELECTRIC";
+    var steps = new List<(string Title, string Icon)>
+    {
+        ("Reporter Data", "fas fa-user"),
+        ("Ticket Data", "fas fa-file-alt"),
+        ("Attachments", "fas fa-paperclip"),
+        ("Review", "fas fa-check-circle")
+    };
+}
+<!-- Add this to your head section -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="container mt-4">
+    <!-- Header with Logo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                    <div class="logo-icon"style="margin-right:20px">
+                        <img src="~/ShareIt-logo.png"style="width:120px;" alt="Alternate Text" />
+                    </div>
+                <div>
+                    <h1 class="h3 mb-0 fw-bold" style="color: #c4252a;">Compliance Reporting System</h1>
+                    <p class="text-muted mb-0">ELSEWEDY ELECTRIC</p>
+                </div>
+            </div>
+            <div class="alert alert-dark" role="alert">
+                <i class="fas fa-shield-alt me-2"></i>
+                <strong>Confidential & Secure:</strong> All reports are handled with strict confidentiality.
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Tracking with Icons -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-12">
+            <div class="steps-progress">
+@*                 <div class="steps-progress-bar" style="width: @((Model.CurrentStep - 1) * 33.33)%"></div>
+ *@
+                <div class="steps-container">
+
+                    @for (int i = 0; i < steps.Count; i++)
+                    {
+                        var stepNumber = i + 1;
+                        var isActive = Model.CurrentStep == stepNumber;
+                        var isCompleted = Model.CurrentStep > stepNumber;
+
+                        <div class="step @(isActive ? "active" : "") @(isCompleted ? "completed" : "")"
+                             onclick="@(stepNumber < Model.CurrentStep ? $"goToStep({stepNumber})" : "")"
+                             style="cursor: @(stepNumber < Model.CurrentStep ? "pointer" : "default")">
+
+                            <div class="step-icon-wrapper">
+                                <div class="step-icon">
+                                    @if (isCompleted)
+                                    {
+                                        <i class="fas fa-check"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="@steps[i].Icon"></i>
+                                    }
+                                </div>
+                                <div class="step-number">@stepNumber</div>
+                            </div>
+
+                            <div class="step-label">
+                                <div class="step-title">@steps[i].Title</div>
+                                <div class="step-status">
+                                    @if (isCompleted)
+                                    {
+                                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                                    }
+                                    else if (isActive)
+                                    {
+                                        <span class="text-danger">Current</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Pending</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+            <div class="card shadow-lg ">
+                <div class="card-header  bg-dark"  ">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 text-white fw-bold">
+                            <i class="fas fa-file-medical-alt me-2"></i>
+                            @(
+                                            Model.CurrentStep == 1 ? "Reporter Information" :
+                                            Model.CurrentStep == 2 ? "Ticket Details" :
+                                            Model.CurrentStep == 3 ? "Upload Supporting Documents" :
+                                            Model.CurrentStep == 4 ?
+                                           "Review & Submit"
+                                           : 
+                                           "Reporter Information")
+                        </h4>
+                        <span class="badge text-white">
+                            Step @Model.CurrentStep of 4
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Reference Number -->
+                    <div class="ref-number-section mb-4 p-3 border-start border-3 border-danger bg-light">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-hashtag fs-4 text-danger me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">CASE REFERENCE</small>
+                                <h5 class="mb-0 text-dark fw-bold">@Model.RefNo</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="New" method="post" enctype="multipart/form-data" id="ticketForm">
+                        <input type="hidden" asp-for="CurrentStep" />
+                        <input type="hidden" asp-for="RefNo" />
+                        <input type="hidden" asp-for="ReporterType" />
+
+                        @* Step 1 data — persist from step 2 onward *@
+                        @if (Model.CurrentStep >= 2)
+                        {
+                            <input type="hidden" asp-for="IsEmployee" />
+                            <input type="hidden" asp-for="EmpNum" />
+                            <input type="hidden" asp-for="EmpName" />
+                            <input type="hidden" asp-for="EmpMobile" />
+                            <input type="hidden" asp-for="EmpEmail1" />
+                            <input type="hidden" asp-for="EmpEmail2" />
+                            <input type="hidden" asp-for="EmpCompanyId" />
+                            <input type="hidden" asp-for="EmpDepartmentId" />
+                            <input type="hidden" asp-for="NonEmpRelationId" />
+                            <input type="hidden" asp-for="Organization" />
+                            <input type="hidden" asp-for="NonEmpName" />
+                            <input type="hidden" asp-for="NonEmpMobile" />
+                            <input type="hidden" asp-for="NonEmpEmail1" />
+                            <input type="hidden" asp-for="NonEmpEmail2" />
+                        }
+
+                        @* Step 2 data — persist from step 3 onward *@
+                        @if (Model.CurrentStep >= 3)
+                        {
+                            <input type="hidden" asp-for="Kind" />
+                            <input type="hidden" asp-for="Description" />
+                            <input type="hidden" asp-for="TicketTypeId" />
+                            <input type="hidden" asp-for="ConcerningCompanyId" />
+                            <input type="hidden" asp-for="ConcerningDepartmentId" />
+                            <input type="hidden" asp-for="ConcerningPerson" />
+                            <input type="hidden" asp-for="ConcerningOtherSuppliers" />
+                        }
+
+                        @* Step 3 file paths — persist to step 4 *@
+                        @if (Model.CurrentStep >= 4)
+                        {
+                            <input type="hidden" asp-for="UploadedFilePaths" />
+                            @* DO NOT put Password/ConfirmPassword here — they are visible inputs in the partial *@
+                        }
+
+                        @if (Model.CurrentStep == 1)
+                        {
+                            await Html.RenderPartialAsync("_ReporterStep", Model);
+                        }
+                        else if (Model.CurrentStep == 2)
+                        {
+                            await Html.RenderPartialAsync("_TicketStep", Model);
+                        }
+                        else if (Model.CurrentStep == 3)
+                        {
+                            await Html.RenderPartialAsync("_AttachmentStep", Model);
+                        }
+                        else if (Model.CurrentStep == 4)
+                        {
+                            await Html.RenderPartialAsync("_ReviewStep", Model);
+                        }
+                    </form>
+                </div>
+
+                <div class="card-footer" style="">
+                    <div class="d-flex justify-content-between align-items-center">
+                        @if (Model.CurrentStep > 1)
+                        {
+                            <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 108, 117, 125; --bs-link-hover-color-rgb: 196, 37, 42;"
+                               href="javascript:void(0)" onclick="goToStep(@Model.CurrentStep - 1)">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                               
+                            </a>
+                        }
+                        else
+                        {
+                            <div></div>
+                        }
+
+                        @if (Model.CurrentStep < 4)
+                        {
+                            <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 196, 37, 42; --bs-link-hover-color-rgb: 166, 30, 35;"
+                               href="javascript:void(0)" onclick="goToStep(@Model.CurrentStep + 1)">
+                                Continue @Model.CurrentStep
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                </svg>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 25, 135, 84; --bs-link-hover-color-rgb: 20, 108, 67;"
+                               href="javascript:void(0)" onclick="document.getElementById('ticketForm').submit()">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Ticket @Model.CurrentStep
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                </svg>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-red: #c4252a;
+        --primary-black: #302e2d;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+    }
+
+    .step.active {
+
+        background: none;
+        border: none;
+    }
+
+    .brand-logo .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        box-shadow: 0 4px 6px rgba(196, 37, 42, 0.2);
+    }
+
+    /* Steps Progress Tracking */
+    /* Steps Progress Tracking */
+    .steps-progress {
+        position: relative;
+        padding: 30px 0;
+    }
+
+    .steps-progress-bar {
+        position: absolute;
+        top: 32px;
+        left: 50px; /* Adjust this based on your icon size */
+        right: 50px; /* Adjust this based on your icon size */
+        height: 4px;
+        background: #dee2e6;
+        z-index: 1;
+    }
+
+    .steps-progress-bar-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: var(--primary-red);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(196, 37, 42, 0.3);
+        z-index: 2;
+    }
+
+    .steps-container {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        z-index: 3;
+    }
+
+    .step {
+        background: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+        padding: 0 15px;
+        border: none;
+    }
+
+        /* Connect lines between steps */
+        .step::before,
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 32px;
+            width: 50%;
+            height: 4px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+
+        .step::before {
+            left: 0;
+        }
+
+        .step::after {
+            right: 0;
+        }
+
+        /* First step - no left connector */
+        .step:first-child::before {
+            display: none;
+        }
+
+        /* Last step - no right connector */
+        .step:last-child::after {
+            display: none;
+        }
+
+        /* Active and completed steps */
+        .step.active::before,
+        .step.active::after,
+        .step.completed::before,
+        .step.completed::after {
+            background: var(--primary-red);
+        }
+
+    /* Make sure the step icon is above the connectors */
+    .step-icon {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Remove the old progress bar styles */
+    .steps-progress-bar-old {
+        display: none;
+    }
+    .step-icon-wrapper {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .step-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-number {
+        position: absolute;
+        top: -28px;
+        right: -8px;
+        background: var(--dark-gray);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .step.active .step-icon {
+        border-color: var(--primary-red);
+        background: var(--primary-red);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(196, 37, 42, 0.3);
+    }
+
+    .step.completed .step-icon {
+        border-color: var(--primary-red);
+        background: var(--primary-red);
+        color: white;
+    }
+
+    .step.completed .step-number {
+        background: #28a745;
+    }
+
+    .step-label {
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .step-title {
+        font-weight: 600;
+        color: var(--primary-black);
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .step.active .step-title {
+        color: var(--primary-red);
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .step-status {
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .step:hover:not(.active):not(:last-child) .step-icon {
+        border-color: var(--primary-red);
+        color: var(--primary-red);
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+/*         border: 2px solid var(--primary-black);
+ */    }
+
+   
+
+    .ref-number-section {
+        border-left-color: var(--primary-red) !important;
+        background: linear-gradient(to right, #fff, #f8f9fa);
+    }
+
+    /* Icon Link Styling */
+    .icon-link {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background-color: transparent;
+    }
+
+    .icon-link-hover:hover {
+        transform: translateX(5px);
+    }
+
+    .icon-link:first-child:hover {
+        transform: translateX(-5px);
+    }
+
+    /* Back link specific styling */
+    .icon-link:first-child {
+        color: rgb(108, 117, 125) !important;
+    }
+
+        .icon-link:first-child:hover {
+            color: rgb(196, 37, 42) !important;
+        }
+
+    /* Continue link specific styling */
+    .icon-link:nth-child(2) {
+        color: rgb(196, 37, 42) !important;
+    }
+
+        .icon-link:nth-child(2):hover {
+            color: rgb(166, 30, 35) !important;
+        }
+
+        /* Submit link specific styling */
+        .icon-link:nth-child(2) .fas.fa-paper-plane {
+            margin-right: 8px;
+        }
+
+        .icon-link:nth-child(2):hover {
+            color: rgb(20, 108, 67) !important;
+        }
+
+    /* Form Elements */
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 0.25rem rgba(196, 37, 42, 0.25);
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--primary-black);
+        margin-bottom: 8px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+        }
+
+        .step-number {
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+        }
+
+        .step-title {
+            font-size: 12px;
+        }
+
+        .steps-progress-bar {
+            top: 32px;
+        }
+
+        .icon-link {
+            font-size: 1rem;
+            padding: 6px 12px;
+        }
+    }
+
+    /* Animation for step icons */
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .step.active .step-icon {
+        animation: pulse 2s infinite;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function goToStep(step) {
+            if (step > 0 && step < 5) {
+                const currentStep = @Model.CurrentStep;
+                const action = step > currentStep ? "continue" : "back";
+
+                if (action === "continue" && !validateCurrentStep(currentStep)) {
+                    return;
+                }
+
+                let actionInput = document.getElementById('formAction');
+                if (!actionInput) {
+                    actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.id = 'formAction';
+                    actionInput.name = 'action';
+                    document.getElementById('ticketForm').appendChild(actionInput);
+                }
+                actionInput.value = action;
+
+                document.getElementById('CurrentStep').value = step;
+                document.getElementById('ticketForm').submit();
+            }
+        }
+
+        function validateCurrentStep(step) {
+            let isValid = true;
+
+            if (step === 2) {
+                // Company/Department only required for Complaints
+                const checkedKind = document.querySelector('input[name="Kind"]:checked');
+                const isComplaint = !checkedKind || checkedKind.value === 'Complaint';
+                const fields = [
+                    { id: 'Description', errorId: 'descriptionError', message: 'Description is required' }
+                ];
+                if (isComplaint) {
+                    fields.push(
+                        { id: 'ConcerningCompanyId', errorId: 'companyError', message: 'Company is required' },
+                        { id: 'ConcerningDepartmentId', errorId: 'departmentError', message: 'Department is required' }
+                    );
+                }
+
+                fields.forEach(function (field) {
+                    const input = document.getElementById(field.id);
+                    const errorSpan = document.getElementById(field.errorId);
+                    if (!input) return;
+
+                    const value = input.value.trim();
+
+                    if (!value || value === '0') {
+                        if (errorSpan) {
+                            errorSpan.textContent = field.message;
+                            errorSpan.style.display = 'inline';
+                        }
+                        isValid = false;
+                    } else {
+                        if (errorSpan) {
+                            errorSpan.textContent = '';
+                            errorSpan.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            return isValid;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(el => new bootstrap.Tooltip(el));
+
+            updateProgressBar();
+        });
+
+        function updateProgressBar() {
+            const currentStep = @Model.CurrentStep;
+            const progressBar = document.querySelector('.steps-progress-bar');
+
+            if (progressBar) {
+                let widthPercentage = 0;
+
+                switch (currentStep) {
+                    case 1:
+                        widthPercentage = 0;
+                        break;
+                    case 2:
+                        widthPercentage = 33;
+                        break;
+                    case 3:
+                        widthPercentage = 66;
+                        break;
+                    case 4:
+                        widthPercentage = 66;
+                        break;
+                    default:
+                        widthPercentage = 0;
+                }
+
+                progressBar.style.width = widthPercentage + '%';
+            }
+        }
+    </script>
+}

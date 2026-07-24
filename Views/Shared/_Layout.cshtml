@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Compliance Reporting System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ShareIT.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <style>
+        :root {
+            --primary-red: #c4252a;
+            --primary-black: #302e2d;
+            --dark-red: #a61e23;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .bg-danger {
+            background: var(--primary-red) !important;
+        }
+
+        /* Modern Header */
+        .navbar {
+            background: white !important;
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-black) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .navbar-brand::before {
+                content: '';
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
+                border-radius: 6px;
+                mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E") no-repeat center;
+                -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E") no-repeat center;
+            }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-gray) !important;
+            padding: 8px 16px !important;
+            border-radius: 6px;
+            margin: 0 4px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: var(--primary-red) !important;
+                background: rgba(196, 37, 42, 0.1);
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 2px;
+                background: var(--primary-red);
+                transition: var(--transition);
+            }
+
+            .nav-link:hover::after, .nav-link.active::after {
+                width: 80%;
+            }
+
+        /* User Profile Dropdown */
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 10px 0;
+            margin-top: 10px;
+        }
+
+        .dropdown-item {
+            padding: 8px 20px;
+            transition: var(--transition);
+        }
+
+            .dropdown-item:hover {
+                background: rgba(196, 37, 42, 0.1);
+                color: var(--primary-red);
+            }
+
+        .dropdown-divider {
+            margin: 10px 0;
+        }
+
+        /* Main Content */
+        
+
+        main {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-black) !important;
+            color: white !important;
+            padding: 30px 0 !important;
+            margin-top: 50px;
+        }
+
+            .footer a {
+                color: #ffcdd2 !important;
+                text-decoration: none;
+                transition: var(--transition);
+            }
+
+                .footer a:hover {
+                    color: white !important;
+                }
+
+        /* Cards and Components */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            border: none;
+            padding: 20px 25px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 24px;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+
+            .btn-primary:hover {
+                background: var(--dark-red);
+                border-color: var(--dark-red);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(196, 37, 42, 0.3);
+            }
+
+        .btn-outline-primary {
+            color: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+
+            .btn-outline-primary:hover {
+                background: var(--primary-red);
+                border-color: var(--primary-red);
+            }
+
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .alert-dark {
+            background: var(--primary-black);
+            color: white;
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 16px;
+            transition: var(--transition);
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--primary-red);
+                box-shadow: 0 0 0 0.25rem rgba(196, 37, 42, 0.15);
+            }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .navbar {
+                padding: 10px 0;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .nav-link {
+                padding: 10px 0 !important;
+                margin: 5px 0;
+            }
+
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 4px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--dark-red);
+            }
+
+        /* Utility Classes */
+        .text-danger {
+            color: var(--primary-red) !important;
+        }
+
+        .border-danger {
+            border-color: var(--primary-red) !important;
+        }
+
+        .bg-gradient-red {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+        }
+
+        /* Loading Animation */
+        .spinner-border.text-danger {
+            color: var(--primary-red) !important;
+        }
+
+        /* Badges */
+        .badge.bg-danger {
+            background: var(--primary-red) !important;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .toast-header {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+        }
+
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            border: none;
+        }
+
+        /* Table */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .table thead th {
+                background: var(--primary-red);
+                color: white;
+                border: none;
+                padding: 15px;
+            }
+
+            .table tbody tr:hover {
+                background: rgba(196, 37, 42, 0.05);
+            }
+
+        /* Pagination */
+        .page-link {
+            color: var(--primary-red);
+            border: 1px solid #dee2e6;
+        }
+
+            .page-link:hover {
+                color: white;
+                background: var(--primary-red);
+                border-color: var(--primary-red);
+            }
+
+        .page-item.active .page-link {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+    </style>
+
+    <!-- Fixed Header -->
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <!-- Brand with Icon -->
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <img width="120" src="~/elsewedy logo (hd).gif" />
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i> Home
+                            </a>
+                        </li>
+                       <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Dashboard">
+                                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "New" ? "active" : "")"
+                               asp-area="" asp-controller="Ticket" asp-action="New">
+                                <i class="fas fa-plus-circle me-1"></i> New Report
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Search" ? "active" : "")"
+                               asp-area="" asp-controller="Search" asp-action="Index">
+                                <i class="fas fa-search-location me-1"></i> Track Case
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Guid" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Guid">
+                                <i class="fas fa-graduation-cap me-1"></i> User Guide
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- User Profile Section -->
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Breadcrumb -->
+
+        <!-- Page Title -->
+        <!-- Main Content Area -->
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-3">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        &copy; 2026 <span class="fw-bold">ShareIT Feedback Portal</span>.
+                        All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-white me-3">Privacy Policy</a>
+                    <a href="#" class="text-white me-3">Terms of Use</a>
+                    <a href="#" class="text-white">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="btn btn-danger btn-lg rounded-circle shadow-lg"
+            style="position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; display: none;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.pageYOffset > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = 'var(--shadow)';
+            }
+        });
+
+        // Active nav link highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("Styles", required: false)
+</body>
+</html>

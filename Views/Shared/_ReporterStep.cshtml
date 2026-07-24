@@ -1,0 +1,386 @@
+﻿@using ShareIT.Models.ViewModel
+@model NewTicketViewModel
+
+<div class="step-content">
+    <div class="welcome-message mb-4 p-3 bg-light rounded">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-handshake fs-3 text-danger me-3"></i>
+            <div>
+                <h5 class="mb-1">Welcome to ELSEWEDY ELECTRIC's Compliance System</h5>
+                <p class="mb-0 text-muted">Please feel free to either disclose your identity or remain anonymous.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reporter Type Selection -->
+    <div class="card mb-4 border-dark">
+        <div class="card-header bg-dark text-white">
+            <h6 class="mb-0"><i class="fas fa-user-shield me-2"></i> Select Reporter Type</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="reporter-option-card @(Model.ReporterType == "Disclose" ? "active" : "")" 
+                         onclick="selectReporterType('Disclose')">
+                        <div class="option-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h6 class="option-title">Disclose Identity</h6>
+                        <p class="option-desc">Provide your details for follow-up communications</p>
+                        <div class="option-badge">
+                            <span class="badge bg-danger">Recommended</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reporter-option-card @(Model.ReporterType == "Anonymous" ? "active" : "")" 
+                         onclick="selectReporterType('Anonymous')">
+                        <div class="option-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <h6 class="option-title">Anonymous Report</h6>
+                        <p class="option-desc">Submit without revealing your identity</p>
+                        <div class="option-badge">
+                            <span class="badge bg-dark">Confidential</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reporter Form -->
+    <div id="reporterForm" class="@(Model.ReporterType == "Disclose" ? "" : "d-none")">
+        <!-- Employee Check -->
+        <div class="card mb-4 border-dark">
+            <div class="card-header bg-light">
+                <h6 class="mb-0 "><i class="fas fa-briefcase me-2"></i> Employment Status</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label fw-bold">Are you an Elsewedy Electric Employee?</label>
+                    <span class="text-danger">*</span>
+                    <div class="d-flex gap-4 mt-3">
+                        <div class="form-check-card @(Model.IsEmployee == "Yes" ? "active" : "")" onclick="selectEmployment(true)">
+                            <input class="form-check-input" type="radio" asp-for="IsEmployee" value="Yes" id="employeeYes">
+                            <label class="form-check-label" for="employeeYes">
+                                <i class="fas fa-user-tie fa-2x mb-2"></i>
+                                <span>Yes, I'm an Employee</span>
+                            </label>
+                        </div>
+                        <div class="form-check-card @(Model.IsEmployee == "No" ? "active" : "")" onclick="selectEmployment(false)">
+                            <input class="form-check-input" type="radio" asp-for="IsEmployee" value="No" id="employeeNo">
+                            <label class="form-check-label" for="employeeNo">
+                                <i class="fas fa-handshake fa-2x mb-2"></i>
+                                <span>No, I'm External</span>
+                            </label>
+                        </div>
+                    </div>
+                    <span asp-validation-for="IsEmployee" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Employee Form -->
+        <div id="employeeForm" class="@(Model.IsEmployee == "Yes" ? "" : "d-none")">
+               <div class="card mb-4 border-dark">
+            <div class="card-header bg-light">
+                    <h6 class="mb-0 ">
+                        <i class="fas fa-id-card me-2"></i>  Employee Information
+                    </h6>
+            </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpNum" class="form-label">
+                                <i class="fas fa-id-badge me-2 text-danger"></i>Universal Code
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="EmpNum" class="form-control" placeholder="Enter employee code">
+                            <span asp-validation-for="EmpNum" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpName" class="form-label">
+                                <i class="fas fa-user me-2 text-danger"></i>Full Name
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="EmpName" class="form-control" placeholder="Enter your full name">
+                            <span asp-validation-for="EmpName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpCompanyId" class="form-label">
+                                <i class="fas fa-building me-2 text-danger"></i>Company
+                            </label>
+                            <span class="text-danger">*</span>
+                            <select asp-for="EmpCompanyId" class="form-select">
+                                <option value="">-- Select Company --</option>
+                                @if (Model.Companies != null)
+                                {
+                                    foreach (var company in Model.Companies)
+                                    {
+                                        <option value="@company.Id">@company.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="EmpCompanyId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpDepartmentId" class="form-label">
+                                <i class="fas fa-sitemap me-2 text-danger"></i>Department
+                            </label>
+                            <span class="text-danger">*</span>
+                            <select asp-for="EmpDepartmentId" class="form-select">
+                                <option value="">-- Select Department --</option>
+                                @if (Model.Departments != null)
+                                {
+                                    foreach (var dept in Model.Departments)
+                                    {
+                                        <option value="@dept.Id">@dept.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="EmpDepartmentId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpEmail1" class="form-label">
+                                <i class="fas fa-envelope me-2 text-danger"></i>Email Address
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="EmpEmail1" type="email" class="form-control" placeholder="name@example.com">
+                            <span asp-validation-for="EmpEmail1" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EmpMobile" class="form-label">
+                                <i class="fas fa-phone me-2 text-danger"></i>Mobile Number
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="EmpMobile" class="form-control" placeholder="Enter 11-digit number">
+                            <span asp-validation-for="EmpMobile" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Non-Employee Form -->
+        <div id="nonEmployeeForm" class="@(Model.IsEmployee == "No" ? "" : "d-none")">
+            <div class="card mb-4 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="fas fa-handshake me-2"></i> External Party Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NonEmpRelationId" class="form-label">
+                                <i class="fas fa-network-wired me-2 text-danger"></i>Relationship with ELSEWEDY
+                            </label>
+                            <span class="text-danger">*</span>
+                            <select asp-for="NonEmpRelationId" class="form-select">
+                                <option value="">-- Select Relationship --</option>
+                                @if (Model.Relations != null)
+                                {
+                                    foreach (var relation in Model.Relations)
+                                    {
+                                        <option value="@relation.Id">@relation.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="NonEmpRelationId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Organization" class="form-label">
+                                <i class="fas fa-landmark me-2 text-danger"></i>Organization
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="Organization" class="form-control" placeholder="Enter organization name">
+                            <span asp-validation-for="Organization" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NonEmpName" class="form-label">
+                                <i class="fas fa-user me-2 text-danger"></i>Full Name
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="NonEmpName" class="form-control" placeholder="Enter your full name">
+                            <span asp-validation-for="NonEmpName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NonEmpMobile" class="form-label">
+                                <i class="fas fa-phone me-2 text-danger"></i>Mobile Number
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="NonEmpMobile" class="form-control" placeholder="Enter 11-digit number">
+                            <span asp-validation-for="NonEmpMobile" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NonEmpEmail1" class="form-label">
+                                <i class="fas fa-envelope me-2 text-danger"></i>Email Address
+                            </label>
+                            <span class="text-danger">*</span>
+                            <input asp-for="NonEmpEmail1" type="email" class="form-control" placeholder="name@example.com">
+                            <span asp-validation-for="NonEmpEmail1" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NonEmpEmail2" class="form-label">
+                                <i class="fas fa-envelope-open me-2 text-danger"></i>Secondary Email (Optional)
+                            </label>
+                            <input asp-for="NonEmpEmail2" type="email" class="form-control" placeholder="secondary@example.com">
+                            <span asp-validation-for="NonEmpEmail2" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Anonymous Notice -->
+    <div id="anonymousNotice" class="@(Model.ReporterType == "Anonymous" ? "" : "d-none")">
+        <div class="alert alert-dark border-danger">
+            <div class="d-flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-user-secret fa-2x text-danger"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="alert-heading">Anonymous Reporting</h5>
+                    <p>Your identity will remain completely confidential. The Compliance team will investigate your report without knowing your identity.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        <strong>Note:</strong> You won't receive updates about your ticket status when reporting anonymously.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reporter-option-card {
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        padding: 25px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        height: 100%;
+        background: white;
+    }
+    
+    .reporter-option-card:hover {
+        border-color: #c4252a;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(196, 37, 42, 0.1);
+    }
+    
+    .reporter-option-card.active {
+        border-color: #c4252a;
+        background: linear-gradient(to bottom right, rgba(196, 37, 42, 0.05), rgba(196, 37, 42, 0.02));
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(196, 37, 42, 0.15);
+    }
+    
+    .option-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        color: #c4252a;
+        font-size: 28px;
+    }
+    
+    .option-title {
+        color: #000;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .option-desc {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    
+    .form-check-card {
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        flex: 1;
+    }
+    
+    .form-check-card:hover {
+        border-color: #c4252a;
+    }
+    
+    .form-check-card.active {
+        border-color: #c4252a;
+        background: linear-gradient(to bottom right, rgba(196, 37, 42, 0.05), rgba(196, 37, 42, 0.02));
+    }
+    
+    .form-check-input {
+        display: none;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        color: #495057;
+    }
+    
+    .form-check-card.active .form-check-label {
+        color: #c4252a;
+        font-weight: 600;
+    }
+    
+    .welcome-message {
+        border-left: 4px solid #c4252a;
+    }
+</style>
+
+<script>
+    function selectReporterType(type) {
+        document.getElementById('ReporterType').value = type;
+        
+        if (type === 'Disclose') {
+            document.getElementById('reporterForm').classList.remove('d-none');
+            document.getElementById('anonymousNotice').classList.add('d-none');
+        } else {
+            document.getElementById('reporterForm').classList.add('d-none');
+            document.getElementById('anonymousNotice').classList.remove('d-none');
+        }
+        
+        // Update active states
+        document.querySelectorAll('.reporter-option-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+    }
+    
+    function selectEmployment(isEmployee) {
+        if (isEmployee) {
+            document.getElementById('employeeForm').classList.remove('d-none');
+            document.getElementById('nonEmployeeForm').classList.add('d-none');
+        } else {
+            document.getElementById('employeeForm').classList.add('d-none');
+            document.getElementById('nonEmployeeForm').classList.remove('d-none');
+        }
+        
+        // Update active states
+        document.querySelectorAll('.form-check-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+    }
+</script>

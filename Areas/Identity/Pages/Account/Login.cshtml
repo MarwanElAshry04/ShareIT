@@ -1,0 +1,606 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In — Elsewedy Electric ShareIT</title>
+@*     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+ *@    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        :root {
+            --red: #c4252a;
+            --red-dark: #9e1c20;
+            --ink: #1a1a1a;
+            --ink2: #111111;
+            --white: #ffffff;
+            --muted: rgba(255,255,255,0.38);
+            --border: rgba(255,255,255,0.09);
+            --field-bg: rgba(255,255,255,0.05);
+            --field-border: rgba(255,255,255,0.12);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            font-family:  Poppins;
+        }
+
+        /* ══════════════════════════════════════
+                   BACKGROUND — identical to home page
+                ══════════════════════════════════════ */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: var(--ink2);
+            overflow: hidden;
+        }
+
+            /* Noise grain */
+            .page-bg::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+                pointer-events: none;
+            }
+
+        /* Top-left red glow — same as hero */
+        .glow-tl {
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: 640px;
+            height: 640px;
+            background: radial-gradient(circle, rgba(196,37,42,0.28) 0%, transparent 65%);
+            animation: pulse 6s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        /* Bottom-right subtle glow */
+        .glow-br {
+            position: absolute;
+            bottom: -150px;
+            right: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(196,37,42,0.14) 0%, transparent 65%);
+            animation: pulse 8s ease-in-out infinite alternate-reverse;
+            z-index: 0;
+        }
+
+        /* Grid lines */
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Giant faint letter watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60vw;
+            color: rgba(255,255,255,0.012);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        @@keyframes pulse {
+            from {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        /* ══════════════════════════════════════
+                   CENTERED LAYOUT
+                ══════════════════════════════════════ */
+        .page-wrap {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+        }
+
+        /* ── LOGO ── */
+        .brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+            animation: fadeDown 0.55s ease both;
+        }
+
+        .brand-shield {
+            width: 76px;
+            height: 76px;
+            background: var(--red);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 18px;
+            box-shadow: 0 0 0 1px rgba(196,37,42,0.5), 0 0 48px rgba(196,37,42,0.45), 0 20px 48px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+            /* Pulsing ring */
+            .brand-shield::after {
+                content: '';
+                position: absolute;
+                inset: -8px;
+                border-radius: 30px;
+                border: 1px solid rgba(196,37,42,0.3);
+                animation: ring 2.8s ease-in-out infinite;
+            }
+
+        @@keyframes ring {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.9;
+                transform: scale(1.06);
+            }
+        }
+
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--white);
+        }
+
+        .brand-sub {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        /* ── GLASS CARD ── */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.042);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 42px 38px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 2px 0 rgba(255,255,255,0.07) inset, 0 40px 80px rgba(0,0,0,0.55);
+            animation: fadeUp 0.55s ease 0.1s both;
+        }
+
+        .card-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .card-sub {
+            font-size: 0.83rem;
+            color: var(--muted);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        /* Validation box */
+        .val-box {
+            background: rgba(196,37,42,0.12);
+            border: 1px solid rgba(196,37,42,0.35);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: #ff8a8d;
+        }
+
+            .val-box ul {
+                padding-left: 16px;
+            }
+
+        /* ── FIELDS ── */
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-ico {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.2);
+            font-size: 13px;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            background: var(--field-bg);
+            border: 1.5px solid var(--field-border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--white);
+            outline: none;
+            transition: all 0.25s;
+            -webkit-appearance: none;
+        }
+
+            .field-input::placeholder {
+                color: rgba(255,255,255,0.18);
+            }
+
+            .field-input:focus {
+                border-color: var(--red);
+                background: rgba(196,37,42,0.07);
+                box-shadow: 0 0 0 4px rgba(196,37,42,0.18);
+            }
+
+        .field-wrap:focus-within .field-ico {
+            color: var(--red);
+        }
+
+        .field-err {
+            display: block;
+            font-size: 0.76rem;
+            color: #ff8a8d;
+            margin-top: 6px;
+        }
+
+        /* Password eye */
+        .pw-btn {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.22);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+            .pw-btn:hover {
+                color: var(--red);
+            }
+
+        /* ── META ROW ── */
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4px 0 24px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+            .remember input {
+                width: 15px;
+                height: 15px;
+                accent-color: var(--red);
+                cursor: pointer;
+            }
+
+        .forgot {
+            font-size: 0.82rem;
+            color: var(--red);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+            .forgot:hover {
+                opacity: 0.7;
+            }
+
+        /* ── SUBMIT ── */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s;
+        }
+
+            .btn-submit::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+                pointer-events: none;
+            }
+
+            .btn-submit:hover {
+                background: var(--red-dark);
+                transform: translateY(-1px);
+                box-shadow: 0 10px 32px rgba(196,37,42,0.5);
+            }
+
+            .btn-submit:active {
+                transform: none;
+                box-shadow: none;
+            }
+
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.18);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+        /* External login */
+        .ext-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+            .ext-btn:hover {
+                background: rgba(196,37,42,0.1);
+                border-color: rgba(196,37,42,0.4);
+                color: white;
+            }
+
+        /* ── FOOTER LINKS ── */
+        .card-footer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 24px;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.22);
+        }
+
+            .card-footer a {
+                color: rgba(255,255,255,0.42);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+                .card-footer a:hover {
+                    color: var(--red);
+                }
+
+            .card-footer .sep {
+                opacity: 0.4;
+            }
+
+        /* ── PAGE FOOTER ── */
+        .page-footer {
+            margin-top: 28px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.14);
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            animation: fadeUp 0.55s ease 0.3s both;
+        }
+
+        /* ── ANIMATIONS ── */
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @@keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .login-card {
+                padding: 30px 22px;
+                border-radius: 16px;
+            }
+
+            .card-heading {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BACKGROUND (matches home page hero exactly) -->
+    <div class="page-bg">
+@*         <div class="glow-tl"></div>
+ *@        <div class="glow-br"></div>
+        <div class="grid-lines"></div>
+    </div>
+
+    <!-- CENTERED FORM -->
+    <div class="page-wrap">
+
+        <!-- Logo — same mark as home page -->
+        <div class="brand">
+            <img src="~/ShareIt-logo.png" alt="ShareIT" style="
+    width: 180px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 24px rgba(196,37,42,0.45));
+    animation: fadeDown 0.55s ease both;
+" />
+            <div class="brand-name">ShareIT</div>
+            <div class="brand-sub">Complaints · Suggestions · Feedback</div>
+        </div>
+
+        <!-- Glass card -->
+        <div class="login-card">
+
+            <div class="card-heading">Welcome back</div>
+            <div class="card-sub">Sign in to share complaints, suggestions &amp; feedback</div>
+
+            <div asp-validation-summary="ModelOnly" class="val-box text-danger" role="alert"></div>
+
+            <form id="account" method="post">
+
+                <!-- Email -->
+                <div class="field">
+                    <label asp-for="Input.Email" class="field-label">Email address</label>
+                    <div class="field-wrap">
+                        <input asp-for="Input.Email"
+                               class="field-input"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="you@elsewedy.com" />
+                        <i class="fas fa-envelope field-ico"></i>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="field-err"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="field">
+                    <label asp-for="Input.Password" class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <input asp-for="Input.Password"
+                               id="pwInput"
+                               type="password"
+                               class="field-input"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="••••••••" />
+                        <i class="fas fa-lock field-ico"></i>
+                        <button type="button" class="pw-btn" onclick="togglePw()">
+                            <i class="fas fa-eye" id="pwIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="field-err"></span>
+                </div>
+
+            
+                <button id="login-submit" type="submit" class="btn-submit">
+                    <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Sign In
+                </button>
+
+            </form>
+            </div>
+            
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePw() {
+            const inp  = document.getElementById('pwInput');
+            const icon = document.getElementById('pwIcon');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                inp.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

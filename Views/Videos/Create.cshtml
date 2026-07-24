@@ -1,0 +1,125 @@
+﻿@model Video
+
+@{
+    ViewData["Title"] = "Upload Video";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+
+}
+
+<div class="container">
+    <h1>Upload New Video</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Video Information</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Section" class="control-label fw-bold"></label>
+                            <select
+                                asp-for="Section" class="form-control" placeholder="e.g., Tutorials, Movies, Music Videos">
+                                <option value="NewCase">New Case</option>
+                                <option value="TrackCase">Track Case</option>
+                                <option value="ShareITVideos"> ShareIT Videos</option>
+                            </select>
+                            <span asp-validation-for="Section" class="text-danger"></span>
+                            <small class="form-text text-muted">Enter the category or section for this video</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="VideoFile" class="control-label fw-bold"></label>
+                            <div class="custom-file">
+                                <input asp-for="VideoFile" class="form-control" type="file" accept="video/*" />
+                            </div>
+                            <span asp-validation-for="VideoFile" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Supported formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM (Max size: 500MB)
+                            </small>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Upload Video
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Upload Tips -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Upload Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Maximum file size: 500MB</li>
+                        <li>Supported formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM</li>
+                        <li>Use descriptive section names for easy organization</li>
+                        <li>Larger videos may take longer to upload</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Upload Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Videos:</strong> @ViewBag.TotalVideos</p>
+                    <p><strong>Storage Used:</strong> @ViewBag.TotalSize</p>
+                    <p><strong>Last Upload:</strong> @ViewBag.LastUpload</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Display selected filename
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            var fileName = e.target.files[0]?.name;
+            var fileSize = e.target.files[0]?.size;
+
+            if (fileName) {
+                var sizeInMB = (fileSize / (1024 * 1024)).toFixed(2);
+                var fileInfo = document.createElement('small');
+                fileInfo.className = 'form-text text-success d-block mt-1';
+                fileInfo.textContent = `Selected: ${fileName} (${sizeInMB} MB)`;
+
+                var existingInfo = document.querySelector('.file-info');
+                if (existingInfo) {
+                    existingInfo.remove();
+                }
+
+                fileInfo.classList.add('file-info');
+                e.target.parentNode.appendChild(fileInfo);
+            }
+        });
+    </script>
+}

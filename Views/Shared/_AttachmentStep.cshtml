@@ -1,0 +1,868 @@
+﻿@using ShareIT.Models.ViewModel
+@model NewTicketViewModel
+
+<div class="step-content">
+    <div class="alert alert-dark border-danger mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-user-secret fa-2x text-danger me-3"></i>
+            <div>
+                <h6 class="mb-1">Anonymous Voice Recording</h6>
+                <p class="mb-0 text-muted">Your voice will be slightly deepened to protect your identity while keeping your message clear.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Upload -->
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h6 class="mb-0"><i class="fas fa-file-upload me-2"></i> Document Upload</h6>
+        </div>
+        <div class="card-body">
+            <div class="file-upload-container mb-4">
+                <div class="upload-info mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card bg-light p-3 border-start border-3 border-danger">
+                                <i class="fas fa-file-alt text-danger me-2"></i>
+                                <strong>Allowed Types:</strong>
+                                <div class="mt-1">
+                                    <span class="badge bg-dark me-1 mb-1">DOCX</span>
+                                    <span class="badge bg-dark me-1 mb-1">PDF</span>
+                                    <span class="badge bg-dark me-1 mb-1">DOC</span>
+                                    <span class="badge bg-dark me-1 mb-1">WAV</span>
+                                    <span class="badge bg-dark me-1 mb-1">MP3</span>
+                                    <span class="badge bg-dark me-1 mb-1">WEBM</span>
+                                    <span class="badge bg-dark me-1 mb-1">JPG</span>
+                                    <span class="badge bg-dark me-1 mb-1">PNG</span>
+                                    <span class="badge bg-dark mb-1">MSG</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card bg-light p-3 border-start border-3 border-danger">
+                                <i class="fas fa-weight-hanging text-danger me-2"></i>
+                                <strong>Size Limit:</strong>
+                                <div class="mt-1">
+                                    <span class="badge bg-danger">10 MB per file</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drop Zone -->
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-content">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-danger mb-3"></i>
+                        <h4>Drag & Drop Files Here</h4>
+                        <p class="text-muted">or click to browse</p>
+                        <input type="file" asp-for="Files" multiple class="d-none" id="fileInput" accept=".docx,.pdf,.doc,.wav,.mp3,.webm,.jpg,.jpeg,.png,.msg">
+                        <button type="button" class="btn btn-danger mt-2" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open me-2"></i> Select Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selected Files -->
+                <div id="fileList" class="mt-4">
+                    <h6 class="mb-3 text-dark"><i class="fas fa-list me-2"></i>Selected Files</h6>
+                    <div id="filesContainer" class="border rounded p-3 bg-light">
+                        <p class="text-muted mb-0 text-center" id="noFilesMessage">No files selected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Recording with Voice Anonymization -->
+    <div class="card mb-4 border-dark">
+        <div class="card-header bg-dark text-white">
+            <h6 class="mb-0"><i class="fas fa-microphone me-2"></i> Anonymous Voice Recording</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="recorder-container p-4 border rounded bg-light">
+                        <div class="recorder-header mb-4">
+                            <h6 class="text-dark"><i class="fas fa-headphones me-2 text-danger"></i>Record Anonymous Statement</h6>
+                            <p class="text-muted mb-0">Record a statement explaining the incident (max 1 minute) - Voice will be slightly deepened for privacy</p>
+                        </div>
+
+                        <!-- Voice Anonymization Toggle -->
+                        <div class="anonymization-toggle mb-4 p-3 rounded" style="background: linear-gradient(135deg, #e8f0fe, #d4e4f7); border-left: 4px solid #c4252a;">
+                            <div class="form-check form-switch d-flex align-items-center justify-content-between">
+                                <div>
+                                    <i class="fas fa-user-secret fa-lg text-danger me-2"></i>
+                                    <strong class="text-dark">Protect My Identity</strong>
+                                    <p class="small text-muted mb-0 mt-1">Your voice will be slightly deepened - Clear and easy to understand</p>
+                                </div>
+                                <input class="form-check-input" type="checkbox" id="voiceAnonymizerToggle" style="width: 3em; height: 1.5em;" checked>
+                            </div>
+                        </div>
+
+                        <div class="recorder-controls">
+                            <div class="d-flex gap-3 mb-4">
+                                <button type="button" id="recordButton" class="btn btn-danger btn-lg">
+                                    <i class="fas fa-microphone me-2"></i> Start Recording
+                                </button>
+                                <button type="button" id="stopButton" class="btn btn-dark btn-lg" disabled>
+                                    <i class="fas fa-stop me-2"></i> Stop
+                                </button>
+                            </div>
+
+                            <div id="recordingStatus" class="d-none mb-4">
+                                <div class="alert alert-danger">
+                                    <div class="d-flex align-items-center">
+                                        <div class="recording-indicator me-3">
+                                            <span class="recording-dot"></span>
+                                        </div>
+                                        <div>
+                                            <strong><i class="fas fa-broadcast-tower me-2"></i>Recording in progress...</strong>
+                                            <div class="small mt-1" id="recordingTimer">00:00</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="recordingsList" class="mt-4">
+                            <h6 class="text-dark mb-3"><i class="fas fa-history me-2"></i>Recorded Files</h6>
+                            <div id="recordingsContainer" class="border rounded p-3">
+                                <p class="text-muted mb-0 text-center">No recordings yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="instructions-card p-4 border rounded text-white" style="background:var(--dark-gray)">
+                        <h5 class="mb-3"><i class="fas fa-shield-alt me-2"></i>Privacy + Clarity</h5>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Identity Protected</strong>
+                            </div>
+                            <p class="small text-white-50">Voice is slightly deepened for anonymity</p>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-volume-up text-info me-2"></i>
+                                <strong>Crystal Clear Audio</strong>
+                            </div>
+                            <p class="small text-white-50">No noise, no distortion - Just clear speech</p>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-lock text-warning me-2"></i>
+                                <strong>100% Anonymous</strong>
+                            </div>
+                            <p class="small text-white-50">Your identity remains protected</p>
+                        </div>
+                        <hr class="border-secondary">
+                        <div class="instruction-step mt-3">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>Enable Voice Protection</strong>
+                                <p class="small mb-0">Toggle is ON by default</p>
+                            </div>
+                        </div>
+                        <div class="instruction-step mt-3">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>Press Start Recording</strong>
+                                <p class="small mb-0">Speak normally into your microphone</p>
+                            </div>
+                        </div>
+                        <div class="instruction-step mt-3">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>Press Stop when done</strong>
+                                <p class="small mb-0">Your clear recording will be saved</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-red: #c4252a;
+        --primary-black: #302e2d;
+        --dark-red: #a61e23;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+    }
+
+    .drop-zone {
+        border: 3px dashed #dee2e6;
+        border-radius: 15px;
+        padding: 40px 20px;
+        text-align: center;
+        background: white;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+        .drop-zone:hover {
+            border-color: #c4252a;
+            background: linear-gradient(to bottom right, rgba(196, 37, 42, 0.02), rgba(196, 37, 42, 0.05));
+        }
+
+        .drop-zone.dragover {
+            border-color: #c4252a;
+            background: linear-gradient(to bottom right, rgba(196, 37, 42, 0.05), rgba(196, 37, 42, 0.1));
+        }
+
+    .file-item {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+        .file-item:hover {
+            border-color: #c4252a;
+            transform: translateX(5px);
+            box-shadow: 0 4px 6px rgba(196, 37, 42, 0.1);
+        }
+
+    .file-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c4252a;
+    }
+
+    .recording-indicator {
+        display: flex;
+        align-items: center;
+    }
+
+    .recording-dot {
+        width: 12px;
+        height: 12px;
+        background-color: #c4252a;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+        margin-right: 8px;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(196, 37, 42, 0.7);
+        }
+
+        70% {
+            transform: scale(1.2);
+            opacity: 0.7;
+            box-shadow: 0 0 0 10px rgba(196, 37, 42, 0);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(196, 37, 42, 0);
+        }
+    }
+
+    .instructions-card {
+        border-left: 4px solid #c4252a;
+        height: 100%;
+    }
+
+    .instruction-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background: #c4252a;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .step-content {
+        flex: 1;
+    }
+
+    .info-card {
+        height: 100%;
+    }
+
+    #recordingStatus .alert {
+        background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+        border: 2px solid #c4252a;
+    }
+
+    .recording-file-item {
+        background: white;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+        .recording-file-item:hover {
+            border-color: #c4252a;
+            transform: translateX(5px);
+            box-shadow: 0 4px 6px rgba(196, 37, 42, 0.1);
+        }
+
+    .form-check-input:checked {
+        background-color: #c4252a;
+        border-color: #c4252a;
+    }
+
+    .anonymization-toggle {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .notification {
+        animation: slideIn 0.3s ease;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+      let mediaRecorder = null;
+    let audioChunks = [];
+    let recordingTimer = null;
+    let seconds = 0;
+    const recordedBlobs = new Map();
+    let isRecording = false;
+    let audioContext = null;
+    let isAnonymizerEnabled = true;
+    let mediaStream = null;
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const filesContainer = document.getElementById('filesContainer');
+    const noFilesMessage = document.getElementById('noFilesMessage');
+    const recordButton = document.getElementById('recordButton');
+    const stopButton = document.getElementById('stopButton');
+    const voiceAnonymizerToggle = document.getElementById('voiceAnonymizerToggle');
+
+    recordButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        startRecording();
+    });
+
+    stopButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        stopRecording();
+    });
+
+    // ─────────────────────────────────────────────────────────────────
+    // AudioWorklet — OLA pitch shifter
+    // Key fixes:
+    //   1. PRE-FILL: don't output anything until buffer has 2x grainSize samples
+    //   2. Larger grainSize (4096) = smoother, fewer stitching artifacts
+    //   3. overlapSize = grainSize/2 (50%) = maximally smooth crossfade
+    //   4. inputRead never gets ahead of inputWrite (hard guard)
+    // ─────────────────────────────────────────────────────────────────
+    const PITCH_WORKLET_CODE = `
+    class PitchProcessor extends AudioWorkletProcessor {
+      constructor() {
+        super();
+        this.pitchRatio  = 0.78;
+        this.grainSize   = 4096;
+        this.overlapSize = 2048;   // 50% overlap for smoothest crossfade
+        this.BUF_SIZE    = 16384;  // must be power of 2, > grainSize * 3
+        this.inputBuf    = new Float32Array(this.BUF_SIZE);
+        this.outputBuf   = new Float32Array(this.BUF_SIZE);
+        this.inputWrite  = 0;
+        this.inputRead   = 0.0;
+        this.outputWrite = 0;
+        this.outputRead  = 0;
+        this.primed      = false;  // wait until buffer has enough data before outputting
+
+        // Hann window
+        this.window = new Float32Array(this.grainSize);
+        for (let i = 0; i < this.grainSize; i++) {
+          this.window[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / this.grainSize));
+        }
+      }
+
+      process(inputs, outputs) {
+        const input  = inputs[0]?.[0];
+        const output = outputs[0]?.[0];
+        if (!input || !output) return true;
+
+        const mask = this.BUF_SIZE - 1;
+
+        // 1. Write new input samples
+        for (let i = 0; i < input.length; i++) {
+          this.inputBuf[this.inputWrite & mask] = input[i];
+          this.inputWrite++;
+        }
+
+        // 2. Wait until we have 2 full grains buffered before starting output
+        if (!this.primed) {
+          if (this.inputWrite < this.grainSize * 2) {
+            // Fill output with silence while priming
+            for (let i = 0; i < output.length; i++) output[i] = 0;
+            return true;
+          }
+          // Set read pointers to start of valid data
+          this.inputRead   = 0;
+          this.outputWrite = 0;
+          this.outputRead  = 0;
+          this.primed      = true;
+        }
+
+        // 3. OLA: stamp grains into output buffer
+        const hopSize = this.grainSize - this.overlapSize;
+        while (this.outputWrite - this.outputRead < output.length + this.grainSize) {
+          const srcStart = Math.floor(this.inputRead);
+
+          // Safety: never read ahead of what has been written
+          if (srcStart + this.grainSize > this.inputWrite) break;
+
+          for (let i = 0; i < this.grainSize; i++) {
+            const s = this.inputBuf[(srcStart + i) & mask] * this.window[i];
+            this.outputBuf[(this.outputWrite + i) & mask] += s;
+          }
+
+          this.inputRead   += hopSize * this.pitchRatio;
+          this.outputWrite += hopSize;
+        }
+
+        // 4. Read from output buffer
+        for (let i = 0; i < output.length; i++) {
+          const idx = this.outputRead & mask;
+          output[i] = this.outputBuf[idx];
+          this.outputBuf[idx] = 0;
+          this.outputRead++;
+        }
+
+        return true;
+      }
+    }
+    registerProcessor('pitch-processor', PitchProcessor);
+    `;
+
+    // ─────────────────────────────────────────────────────────────────
+    // MIME type detection
+    // ─────────────────────────────────────────────────────────────────
+    function getSupportedMimeType() {
+        const types = [
+            'audio/webm;codecs=opus',
+            'audio/webm',
+            'audio/mp4;codecs=opus',
+            'audio/mp4',
+            'audio/wav'
+        ];
+        for (const type of types) {
+            if (MediaRecorder.isTypeSupported(type)) return type;
+        }
+        return 'audio/webm';
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Voice anonymizer
+    // ─────────────────────────────────────────────────────────────────
+    async function deepenVoice(inputStream) {
+        if (!isAnonymizerEnabled) return inputStream;
+
+        if (audioContext) {
+            await audioContext.close();
+            audioContext = null;
+        }
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({
+            sampleRate: 44100,
+            latencyHint: 'interactive'
+        });
+        await audioContext.resume();
+
+        // Load worklet via blob URL — no separate file needed
+        const blob    = new Blob([PITCH_WORKLET_CODE], { type: 'application/javascript' });
+        const blobUrl = URL.createObjectURL(blob);
+        await audioContext.audioWorklet.addModule(blobUrl);
+        URL.revokeObjectURL(blobUrl);
+
+        const source    = audioContext.createMediaStreamSource(inputStream);
+        const pitchNode = new AudioWorkletNode(audioContext, 'pitch-processor');
+
+        // High-pass: remove mic rumble below 100 Hz
+        const highPass = audioContext.createBiquadFilter();
+        highPass.type = 'highpass';
+        highPass.frequency.value = 100;
+        highPass.Q.value = 0.7;
+
+        // Formant notch: masks speaker identity beyond pitch
+        const formant = audioContext.createBiquadFilter();
+        formant.type = 'peaking';
+        formant.frequency.value = 900;
+        formant.Q.value = 1.2;
+        formant.gain.value = -4;
+
+        // Low-pass: smooth OLA aliasing
+        const lowPass = audioContext.createBiquadFilter();
+        lowPass.type = 'lowpass';
+        lowPass.frequency.value = 7000;
+        lowPass.Q.value = 0.5;
+
+        const outGain = audioContext.createGain();
+        outGain.gain.value = 1.1;
+
+        const destination = audioContext.createMediaStreamDestination();
+
+        // source → highPass → pitchNode → lowPass → formant → outGain → out
+        source.connect(highPass);
+        highPass.connect(pitchNode);
+        pitchNode.connect(lowPass);
+        lowPass.connect(formant);
+        formant.connect(outGain);
+        outGain.connect(destination);
+
+        return destination.stream;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Recording
+    // ─────────────────────────────────────────────────────────────────
+    async function startRecording() {
+        if (isRecording) return;
+
+        recordButton.disabled = true;
+        recordButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Requesting microphone...';
+
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: false,
+                    sampleRate: 44100,
+                    channelCount: 1,
+                    latency: 0
+                }
+            });
+
+            let recordingStream = mediaStream;
+            if (isAnonymizerEnabled) {
+                recordingStream = await deepenVoice(mediaStream);
+            }
+
+            const mimeType = getSupportedMimeType();
+
+            mediaRecorder = new MediaRecorder(recordingStream, {
+                mimeType: mimeType,
+                audioBitsPerSecond: 128000
+            });
+
+            audioChunks = [];
+            seconds = 0;
+            isRecording = true;
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                if (audioChunks.length === 0) {
+                    showNotification('No audio was recorded. Please try again.', 'error');
+                    resetRecordingUI();
+                    return;
+                }
+
+                const audioBlob = new Blob(audioChunks, { type: mimeType });
+                const audioUrl  = URL.createObjectURL(audioBlob);
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+                const audioName = `anonymous_recording_${timestamp}.webm`;
+
+                const recordingsContainer = document.getElementById('recordingsContainer');
+                const noRecordingsMsg = recordingsContainer.querySelector('.text-center');
+                if (noRecordingsMsg) recordingsContainer.innerHTML = '';
+
+                recordedBlobs.set(audioName, audioBlob);
+
+                const recordingItem = document.createElement('div');
+                recordingItem.className = 'recording-file-item d-flex justify-content-between align-items-center mb-2 p-3';
+                recordingItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="file-icon me-3">
+                            <i class="fas fa-user-secret text-danger"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">${audioName}</div>
+                            <div class="small text-muted">
+                                ${formatFileSize(audioBlob.size)} &bull; ${Math.floor(seconds)} seconds &bull;
+                                <span class="text-danger"><i class="fas fa-shield-alt me-1"></i>Voice Anonymous</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="${audioUrl}" download="${audioName}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-download me-1"></i> Download
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-dark"
+                                onclick="addRecordedFileToUpload('${audioName}', ${audioBlob.size})">
+                            <i class="fas fa-paperclip me-1"></i> Attach
+                        </button>
+                    </div>
+                `;
+                recordingsContainer.appendChild(recordingItem);
+
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    mediaStream = null;
+                }
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+
+                resetRecordingUI();
+                showNotification('Recording saved! Voice is anonymized and clear.', 'success');
+            };
+
+            mediaRecorder.start(1000);
+
+            document.getElementById('recordingStatus').classList.remove('d-none');
+            recordButton.disabled = true;
+            recordButton.innerHTML = '<i class="fas fa-microphone me-2"></i> Start Recording';
+            stopButton.disabled = false;
+
+            recordingTimer = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                document.getElementById('recordingTimer').textContent =
+                    `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+                if (seconds >= 60) {
+                    stopRecording();
+                    showNotification('Maximum recording time reached (1 minute)', 'info');
+                }
+            }, 1000);
+
+            showNotification('Recording started! Voice will be anonymized.', 'success');
+
+        } catch (error) {
+            console.error('Microphone error:', error);
+            let errorMessage = 'Unable to access microphone. ';
+            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                errorMessage = 'Please allow microphone access. Click the mic icon in your browser address bar.';
+            } else if (error.name === 'NotFoundError') {
+                errorMessage = 'No microphone found. Please connect a microphone.';
+            } else {
+                errorMessage += error.message;
+            }
+            showNotification(errorMessage, 'error');
+            resetRecordingUI();
+        }
+    }
+
+    function stopRecording() {
+        if (!isRecording || !mediaRecorder) return;
+        if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+        if (recordingTimer) { clearInterval(recordingTimer); recordingTimer = null; }
+        isRecording = false;
+        showNotification('Recording stopped.', 'info');
+    }
+
+    function resetRecordingUI() {
+        document.getElementById('recordingStatus').classList.add('d-none');
+        recordButton.disabled = false;
+        stopButton.disabled = true;
+        document.getElementById('recordingTimer').textContent = '00:00';
+        seconds = 0;
+        isRecording = false;
+        if (recordingTimer) { clearInterval(recordingTimer); recordingTimer = null; }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // File upload
+    // ─────────────────────────────────────────────────────────────────
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelect();
+    });
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+        const files = fileInput.files;
+        filesContainer.innerHTML = '';
+
+        if (files.length === 0) { noFilesMessage.style.display = 'block'; return; }
+
+        noFilesMessage.style.display = 'none';
+        let totalSize = 0;
+        const validExtensions = ['.docx', '.pdf', '.doc', '.wav', '.mp3', '.webm', '.jpg', '.jpeg', '.png', '.msg'];
+
+        Array.from(files).forEach((file, index) => {
+            totalSize += file.size;
+            const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+            if (!validExtensions.includes(extension)) {
+                showNotification(`Invalid file type: ${file.name}`, 'error');
+                return;
+            }
+
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item d-flex justify-content-between align-items-center mb-2';
+            fileItem.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="file-icon me-3"><i class="${getFileIcon(extension)}"></i></div>
+                    <div>
+                        <div class="fw-bold text-dark">${file.name}</div>
+                        <div class="small text-muted">${formatFileSize(file.size)}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            filesContainer.appendChild(fileItem);
+        });
+
+        if (totalSize > 10485760) {
+            showNotification('Total file size exceeds 10MB limit', 'error');
+            fileInput.value = '';
+            filesContainer.innerHTML = '<p class="text-muted mb-0 text-center">No files selected</p>';
+        }
+    }
+
+    function getFileIcon(extension) {
+        const iconMap = {
+            '.docx': 'fas fa-file-word', '.doc': 'fas fa-file-word',
+            '.pdf':  'fas fa-file-pdf',
+            '.wav':  'fas fa-file-audio', '.mp3': 'fas fa-file-audio', '.webm': 'fas fa-file-audio',
+            '.jpg':  'fas fa-file-image', '.jpeg': 'fas fa-file-image', '.png': 'fas fa-file-image',
+            '.msg':  'fas fa-envelope'
+        };
+        return iconMap[extension] || 'fas fa-file';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function removeFile(index) {
+        const dt = new DataTransfer();
+        const files = fileInput.files;
+        for (let i = 0; i < files.length; i++) { if (i !== index) dt.items.add(files[i]); }
+        fileInput.files = dt.files;
+        handleFileSelect();
+    }
+
+    window.addRecordedFileToUpload = function(fileName, size) {
+        const blob = recordedBlobs.get(fileName);
+        if (!blob) { showNotification('File not found. Please record again.', 'error'); return; }
+
+        const file = new File([blob], fileName, { type: blob.type });
+        const dataTransfer = new DataTransfer();
+        if (fileInput.files) {
+            for (let i = 0; i < fileInput.files.length; i++) dataTransfer.items.add(fileInput.files[i]);
+        }
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        handleFileSelect();
+        showNotification('Recording added to upload list!', 'success');
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    // Voice anonymizer toggle
+    // ─────────────────────────────────────────────────────────────────
+    voiceAnonymizerToggle.addEventListener('change', function() {
+        isAnonymizerEnabled = this.checked;
+        showNotification(`Voice protection ${isAnonymizerEnabled ? 'enabled' : 'disabled'}`, 'info');
+    });
+
+    // ─────────────────────────────────────────────────────────────────
+    // Notifications
+    // ─────────────────────────────────────────────────────────────────
+    function showNotification(message, type) {
+        const bgColor = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8';
+        const icon    = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position:fixed;top:20px;right:20px;background:${bgColor};color:white;
+            padding:12px 20px;border-radius:8px;z-index:9999;font-size:14px;
+            max-width:350px;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        `;
+        notification.innerHTML = `<i class="fas ${icon} me-2"></i>${message}`;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Cleanup
+    // ─────────────────────────────────────────────────────────────────
+    window.addEventListener('beforeunload', () => {
+        if (isRecording && mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        if (audioContext) audioContext.close();
+        if (recordingTimer) clearInterval(recordingTimer);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showNotification('Ready to record! Voice will be anonymized for privacy.', 'success');
+    });
+</script>

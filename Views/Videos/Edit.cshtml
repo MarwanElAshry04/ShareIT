@@ -1,0 +1,177 @@
+﻿@model Video
+
+@{
+    ViewData["Title"] = "Edit Video";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<div class="container">
+    <h1>Edit Video</h1>
+    <hr />
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">Edit Video Information</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="VideoPath" />
+                        <input type="hidden" asp-for="FileType" />
+                        <input type="hidden" asp-for="FileName" />
+                        <input type="hidden" asp-for="FileSize" />
+                        <input type="hidden" asp-for="CreatedOn" />
+                        <input type="hidden" asp-for="Duration" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Section" class="control-label fw-bold"></label>
+                            <input asp-for="Section" class="form-control" />
+                            <span asp-validation-for="Section" class="text-danger"></span>
+                            <small class="form-text text-muted">Update the section/category for this video</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label fw-bold">Current Video</label>
+                            <div class="mb-2">
+                                @if (!string.IsNullOrEmpty(Model.VideoPath))
+                                {
+                                    <video width="400" controls class="border rounded">
+                                        <source src="@Model.VideoPath" type="video/@Model.FileType?.ToLower()">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-circle"></i> Video file not found
+                                    </div>
+                                }
+                            </div>
+                            <div class="mt-2">
+                                <small class="form-text text-muted d-block">
+                                    <strong>Current file:</strong> @Model.FileName
+                                </small>
+                                <small class="form-text text-muted d-block">
+                                    <strong>Size:</strong>
+                                    @if (Model.FileSize >= 1024 * 1024 * 1024)
+                                    {
+                                        @($"{Model.FileSize / (1024.0 * 1024 * 1024):F2} GB")
+                                    }
+                                    else if (Model.FileSize >= 1024 * 1024)
+                                    {
+                                        @($"{Model.FileSize / (1024.0 * 1024):F2} MB")
+                                    }
+                                    else if (Model.FileSize >= 1024)
+                                    {
+                                        @($"{Model.FileSize / 1024.0:F2} KB")
+                                    }
+                                    else
+                                    {
+                                        @($"{Model.FileSize} bytes")
+                                    }
+                                </small>
+                                @if (!string.IsNullOrEmpty(Model.Duration))
+                                {
+                                    <small class="form-text text-muted d-block">
+                                        <strong>Duration:</strong> @Model.Duration
+                                    </small>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="VideoFile" class="control-label fw-bold">Replace Video (Optional)</label>
+                            <input asp-for="VideoFile" class="form-control" type="file" accept="video/*" />
+                            <span asp-validation-for="VideoFile" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Leave empty to keep current video. Supported formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM (Max size: 500MB)
+                            </small>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Edit Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Update section name to reorganize videos</li>
+                        <li>Upload a new video file to replace the existing one</li>
+                        <li>Changes are saved immediately after clicking "Save Changes"</li>
+                        <li>The original upload date remains unchanged</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Display selected filename when replacing video
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+
+                    // Remove existing file info if any
+                    const existingInfo = document.querySelector('.file-info');
+                    if (existingInfo) {
+                        existingInfo.remove();
+                    }
+
+                    // Create and add new file info
+                    const fileInfo = document.createElement('small');
+                    fileInfo.className = 'form-text text-success d-block mt-1 file-info';
+                    fileInfo.innerHTML = `<i class="fas fa-file-video"></i> New file selected: ${file.name} (${sizeInMB} MB)`;
+
+                    // Add warning about replacing
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'alert alert-warning mt-2';
+                    warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> The current video will be replaced with the new one.';
+
+                    // Remove existing warning if any
+                    const existingWarning = document.querySelector('.replace-warning');
+                    if (existingWarning) {
+                        existingWarning.remove();
+                    }
+                    warningDiv.classList.add('replace-warning');
+
+                    e.target.parentNode.appendChild(fileInfo);
+                    e.target.parentNode.appendChild(warningDiv);
+                }
+            });
+        }
+    </script>
+}

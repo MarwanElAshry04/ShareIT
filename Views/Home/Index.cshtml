@@ -1,0 +1,600 @@
+﻿@model ShareIT.Models.ViewModel.HomeViewModel
+@{
+    ViewData["Title"] = "Compliance Portal - ELSEWEDY ELECTRIC";
+}
+
+<style>
+    /* Hero Section */
+    .hero-section {
+        color: black;
+        padding: 80px 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: center/contain no-repeat;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .hero-section .container {
+            position: relative;
+            z-index: 2;
+        }
+
+    .hero-logo {
+        width: 200px;
+        height: 200px;
+        background: white;
+        border-radius: 50%;
+        padding: 20px;
+        margin: 0 auto 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .hero-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin: 0 auto 30px;
+        line-height: 1.8;
+    }
+
+    /* Navigation Cards */
+    .navigation-section {
+        padding: 50px 0;
+        margin-bottom: 50px;
+    }
+
+    .nav-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: none;
+    }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+    .nav-card-icon {
+        height: 120px;
+        background: linear-gradient(135deg, #c4252a, #e02020);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+    }
+
+    .nav-card-content {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .nav-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 15px;
+    }
+
+    .nav-card-desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .nav-card-btn {
+        display: inline-block;
+        background: #c4252a;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: 2px solid #c4252a;
+    }
+
+        .nav-card-btn:hover {
+            background: white;
+            color: #c4252a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+        }
+
+    /* Documents Section */
+    .documents-section {
+        padding: 50px 0;
+    }
+
+    .section-header {
+        text-align: left;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #c4252a;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #c4252a;
+            border-radius: 2px;
+        }
+
+    .section-subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin: 0 auto;
+    }
+
+    .document-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #c4252a;
+        }
+
+    .document-header {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex: 1;
+    }
+
+    .document-logo {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+
+        .document-logo img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+    .default-logo {
+        color: #c4252a;
+        font-size: 28px;
+    }
+
+    .document-info {
+        flex: 1;
+    }
+
+    .document-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #343a40;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .document-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .document-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f8f9fa;
+    }
+
+    .btn-action {
+        padding: 8px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .btn-view {
+        background: #c4252a;
+        color: white;
+        border: 2px solid #c4252a;
+    }
+
+        .btn-view:hover {
+            background: #a61d22;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+        }
+
+    .btn-download {
+        background: white;
+        color: #c4252a;
+        border: 2px solid #c4252a;
+    }
+
+        .btn-download:hover {
+            background: #c4252a;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+        }
+
+    /* Stats Section */
+    .stats-section {
+        background: linear-gradient(135deg, #343a40, #212529);
+        color: white;
+        padding: 60px 0;
+        margin-top: 50px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #c4252a;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: #adb5bd;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h4 {
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            color: #adb5bd;
+            max-width: 400px;
+            margin: 0 auto 25px;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 50px 0;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .nav-card {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .document-actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .hero-logo {
+            width: 150px;
+            height: 150px;
+        }
+
+        .hero-title {
+            font-size: 1.7rem;
+        }
+
+        .nav-card-content {
+            padding: 20px;
+        }
+
+        .document-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .document-logo {
+            margin: 0 auto 15px;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+   
+    <div class="section-header">
+        <h2 class="section-title">HR Documents</h2>
+        <p class="section-subtitle">
+            For 80 years it has been our strong belief that an essential part of business success is integrity.
+            We are firmly and unequivocally concerning the violation of laws, regulations and internal policies.
+            We have no tolerance for unethical behavior and business misconducts.
+            We encourage you to read our employee policies and guidelines.
+        </p>
+    </div>
+
+    <div class="documents-section">
+        <div class="container">
+
+            @if (Model.Documents.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var document in Model.Documents.OrderBy(d => d.DisplayOrder))
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="document-card">
+                                <div class="document-header">
+                                    <div class="document-logo">
+                                        @if (!string.IsNullOrEmpty(document.Logo))
+                                        {
+                                            <img src="@document.Logo" alt="@document.Name Logo">
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-file-pdf default-logo"></i>
+                                        }
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-title">@document.Name</div>
+                                        @if (!string.IsNullOrEmpty(document.Description))
+                                        {
+                                            <div class="document-description">@document.Description</div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="document-actions">
+                                    <a href="@Url.Action("View", "Document", new { id = document.Id })"
+                                       class="btn-action btn-view" target="_blank">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="@Url.Action("Download", "Document", new { id = document.Id })"
+                                       class="btn-action btn-download">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>No Documents Available</h4>
+                    <p>No HR documents have been uploaded yet. Please check back later.</p>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("ComplianceManager")))
+                    {
+                        <a asp-controller="Document" asp-action="Create" class="nav-card-btn">
+                            <i class="fas fa-upload me-2"></i>Upload First Document
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+<!-- Navigation Cards -->
+@* <div class="navigation-section">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Card 1: New Case -->
+            <div class="col-md-4">
+                <div class="nav-card">
+                    <div class="nav-card-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="nav-card-content">
+                        <h3 class="nav-card-title">Report New Case</h3>
+                        <p class="nav-card-desc">
+                            Submit a new compliance concern or report unethical behavior through our secure and confidential system.
+                        </p>
+                        <a asp-controller="Ticket" asp-action="Create" class="nav-card-btn">
+                            <i class="fas fa-plus me-2"></i>Report Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Track Case -->
+            <div class="col-md-4">
+                <div class="nav-card">
+                    <div class="nav-card-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="nav-card-content">
+                        <h3 class="nav-card-title">Track Your Case</h3>
+                        <p class="nav-card-desc">
+                            Check the status of your submitted ticket and communicate with our compliance team.
+                        </p>
+                        <a asp-controller="Search" asp-action="Index" class="nav-card-btn">
+                            <i class="fas fa-search me-2"></i>Track Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: User Guide -->
+            <div class="col-md-4">
+                <div class="nav-card">
+                    <div class="nav-card-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="nav-card-content">
+                        <h3 class="nav-card-title">User Guide</h3>
+                        <p class="nav-card-desc">
+                            Learn how to use our compliance portal, understand policies, and get answers to frequently asked questions.
+                        </p>
+                        <a asp-controller="Guide" asp-action="Index" class="nav-card-btn">
+                            <i class="fas fa-question-circle me-2"></i>View Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ *@
+<!-- Documents Section -->
+
+<!-- Statistics Section -->
+
+<!-- Font Awesome Icons -->
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Add animation to navigation cards
+            $('.nav-card').each(function (index) {
+                $(this).css('opacity', '0');
+                $(this).css('transform', 'translateY(20px)');
+
+                setTimeout(() => {
+                    $(this).animate({
+                        opacity: 1,
+                        transform: 'translateY(0)'
+                    }, 500);
+                }, index * 200);
+            });
+
+            // Add animation to document cards
+            $('.document-card').each(function (index) {
+                $(this).css('opacity', '0');
+
+                setTimeout(() => {
+                    $(this).animate({
+                        opacity: 1
+                    }, 500);
+                }, index * 100);
+            });
+
+            // Smooth scroll for navigation
+            $('a[href^="#"]').on('click', function (e) {
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    e.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 100
+                    }, 1000);
+                }
+            });
+
+            // Add hover effect to buttons
+            $('.btn-action, .nav-card-btn').hover(
+                function () {
+                    $(this).css('transform', 'translateY(-2px)');
+                },
+                function () {
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+        });
+    </script>
+}

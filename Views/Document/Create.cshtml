@@ -1,0 +1,425 @@
+﻿@model ShareIT.Models.ViewModel.DocumentViewModel
+@{
+    ViewData["Title"] = "Create New Document";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<style>
+    .create-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #c4252a, #e02020);
+        color: white;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 0;
+    }
+
+    .form-card {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .form-body {
+        padding: 30px;
+        background: white;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-control-file {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus, .form-control-file:focus {
+            border-color: #c4252a;
+            box-shadow: 0 0 0 0.2rem rgba(196, 37, 42, 0.25);
+        }
+
+    .file-upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .file-upload-area:hover {
+            border-color: #c4252a;
+            background: #fff5f5;
+        }
+
+        .file-upload-area i {
+            font-size: 48px;
+            color: #c4252a;
+            margin-bottom: 15px;
+        }
+
+    .file-info {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #c4252a, #e02020);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #e02020, #c4252a);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 37, 42, 0.3);
+        }
+
+        .btn-submit:disabled {
+            background: #6c757d;
+            transform: none;
+            box-shadow: none;
+        }
+
+    .btn-cancel {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s;
+        width: 100%;
+        text-decoration: none;
+        text-align: center;
+        display: block;
+    }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            color: #343a40;
+            text-decoration: none;
+        }
+
+    .validation-summary-errors {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+        .validation-summary-errors ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .field-validation-error {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .file-preview {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+        .file-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+    .preview-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+        .preview-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .preview-info {
+        flex: 1;
+    }
+
+    .preview-name {
+        font-weight: 500;
+        color: #343a40;
+    }
+
+    .preview-size {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="">
+    <!-- Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="form-card">
+        <!-- Header -->
+        <div class="form-header">
+            <h3 class="mb-0">
+                <i class="fas fa-plus-circle me-2"></i>
+                Create New Document
+            </h3>
+            <p class="mb-0 opacity-75">Add a new compliance document to the system</p>
+        </div>
+
+        <!-- Form -->
+        <div class="form-body">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="createForm">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <p class="text-muted mb-4"><span class="text-danger fw-bold">*</span> indicates a required field.</p>
+
+                <!-- Document Name -->
+                <div class="form-group mb-4">
+                    <label asp-for="Name" class="form-label">
+                        <i class="fas fa-file-alt me-2 text-danger"></i>
+                        Document Name <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="Name" class="form-control"
+                           placeholder="Enter document name (e.g., Fraud Control Policy)" />
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group mb-4">
+                    <label asp-for="Description" class="form-label">
+                        <i class="fas fa-align-left me-2 text-danger"></i>
+                        Description <span class="text-muted fw-normal">(optional)</span>
+                    </label>
+                    <textarea asp-for="Description" class="form-control" rows="3"
+                              placeholder="Enter document description (optional)"></textarea>
+                    <span asp-validation-for="Description" class="field-validation-error"></span>
+                </div>
+
+                <!-- Display Order -->
+                <div class="form-group mb-4">
+                    <label asp-for="DisplayOrder" class="form-label">
+                        <i class="fas fa-sort-numeric-down me-2 text-danger"></i>
+                        Display Order <span class="text-muted fw-normal">(optional)</span>
+                    </label>
+                    <input asp-for="DisplayOrder" type="number" class="form-control"
+                           placeholder="Enter display order (0-100)" />
+                    <span asp-validation-for="DisplayOrder" class="field-validation-error"></span>
+                    <small class="text-muted">Documents are sorted by this number (lower numbers appear first)</small>
+                </div>
+
+                <!-- PDF File Upload -->
+                <div class="form-group mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-file-pdf me-2 text-danger"></i>
+                        PDF Document <span class="text-danger">*</span>
+                    </label>
+                    <div class="file-upload-area" onclick="document.getElementById('PdfFile').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h5 class="mb-2">Click to upload PDF</h5>
+                        <p class="text-muted mb-0">Maximum file size: 50MB</p>
+                        <p class="text-muted">Supported format: .pdf</p>
+                    </div>
+                    <input asp-for="PdfFile" type="file" class="form-control-file d-none"
+                           id="PdfFile" accept=".pdf" />
+                    <span asp-validation-for="PdfFile" class="field-validation-error"></span>
+
+                    <!-- File Preview -->
+                    <div class="file-preview" id="pdfPreview" style="display: none;">
+                        <div class="preview-item">
+                            <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                            <div class="preview-info">
+                                <div class="preview-name" id="pdfFileName"></div>
+                                <div class="preview-size" id="pdfFileSize"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo Upload (Optional) -->
+                <div class="form-group mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-image me-2 text-danger"></i>
+                        Logo/Icon (Optional)
+                    </label>
+                    <div class="file-upload-area" onclick="document.getElementById('LogoFile').click()">
+                        <i class="fas fa-image"></i>
+                        <h5 class="mb-2">Click to upload logo</h5>
+                        <p class="text-muted mb-0">Maximum file size: 5MB</p>
+                        <p class="text-muted">Supported formats: .jpg, .jpeg, .png, .gif, .svg</p>
+                    </div>
+                    <input asp-for="LogoFile" type="file" class="form-control-file d-none"
+                           id="LogoFile" accept=".jpg,.jpeg,.png,.gif,.svg" />
+
+                    <!-- Logo Preview -->
+                    <div class="file-preview" id="logoPreview" style="display: none;">
+                        <div class="preview-item">
+                            <img id="logoPreviewImg" src="#" alt="Logo preview" />
+                            <div class="preview-info">
+                                <div class="preview-name" id="logoFileName"></div>
+                                <div class="preview-size" id="logoFileSize"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-3">
+                        <a asp-action="Index" class="btn-cancel">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span id="btnText">
+                                <i class="fas fa-save me-2"></i>Create Document
+                            </span>
+                            <span id="btnSpinner" class="d-none">
+                                <span class="spinner me-2"></span>Creating...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Handle PDF file selection
+            $('#PdfFile').change(function(e) {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    $('#pdfFileName').text(file.name);
+                    $('#pdfFileSize').text(formatFileSize(file.size));
+                    $('#pdfPreview').show();
+                } else {
+                    $('#pdfPreview').hide();
+                }
+            });
+
+            // Handle logo file selection
+            $('#LogoFile').change(function(e) {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    $('#logoFileName').text(file.name);
+                    $('#logoFileSize').text(formatFileSize(file.size));
+
+                    // Preview image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#logoPreviewImg').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+
+                    $('#logoPreview').show();
+                } else {
+                    $('#logoPreview').hide();
+                }
+            });
+
+            // Form submission
+            $('#createForm').on('submit', function(e) {
+                if ($(this).valid()) {
+                    $('#btnText').addClass('d-none');
+                    $('#btnSpinner').removeClass('d-none');
+                    $('#submitBtn').prop('disabled', true);
+                }
+            });
+
+            // Validate file size
+            $('#PdfFile, #LogoFile').on('change', function() {
+                const file = this.files[0];
+                const maxSize = this.id === 'PdfFile' ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+
+                if (file && file.size > maxSize) {
+                    alert(`File size exceeds maximum limit (${formatFileSize(maxSize)})`);
+                    this.value = '';
+
+                    if (this.id === 'PdfFile') {
+                        $('#pdfPreview').hide();
+                    } else {
+                        $('#logoPreview').hide();
+                    }
+                }
+            });
+        });
+
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+}

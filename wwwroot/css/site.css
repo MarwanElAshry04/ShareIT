@@ -1,0 +1,79 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.step {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin: 0 5px;
+    position: relative;
+}
+
+    .step.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+/* Tabs */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+}
+
+    .tab-btn.active {
+        border-bottom-color: #007bff;
+        font-weight: bold;
+    }
+
+/* Form styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.validation-summary-errors {
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875em;
+}
