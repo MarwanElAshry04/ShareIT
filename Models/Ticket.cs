@@ -7,14 +7,22 @@ namespace ShareIT.Models
         BaseModel
     {
         public int Id { get; set; }
-        // Complaint / Suggestion / Feedback. Existing rows default to Complaint.
-        public TicketKind Kind { get; set; } = TicketKind.Complaint;
-        [ForeignKey("TicketType")]
-        public int? TicketTypeId { get; set; }
-        public TicketType? TicketType { get; set; }
+        public string? Title { get; set; }
+        // Which of the 6 types this ticket is.
+        public TicketType TicketType { get; set; } = TicketType.Issue;
+        [ForeignKey("Category")]
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
         [ForeignKey("Reporter")]
         public int? ReporterId { get; set; }
         public Reporter? Reporter { get; set; }
+
+        // The type-specific detail — only the one matching TicketType is filled in.
+        public IssueDetail? IssueDetail { get; set; }
+        public IdeaDetail? IdeaDetail { get; set; }
+        public ProjectProposalDetail? ProjectProposalDetail { get; set; }
+        public SafetyDetail? SafetyDetail { get; set; }
+        public FeedbackDetail? FeedbackDetail { get; set; }
         public string? Status { get; set; }
         public string RefNo { get; set; }
         public string password { get; set; }

@@ -5,9 +5,9 @@
         public List<ChartLabelValue> SubmissionsByCompany { get; set; } = new();
         public List<string> TypeLabels { get; set; } = new();
         public List<StackedSeries> SubmissionsByTypeAndStatus { get; set; } = new();
-        public List<ChartLabelValue> TopTicketTypes { get; set; } = new();
+        public List<ChartLabelValue> TopCategories { get; set; } = new();
         public List<ChartLabelValue> StatusBreakdown { get; set; } = new();
-        public List<ChartLabelValue> KindBreakdown { get; set; } = new();
+        public List<ChartLabelValue> TypeBreakdown { get; set; } = new();
         public int TotalTickets { get; set; }
     }
 

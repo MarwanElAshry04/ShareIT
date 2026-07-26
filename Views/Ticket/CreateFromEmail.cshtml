@@ -381,20 +381,20 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="TicketTypeId" class="form-label">
+                        <label asp-for="CategoryId" class="form-label">
                             <i class="fas fa-tag me-1"></i> Ticket Type *
                         </label>
-                        <select asp-for="TicketTypeId" class="form-select" required>
+                        <select asp-for="CategoryId" class="form-select" required>
                             <option value="">Select Ticket Type</option>
-                            @if (ViewBag.TicketTypes != null)
+                            @if (ViewBag.Categories != null)
                             {
-                                @foreach (var type in ViewBag.TicketTypes)
+                                @foreach (var type in ViewBag.Categories)
                                 {
                                     <option value="@type.Id">@type.ComplainType</option>
                                 }
                             }
                         </select>
-                        <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -527,7 +527,7 @@
     <script>
         $(document).ready(function() {
             // Load sub types when ticket type changes
-            $('#TicketTypeId').change(function() {
+            $('#CategoryId').change(function() {
                 var typeId = $(this).val();
                 if (typeId) {
                     $.ajax({

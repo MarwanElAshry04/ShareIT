@@ -1,6 +1,6 @@
 ﻿namespace ShareIT.Models
 {
-    public class TicketType: BaseModel
+    public class Category: BaseModel
     {
         public int Id { get; set; }
         public string ComplainType { get; set; }

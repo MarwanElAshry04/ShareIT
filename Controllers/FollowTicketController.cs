@@ -55,7 +55,7 @@ namespace ShareIT.Controllers
                 // Base query with includes
                 var query = _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Include(c => c.TicketChats)
                         .OrderByDescending(c => c.CreatedOn)
                     .AsQueryable();
@@ -80,9 +80,9 @@ namespace ShareIT.Controllers
                 }
 
                 // Filter by Kind (Complaint, Suggestion, Feedback)
-                if (!string.IsNullOrEmpty(kind) && Enum.TryParse<TicketKind>(kind, out var kindFilter))
+                if (!string.IsNullOrEmpty(kind) && Enum.TryParse<TicketType>(kind, out var kindFilter))
                 {
-                    query = query.Where(c => c.Kind == kindFilter);
+                    query = query.Where(c => c.TicketType == kindFilter);
                 }
 
                 // Filter by Validation (Valid, Invalid)
@@ -130,9 +130,6 @@ namespace ShareIT.Controllers
                     Closed = await _context.Tickets.Where(c => c.Status == "Closed").CountAsync(),
                     ValidTickets = await _context.Tickets.Where(c => c.validation == "Valid").CountAsync(),
                     InvalidTickets = await _context.Tickets.Where(c => c.validation == "Invalid").CountAsync(),
-                    ComplaintCount = await _context.Tickets.Where(c => c.Kind == TicketKind.Complaint).CountAsync(),
-                    SuggestionCount = await _context.Tickets.Where(c => c.Kind == TicketKind.Suggestion).CountAsync(),
-                    FeedbackCount = await _context.Tickets.Where(c => c.Kind == TicketKind.Feedback).CountAsync(),
                     AnonymousReports = await _context.Tickets
                         .Include(c => c.Reporter)
                         .Where(c => c.Reporter != null && c.Reporter.reporterType == "Anonymous")
@@ -182,7 +179,7 @@ namespace ShareIT.Controllers
                     Statistics = statistics,
                     SearchTerm = searchTerm,
                     Status = status,
-                    Kind = kind,
+                    TicketType = kind,
                     Validation = validation,  // Add this to your ViewModel
                     TypeId = typeId,
                     DateFrom = dateFrom,
@@ -196,7 +193,7 @@ namespace ShareIT.Controllers
                     TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
 
                     // Get lookup data for filters
-                    TicketTypes = await _context.TicketTypes.ToListAsync(),
+                    Categories = await _context.Categories.ToListAsync(),
                     AssignedDepartments = assignedDepartments ?? new List<string>(),
                     Priorities = new List<string> { "High", "Medium", "Low" },
                     ReporterTypes = new List<string> { "All", "Disclosed", "Anonymous" }
@@ -225,7 +222,7 @@ namespace ShareIT.Controllers
 
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Where(c => c.forwarding == userDepartment || c.UpdatedBy == currentUser)
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -248,7 +245,7 @@ namespace ShareIT.Controllers
             {
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Where(c => c.Status == "Initiate") // Open status
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -271,7 +268,7 @@ namespace ShareIT.Controllers
             {
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Where(c =>c.Status != "Closed")
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -295,7 +292,7 @@ namespace ShareIT.Controllers
                 var today = DateTime.Today;
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Where(c => c.Status == "Closed" && c.closureDate.HasValue && c.closureDate.Value.Date == today)
                     .OrderByDescending(c => c.closureDate)
                     .ToListAsync();
@@ -317,7 +314,7 @@ namespace ShareIT.Controllers
             {
                 var query = _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(searchTerm))
@@ -341,7 +338,7 @@ namespace ShareIT.Controllers
                 foreach (var c in tickets)
                 {
                     var reporterName = c.Reporter?.reporterType == "Anonymous" ? "Anonymous" : c.Reporter?.name ?? "N/A";
-                    sb.AppendLine($"\"{c.RefNo}\",\"{c.CreatedOn:dd/MM/yyyy}\",\"{c.TicketType?.ComplainType}\",\"{c.Status}\",\"{reporterName}\",\"{c.ConcerningCompany}\",\"{c.ConcerningDepartment}\",\"{c.forwarding}\",\"{c.Desc?.Replace("\"", "\"\"")}\"");
+                    sb.AppendLine($"\"{c.RefNo}\",\"{c.CreatedOn:dd/MM/yyyy}\",\"{c.Category?.ComplainType}\",\"{c.Status}\",\"{reporterName}\",\"{c.ConcerningCompany}\",\"{c.ConcerningDepartment}\",\"{c.forwarding}\",\"{c.Desc?.Replace("\"", "\"\"")}\"");
                 }
 
                 var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
@@ -419,8 +416,8 @@ namespace ShareIT.Controllers
         private async Task<List<ChartData>> GetTypeDistribution()
         {
             var distribution = await _context.Tickets
-                .Include(c => c.TicketType)
-                .GroupBy(c => c.TicketType!.ComplainType)
+                .Include(c => c.Category)
+                .GroupBy(c => c.Category!.ComplainType)
                 .Select(g => new ChartData
                 {
                     Label = g.Key ?? "Unknown",
@@ -581,13 +578,13 @@ namespace ShareIT.Controllers
 
                 // Build description of what changed
                 var changes = new List<string>();
-                if (ticket.TicketTypeId != ticketTypeId) changes.Add("Ticket Type");
+                if (ticket.CategoryId != ticketTypeId) changes.Add("Ticket Type");
                 if (ticket.ConcerningCompany != concerningCompany) changes.Add("Concerning Company");
                 if (ticket.ConcerningDepartment != concerningDepartment) changes.Add("Concerning Department");
                 if (ticket.ConcerningPerson != concerningPerson) changes.Add("Concerning Person");
                 if (ticket.ConcerningOther != concerningOther) changes.Add("Concerning Other");
 
-                ticket.TicketTypeId = ticketTypeId;
+                ticket.CategoryId = ticketTypeId;
                 ticket.ConcerningCompany = concerningCompany;
                 ticket.ConcerningDepartment = concerningDepartment;
                 ticket.ConcerningPerson = concerningPerson;
@@ -625,7 +622,7 @@ namespace ShareIT.Controllers
             {
                 var ticket = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.TicketType)
+                    .Include(c => c.Category)
                     .Include(c => c.TicketChats)
                     .Include(c => c.TicketAttachments)
                     .FirstOrDefaultAsync(c => c.Id == id);
@@ -637,7 +634,7 @@ namespace ShareIT.Controllers
                 }
 
                 // ✅ Add this line
-                ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
+                ViewBag.Categories = await _context.Categories.ToListAsync();
                 ViewBag.Company = await _context.Companies.ToListAsync();
                 ViewBag.Department = await _context.Departments.ToListAsync();
 

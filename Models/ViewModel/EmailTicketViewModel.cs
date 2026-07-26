@@ -8,7 +8,7 @@ namespace ShareIT.Models.ViewModel
 
         [Display(Name = "Ticket Type")]
         [Required(ErrorMessage = "Ticket type is required")]
-        public int TicketTypeId { get; set; }
+        public int CategoryId { get; set; }
 
         [Display(Name = "Sub Type")]
         public int? ComSubTypeId { get; set; }

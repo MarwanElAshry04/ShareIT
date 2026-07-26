@@ -8,7 +8,7 @@
         // Search filters
         public string SearchTerm { get; set; }
         public string Status { get; set; }  // Changed from StatusId to Status (string)
-        public string Kind { get; set; }    // Complaint / Suggestion / Feedback (empty = all)
+        public string TicketType { get; set; }    // Complaint / Suggestion / Feedback (empty = all)
         public int? TypeId { get; set; }
         public string DateFrom { get; set; }
         public string DateTo { get; set; }
@@ -25,7 +25,7 @@
 
         // Lookup data
         public List<string> Statuses { get; set; } = new();  // Changed from List<TicketStatus>
-        public List<TicketType> TicketTypes { get; set; } = new();
+        public List<Category> Categories { get; set; } = new();
         public List<string> Priorities { get; set; } = new();
         public List<string> ReporterTypes { get; set; } = new();
         public List<string> AssignedDepartments { get; set; } = new();
@@ -39,9 +39,6 @@
         public int Closed { get; set; }
         public int ValidTickets { get; set; }
         public int InvalidTickets { get; set; }
-        public int ComplaintCount { get; set; }
-        public int SuggestionCount { get; set; }
-        public int FeedbackCount { get; set; }
         public int HighPriority { get; set; }
         public int MediumPriority { get; set; }
         public int LowPriority { get; set; }

@@ -60,17 +60,30 @@ namespace ShareIT.Models.ViewModel
 
         // Step 2: Ticket Data
         [Display(Name = "What would you like to submit?")]
-        public TicketKind Kind { get; set; } = TicketKind.Complaint;
+        public TicketType TicketType { get; set; } = TicketType.Issue;
+
+        [Display(Name = "Title")]
+        public string? Title { get; set; }
+
+        // Step 3: type-specific detail. We reuse the detail model classes as
+        // "input holders" — only the one matching TicketType gets saved.
+        public IssueDetail Issue { get; set; } = new();
+        public IdeaDetail Idea { get; set; } = new();
+        public ProjectProposalDetail ProjectProposal { get; set; } = new();
+        public SafetyDetail Safety { get; set; } = new();
+        public FeedbackDetail Feedback { get; set; } = new();
 
         [Display(Name = "Ticket Type")]
-        public int? TicketTypeId { get; set; }
+        public int? CategoryId { get; set; }
 
         
 
+        // Not [Required] here — the controller validates it at step 3 only.
+        // (A [Required]/non-nullable field would make the whole model invalid on
+        //  every earlier step and block the wizard from advancing.)
         [Display(Name = "Description")]
-        [Required(ErrorMessage = "Description is required")]
         [StringLength(5000, ErrorMessage = "Description is too long")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Display(Name = "Company")]
         public int? ConcerningCompanyId { get; set; }
@@ -88,16 +101,15 @@ namespace ShareIT.Models.ViewModel
         public List<IFormFile> Files { get; set; } = new List<IFormFile>();
 
         // Step 4: Review
+        // Validated by the controller at step 5 (not [Required] here — see Description note).
         [Display(Name = "Password")]
-        [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [Display(Name = "Confirm Password")]
-        [Required(ErrorMessage = "Confirm password is required")]
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Passwords do not match")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
         public string? UploadedFilePaths { get; set; }
         // In NewTicketViewModel.cs
 
@@ -113,9 +125,9 @@ namespace ShareIT.Models.ViewModel
 
         public List<Company>? Companies { get; set; }
         public List<Department>? Departments { get; set; }
-        public List<TicketType>? TicketTypes { get; set; }
+        public List<Category>? Categories { get; set; }
         public List<LookupItem>? Relations { get; set; }
-        public List<LookupItem>? SubTicketTypes { get; set; }
+        public List<LookupItem>? SubCategories { get; set; }
 
         // Current step tracking
         public int CurrentStep { get; set; } = 1; // 1=Reporter, 2=Ticket, 3=Attachments, 4=Review

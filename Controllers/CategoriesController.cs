@@ -13,22 +13,22 @@ namespace ShareIT.Controllers
 {
     [Authorize]
 
-    public class TicketTypesController : Controller
+    public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketTypesController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: TicketTypes
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TicketTypes.ToListAsync());
+            return View(await _context.Categories.ToListAsync());
         }
 
-        // GET: TicketTypes/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,7 +36,7 @@ namespace ShareIT.Controllers
                 return NotFound();
             }
 
-            var ticketType = await _context.TicketTypes
+            var ticketType = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ticketType == null)
             {
@@ -46,18 +46,18 @@ namespace ShareIT.Controllers
             return View(ticketType);
         }
 
-        // GET: TicketTypes/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: TicketTypes/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ComplainType,definition,ComplainType_ar,priority,status,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn")] TicketType ticketType)
+        public async Task<IActionResult> Create([Bind("Id,ComplainType,definition,ComplainType_ar,priority,status,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn")] Category ticketType)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +68,7 @@ namespace ShareIT.Controllers
             return View(ticketType);
         }
 
-        // GET: TicketTypes/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,7 +76,7 @@ namespace ShareIT.Controllers
                 return NotFound();
             }
 
-            var ticketType = await _context.TicketTypes.FindAsync(id);
+            var ticketType = await _context.Categories.FindAsync(id);
             if (ticketType == null)
             {
                 return NotFound();
@@ -84,12 +84,12 @@ namespace ShareIT.Controllers
             return View(ticketType);
         }
 
-        // POST: TicketTypes/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ComplainType,definition,ComplainType_ar,priority,status,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn")] TicketType ticketType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ComplainType,definition,ComplainType_ar,priority,status,CreatedBy,CreatedOn,UpdatedBy,UpdatedOn")] Category ticketType)
         {
             if (id != ticketType.Id)
             {
@@ -105,7 +105,7 @@ namespace ShareIT.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketTypeExists(ticketType.Id))
+                    if (!CategoryExists(ticketType.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +119,7 @@ namespace ShareIT.Controllers
             return View(ticketType);
         }
 
-        // GET: TicketTypes/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -127,7 +127,7 @@ namespace ShareIT.Controllers
                 return NotFound();
             }
 
-            var ticketType = await _context.TicketTypes
+            var ticketType = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ticketType == null)
             {
@@ -137,24 +137,24 @@ namespace ShareIT.Controllers
             return View(ticketType);
         }
 
-        // POST: TicketTypes/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticketType = await _context.TicketTypes.FindAsync(id);
+            var ticketType = await _context.Categories.FindAsync(id);
             if (ticketType != null)
             {
-                _context.TicketTypes.Remove(ticketType);
+                _context.Categories.Remove(ticketType);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketTypeExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.TicketTypes.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }

@@ -1,0 +1,46 @@
+﻿@using ShareIT.Models
+@using ShareIT.Models.ViewModel
+@model NewTicketViewModel
+
+<div class="step-content">
+    <div class="alert alert-dark border-danger mb-4">
+        <i class="fas fa-info-circle text-danger me-2"></i>
+        Choose what you'd like to submit. Each type asks for different details in the next step.
+    </div>
+
+    <div class="row g-3" role="radiogroup" aria-label="Ticket type">
+        @{
+            var types = new[]
+            {
+                (Value: TicketType.Issue,           Icon: "fa-triangle-exclamation", Label: "Issue",            Blurb: "Report an operational, people, or process problem."),
+                (Value: TicketType.Idea,            Icon: "fa-lightbulb",            Label: "Idea",             Blurb: "Suggest an improvement or new idea."),
+                (Value: TicketType.ProjectProposal, Icon: "fa-diagram-project",      Label: "Project Proposal", Blurb: "Propose a project with cost, benefits, and timeline."),
+                (Value: TicketType.SafetyConcern,   Icon: "fa-helmet-safety",        Label: "Safety Concern",   Blurb: "Raise a safety hazard or risk."),
+                (Value: TicketType.Feedback,        Icon: "fa-comment-dots",         Label: "Feedback",         Blurb: "Share workplace feedback or a complaint."),
+                (Value: TicketType.SystemRequest,   Icon: "fa-laptop-code",          Label: "System Request",   Blurb: "Request a digital or system improvement.")
+            };
+        }
+        @foreach (var t in types)
+        {
+            <div class="col-md-4">
+                <input type="radio" class="btn-check" name="TicketType" id="type-@t.Value"
+                       value="@t.Value" autocomplete="off"
+                @(Model.TicketType == t.Value ? "checked" : "") />
+                <label class="btn btn-outline-danger w-100 h-100 text-start p-3 type-tile" for="type-@t.Value">
+                    <span class="d-block fw-bold mb-1"><i class="fas @t.Icon me-2"></i>@t.Label</span>
+                    <small class="tile-blurb">@t.Blurb</small>
+                </label>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Dark text by default; white on hover / when selected (red background) */
+    .type-tile { color: #212529 !important; }
+    .type-tile .tile-blurb { color: #6c757d !important; }
+    .type-tile:hover,
+    .btn-check:checked + .type-tile { color: #fff !important; }
+    .type-tile:hover .tile-blurb,
+    .btn-check:checked + .type-tile .tile-blurb { color: rgba(255, 255, 255, .9) !important; }
+</style>

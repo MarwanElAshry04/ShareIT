@@ -715,10 +715,10 @@
                         <div class="info-value">
                             <select name="ticketTypeId" class="form-select form-select-sm">
                                 <option value="">-- Select Type --</option>
-                                @foreach (var type in ViewBag.TicketTypes as List<TicketType> ?? new List<TicketType>())
+                                @foreach (var type in ViewBag.Categories as List<Category> ?? new List<Category>())
                                 {
                                     <option value="@type.Id"
-                                            selected="@(ticket.TicketTypeId == type.Id)">
+                                            selected="@(ticket.CategoryId == type.Id)">
                                         @type.ComplainType
                                     </option>
                                 }

@@ -28,10 +28,10 @@ namespace ShareIT.Controllers
             _timelineService = timelineService; // ✅ Add this
         }
 
-        // GET: /Search
-        public IActionResult Index()
+        // GET: /Search  (optionally ?refNo=... to pre-fill the reference box)
+        public IActionResult Index(string? refNo)
         {
-            var model = new TicketSearchModel();
+            var model = new TicketSearchModel { TicketRef = refNo };
             return View(model);
         }
 
@@ -46,7 +46,7 @@ namespace ShareIT.Controllers
 
             var ticket = await _context.Tickets
                 .Include(c => c.Reporter)
-                .Include(c => c.TicketType)
+                .Include(c => c.Category)
                 .Include(c => c.TicketChats)
                 .Include(c => c.TicketAttachments)
                 .FirstOrDefaultAsync(c => c.RefNo == model.TicketRef

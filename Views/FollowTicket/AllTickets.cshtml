@@ -656,37 +656,23 @@
                 </select>
             </div>
 
-            <!-- Kind Filter -->
+            <!-- Type Filter -->
             <div class="filter-group">
                 <div class="filter-label">
-                    <i class="fas fa-tags me-1"></i> Kind
+                    <i class="fas fa-tags me-1"></i> Type
                 </div>
                 <select name="kind" class="filter-control">
-                    <option value="">All Kinds</option>
-                    <option value="Complaint" selected="@(Model.Kind == "Complaint")">Complaint</option>
-                    <option value="Suggestion" selected="@(Model.Kind == "Suggestion")">Suggestion</option>
-                    <option value="Feedback" selected="@(Model.Kind == "Feedback")">Feedback</option>
+                    <option value="">All Types</option>
+                    <option value="Issue" selected="@(Model.TicketType == "Issue")">Issue</option>
+                    <option value="Idea" selected="@(Model.TicketType == "Idea")">Idea</option>
+                    <option value="ProjectProposal" selected="@(Model.TicketType == "ProjectProposal")">Project Proposal</option>
+                    <option value="SafetyConcern" selected="@(Model.TicketType == "SafetyConcern")">Safety Concern</option>
+                    <option value="Feedback" selected="@(Model.TicketType == "Feedback")">Feedback</option>
+                    <option value="SystemRequest" selected="@(Model.TicketType == "SystemRequest")">System Request</option>
                 </select>
             </div>
 
-            <!-- Ticket Type -->
-            <div class="filter-group">
-                <div class="filter-label">
-                    <i class="fas fa-folder me-1"></i> Ticket Type
-                </div>
-                <select name="typeId" class="filter-control">
-                    <option value="">All Types</option>
-                    @if (Model.TicketTypes != null)
-                    {
-                        @foreach (var type in Model.TicketTypes)
-                        {
-                            <option value="@type.Id" selected="@(Model.TypeId == type.Id)">
-                                @type.ComplainType
-                            </option>
-                        }
-                    }
-                </select>
-            </div>
+            @* Old category "Ticket Type" filter (Harassment, etc.) removed — tickets are classified by Type above. *@
 
         @*     <!-- Priority -->
             <div class="filter-group">
@@ -840,7 +826,6 @@
                         <th width="50">#</th>
                         <th>Reference No</th>
                         <th>Date</th>
-                        <th>Kind</th>
                         <th>Type</th>
                         <th>Status</th>
                         <th>Priority</th>
@@ -903,22 +888,15 @@
                         </td>
                         <td>
                             @{
-                                var kindClass = ticket.Kind switch
+                                var kindClass = ticket.TicketType switch
                                 {
-                                    ShareIT.Models.TicketKind.Suggestion => "bg-primary",
-                                    ShareIT.Models.TicketKind.Feedback => "bg-success",
+                                    ShareIT.Models.TicketType.Idea => "bg-primary",
+                                    ShareIT.Models.TicketType.Feedback => "bg-success",
                                     _ => "bg-danger"
                                 };
                             }
-                            <span class="badge @kindClass">@ticket.Kind</span>
+                            <span class="badge @kindClass">@ticket.TicketType</span>
                         </td>
-                        <td>
-                            <span class="badge bg-info text-dark">
-                                @(ticket.TicketType?.ComplainType?.Length > 25 ?
-                                                            ticket.TicketType.ComplainType.Substring(0, 25) + "..." :
-                                                            ticket.TicketType?.ComplainType ?? "N/A")
-                                </span>
-                            </td>
                             <td>
                                 <span class="status-badge @statusClass">
                                     <i class="fas fa-circle me-1" style="font-size: 8px;"></i>
@@ -1232,8 +1210,8 @@
         if (!string.IsNullOrEmpty(model.Status))
             queryParams.Add($"status={model.Status}");
 
-        if (!string.IsNullOrEmpty(model.Kind))
-            queryParams.Add($"kind={model.Kind}");
+        if (!string.IsNullOrEmpty(model.TicketType))
+            queryParams.Add($"kind={model.TicketType}");
 
         if (model.TypeId.HasValue)
             queryParams.Add($"typeId={model.TypeId}");

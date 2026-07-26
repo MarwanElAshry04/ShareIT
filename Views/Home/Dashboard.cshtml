@@ -15,23 +15,13 @@
                 </div>
             </div>
         </div>
-        @{
-            int KindCount(string label) =>
-                Model.KindBreakdown.FirstOrDefault(k => k.Label == label)?.Value ?? 0;
-            var kindCards = new[]
-            {
-                (Label: "Complaint",  Plural: "Complaints",  Color: "text-danger"),
-                (Label: "Suggestion", Plural: "Suggestions", Color: "text-primary"),
-                (Label: "Feedback",   Plural: "Feedback",    Color: "text-success")
-            };
-        }
-        @foreach (var c in kindCards)
+        @foreach (var t in Model.TypeBreakdown)
         {
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h6 class="text-muted">@c.Plural</h6>
-                        <h2 class="fw-bold @c.Color">@KindCount(c.Label)</h2>
+                        <h6 class="text-muted">@t.Label</h6>
+                        <h2 class="fw-bold text-danger">@t.Value</h2>
                     </div>
                 </div>
             </div>
@@ -107,8 +97,8 @@
             }
         });
 
-        const topTypesLabels = @Html.Raw(Json.Serialize(Model.TopTicketTypes.Select(x => x.Label)));
-        const topTypesValues = @Html.Raw(Json.Serialize(Model.TopTicketTypes.Select(x => x.Value)));
+        const topTypesLabels = @Html.Raw(Json.Serialize(Model.TopCategories.Select(x => x.Label)));
+        const topTypesValues = @Html.Raw(Json.Serialize(Model.TopCategories.Select(x => x.Value)));
 
         new Chart(document.getElementById('topTypesChart'), {
             type: 'bar',

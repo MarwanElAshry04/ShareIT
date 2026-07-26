@@ -34,10 +34,11 @@ namespace ShareIT.Controllers
 
             return View(model);
         }
+        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             var tickets = await _context.Tickets
-                .Include(c => c.TicketType)
+                .Include(c => c.Category)
                 .ToListAsync();
 
             var model = new DashboardViewModel
@@ -52,7 +53,7 @@ namespace ShareIT.Controllers
                 .ToList();
 
             model.TypeLabels = tickets
-                .Select(c => c.TicketType?.ComplainType ?? "Unspecified")
+                .Select(c => c.TicketType.ToString())
                 .Distinct()
                 .OrderBy(t => t)
                 .ToList();
@@ -69,14 +70,14 @@ namespace ShareIT.Controllers
                 foreach (var type in model.TypeLabels)
                 {
                     series.Values.Add(tickets.Count(c =>
-                        (c.TicketType?.ComplainType ?? "Unspecified") == type &&
+                        c.TicketType.ToString() == type &&
                         (string.IsNullOrWhiteSpace(c.Status) ? "Unspecified" : c.Status) == status));
                 }
                 model.SubmissionsByTypeAndStatus.Add(series);
             }
 
-            model.TopTicketTypes = tickets
-                .GroupBy(c => c.TicketType?.ComplainType ?? "Unspecified")
+            model.TopCategories = tickets
+                .GroupBy(c => c.TicketType.ToString())
                 .Select(g => new ChartLabelValue { Label = g.Key, Value = g.Count() })
                 .OrderByDescending(x => x.Value)
                 .Take(10)
@@ -88,8 +89,8 @@ namespace ShareIT.Controllers
                 .OrderByDescending(x => x.Value)
                 .ToList();
 
-            model.KindBreakdown = tickets
-                .GroupBy(c => c.Kind.ToString())
+            model.TypeBreakdown = tickets
+                .GroupBy(c => c.TicketType.ToString())
                 .Select(g => new ChartLabelValue { Label = g.Key, Value = g.Count() })
                 .OrderByDescending(x => x.Value)
                 .ToList();

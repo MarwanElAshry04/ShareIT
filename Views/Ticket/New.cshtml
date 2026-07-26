@@ -5,7 +5,8 @@
     var steps = new List<(string Title, string Icon)>
     {
         ("Reporter Data", "fas fa-user"),
-        ("Ticket Data", "fas fa-file-alt"),
+        ("Choose Type", "fas fa-tags"),
+        ("Details", "fas fa-file-alt"),
         ("Attachments", "fas fa-paperclip"),
         ("Review", "fas fa-check-circle")
     };
@@ -94,21 +95,20 @@
     <div class="row justify-content-center">
         <div class="col-lg-12">
             <div class="card shadow-lg ">
-                <div class="card-header  bg-dark"  ">
+                <div class="card-header bg-dark">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 text-white fw-bold">
                             <i class="fas fa-file-medical-alt me-2"></i>
                             @(
-                                            Model.CurrentStep == 1 ? "Reporter Information" :
-                                            Model.CurrentStep == 2 ? "Ticket Details" :
-                                            Model.CurrentStep == 3 ? "Upload Supporting Documents" :
-                                            Model.CurrentStep == 4 ?
-                                           "Review & Submit"
-                                           : 
-                                           "Reporter Information")
+                                Model.CurrentStep == 1 ? "Reporter Information" :
+                                Model.CurrentStep == 2 ? "Choose Ticket Type" :
+                                Model.CurrentStep == 3 ? "Ticket Details" :
+                                Model.CurrentStep == 4 ? "Upload Supporting Documents" :
+                                Model.CurrentStep == 5 ? "Review & Submit" :
+                                "Reporter Information")
                         </h4>
                         <span class="badge text-white">
-                            Step @Model.CurrentStep of 4
+                            Step @Model.CurrentStep of 5
                         </span>
                     </div>
                 </div>
@@ -149,23 +149,58 @@
                             <input type="hidden" asp-for="NonEmpEmail2" />
                         }
 
-                        @* Step 2 data — persist from step 3 onward *@
+                        @* Step 2 data (chosen type) — persist from step 3 onward *@
                         @if (Model.CurrentStep >= 3)
                         {
-                            <input type="hidden" asp-for="Kind" />
-                            <input type="hidden" asp-for="Description" />
-                            <input type="hidden" asp-for="TicketTypeId" />
-                            <input type="hidden" asp-for="ConcerningCompanyId" />
-                            <input type="hidden" asp-for="ConcerningDepartmentId" />
-                            <input type="hidden" asp-for="ConcerningPerson" />
-                            <input type="hidden" asp-for="ConcerningOtherSuppliers" />
+                            <input type="hidden" asp-for="TicketType" />
                         }
 
-                        @* Step 3 file paths — persist to step 4 *@
+                        @* Step 3 data (title, description, type details) — persist from step 4 onward *@
                         @if (Model.CurrentStep >= 4)
                         {
+                            <input type="hidden" asp-for="Title" />
+                            <input type="hidden" asp-for="Description" />
+
+                            <input type="hidden" asp-for="Issue.IssueType" />
+                            <input type="hidden" asp-for="Issue.ImpactArea" />
+                            <input type="hidden" asp-for="Issue.ResponsibleDepartmentId" />
+                            <input type="hidden" asp-for="Issue.SolutionCategory" />
+                            <input type="hidden" asp-for="Issue.RootCause" />
+                            <input type="hidden" asp-for="Issue.ProposedSolution" />
+
+                            <input type="hidden" asp-for="Idea.Scope" />
+                            <input type="hidden" asp-for="Idea.ImpactType" />
+                            <input type="hidden" asp-for="Idea.ResponsibleDepartmentId" />
+                            <input type="hidden" asp-for="Idea.ImpactDescription" />
+                            <input type="hidden" asp-for="Idea.Sustainability" />
+
+                            <input type="hidden" asp-for="ProjectProposal.BusinessNeed" />
+                            <input type="hidden" asp-for="ProjectProposal.EstimatedCost" />
+                            <input type="hidden" asp-for="ProjectProposal.Scope" />
+                            <input type="hidden" asp-for="ProjectProposal.ExpectedBenefits" />
+                            <input type="hidden" asp-for="ProjectProposal.RoiReach" />
+                            <input type="hidden" asp-for="ProjectProposal.KeyStakeholders" />
+                            <input type="hidden" asp-for="ProjectProposal.TimelineStart" />
+                            <input type="hidden" asp-for="ProjectProposal.TimelineEnd" />
+
+                            <input type="hidden" asp-for="Safety.PotentialImpact" />
+                            <input type="hidden" asp-for="Safety.RiskLevel" />
+                            <input type="hidden" asp-for="Safety.HazardCategory" />
+                            <input type="hidden" asp-for="Safety.SuggestedAction" />
+                            <input type="hidden" asp-for="Safety.ResponsibleDepartmentId" />
+
+                            <input type="hidden" asp-for="Feedback.Category" />
+                            <input type="hidden" asp-for="Feedback.ResponsibleDepartmentId" />
+                            <input type="hidden" asp-for="Feedback.ImpactArea" />
+                            <input type="hidden" asp-for="Feedback.PreferredResolution" />
+                            <input type="hidden" asp-for="Feedback.Confidentiality" />
+                            <input type="hidden" asp-for="Feedback.ActionType" />
+                        }
+
+                        @* Step 4 file paths — persist from step 5 onward *@
+                        @if (Model.CurrentStep >= 5)
+                        {
                             <input type="hidden" asp-for="UploadedFilePaths" />
-                            @* DO NOT put Password/ConfirmPassword here — they are visible inputs in the partial *@
                         }
 
                         @if (Model.CurrentStep == 1)
@@ -174,13 +209,17 @@
                         }
                         else if (Model.CurrentStep == 2)
                         {
-                            await Html.RenderPartialAsync("_TicketStep", Model);
+                            await Html.RenderPartialAsync("_TypeStep", Model);
                         }
                         else if (Model.CurrentStep == 3)
                         {
-                            await Html.RenderPartialAsync("_AttachmentStep", Model);
+                            await Html.RenderPartialAsync("_DetailsStep", Model);
                         }
                         else if (Model.CurrentStep == 4)
+                        {
+                            await Html.RenderPartialAsync("_AttachmentStep", Model);
+                        }
+                        else if (Model.CurrentStep == 5)
                         {
                             await Html.RenderPartialAsync("_ReviewStep", Model);
                         }
@@ -202,7 +241,7 @@
                             <div></div>
                         }
 
-                        @if (Model.CurrentStep < 4)
+                        @if (Model.CurrentStep < 5)
                         {
                             <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 196, 37, 42; --bs-link-hover-color-rgb: 166, 30, 35;"
                                href="javascript:void(0)" onclick="goToStep(@Model.CurrentStep + 1)">
@@ -567,14 +606,12 @@
 @section Scripts {
     <script>
         function goToStep(step) {
-            if (step > 0 && step < 5) {
+            if (step > 0 && step <= 5) {
                 const currentStep = @Model.CurrentStep;
                 const action = step > currentStep ? "continue" : "back";
 
-                if (action === "continue" && !validateCurrentStep(currentStep)) {
-                    return;
-                }
-
+                // Validation is handled server-side per step; just submit and let
+                // the server advance or re-render the step with error messages.
                 let actionInput = document.getElementById('formAction');
                 if (!actionInput) {
                     actionInput = document.createElement('input');
@@ -585,7 +622,6 @@
                 }
                 actionInput.value = action;
 
-                document.getElementById('CurrentStep').value = step;
                 document.getElementById('ticketForm').submit();
             }
         }
@@ -594,18 +630,9 @@
             let isValid = true;
 
             if (step === 2) {
-                // Company/Department only required for Complaints
-                const checkedKind = document.querySelector('input[name="Kind"]:checked');
-                const isComplaint = !checkedKind || checkedKind.value === 'Complaint';
                 const fields = [
                     { id: 'Description', errorId: 'descriptionError', message: 'Description is required' }
                 ];
-                if (isComplaint) {
-                    fields.push(
-                        { id: 'ConcerningCompanyId', errorId: 'companyError', message: 'Company is required' },
-                        { id: 'ConcerningDepartmentId', errorId: 'departmentError', message: 'Department is required' }
-                    );
-                }
 
                 fields.forEach(function (field) {
                     const input = document.getElementById(field.id);

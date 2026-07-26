@@ -8,7 +8,7 @@ namespace ShareIT.Models.ViewModel
 
         [Required(ErrorMessage = "نوع الشكوى مطلوب")]
         [Display(Name = "نوع الشكوى")]
-        public int TicketTypeId { get; set; }
+        public int CategoryId { get; set; }
 
         [Display(Name = "النوع الفرعي")]
         public int? ComSubTypeId { get; set; }

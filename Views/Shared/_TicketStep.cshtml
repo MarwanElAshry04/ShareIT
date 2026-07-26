@@ -12,38 +12,6 @@
         </div>
     </div>
 
-    <!-- Submission Kind -->
-    <div class="card mb-4 border-danger">
-        <div class="card-header bg-danger text-white">
-            <h6 class="mb-0"><i class="fas fa-tags me-2"></i> What would you like to submit?</h6>
-        </div>
-        <div class="card-body">
-            <div class="row g-3" role="radiogroup" aria-label="Submission kind">
-                @{
-                    var kinds = new[]
-                    {
-                        (Value: ShareIT.Models.TicketKind.Complaint,  Icon: "fa-triangle-exclamation", Label: "Complaint",  Blurb: "Report a concern, violation, or misconduct."),
-                        (Value: ShareIT.Models.TicketKind.Suggestion,  Icon: "fa-lightbulb",           Label: "Suggestion", Blurb: "Propose an improvement or new idea."),
-                        (Value: ShareIT.Models.TicketKind.Feedback,    Icon: "fa-comment-dots",        Label: "Feedback",   Blurb: "Share general feedback or a comment.")
-                    };
-                }
-                @foreach (var k in kinds)
-                {
-                    <div class="col-md-4">
-                        <input type="radio" class="btn-check" name="Kind" id="kind-@k.Value"
-                               value="@k.Value" autocomplete="off"
-                               @(Model.Kind == k.Value ? "checked" : "") />
-                        <label class="btn btn-outline-danger w-100 h-100 text-start p-3" for="kind-@k.Value" style="color:#111;">
-                            <span class="d-block fw-bold mb-1 text-dark"><i class="fas @k.Icon me-2"></i>@k.Label</span>
-                            <small class="text-secondary">@k.Blurb</small>
-                        </label>
-                    </div>
-                }
-            </div>
-            <span asp-validation-for="Kind" class="text-danger small"></span>
-        </div>
-    </div>
-
     <!-- Ticket Description -->
     <div class="card mb-4 border-danger">
         <div class="card-header bg-danger text-white">
@@ -232,23 +200,4 @@
             subTypeSelect.innerHTML = '<option value="">-- Select main type first --</option>';
         }
     });
-
-    // "Concerning" company/department are only required for Complaints.
-    // Toggle the required asterisks live as the user picks a Kind.
-    (function () {
-        const kindRadios = document.querySelectorAll('input[name="Kind"]');
-        const stars = document.querySelectorAll('.concerning-star');
-
-        function selectedKind() {
-            const checked = document.querySelector('input[name="Kind"]:checked');
-            return checked ? checked.value : 'Complaint';
-        }
-        function applyKindRequirement() {
-            const isComplaint = selectedKind() === 'Complaint';
-            stars.forEach(s => s.style.display = isComplaint ? '' : 'none');
-        }
-
-        kindRadios.forEach(r => r.addEventListener('change', applyKindRequirement));
-        applyKindRequirement();
-    })();
 </script>

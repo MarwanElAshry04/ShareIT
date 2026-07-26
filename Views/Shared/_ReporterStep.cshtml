@@ -369,6 +369,9 @@
     }
     
     function selectEmployment(isEmployee) {
+        // Actually check the (hidden) radio so IsEmployee posts correctly.
+        document.getElementById('employeeYes').checked = isEmployee;
+        document.getElementById('employeeNo').checked = !isEmployee;
         if (isEmployee) {
             document.getElementById('employeeForm').classList.remove('d-none');
             document.getElementById('nonEmployeeForm').classList.add('d-none');

@@ -46,7 +46,7 @@ namespace ShareIT.Controllers
                 RefNo = GenerateRefNo(),
                 Companies = await _context.Companies.ToListAsync(),
                 Departments = await _context.Departments.ToListAsync(),
-                TicketTypes = await _context.TicketTypes.ToListAsync(),
+                Categories = await _context.Categories.ToListAsync(),
                 Relations = await GetRelationsAsync(), // Add this line
                 CurrentStep = 1
             };
@@ -73,18 +73,38 @@ namespace ShareIT.Controllers
         {
             model.Companies = await _context.Companies.ToListAsync();
             model.Departments = await _context.Departments.ToListAsync();
-            model.TicketTypes = await _context.TicketTypes.ToListAsync();
+            model.Categories = await _context.Categories.ToListAsync();
             model.Relations = await GetRelationsAsync(); // Add this line
         }
         [HttpPost]
         public async Task<IActionResult> New(NewTicketViewModel model)
         {
+            // The controller UPDATES CurrentStep/UploadedFilePaths below. Remove the
+            // stale POSTed values from ModelState so the hidden <input asp-for="..."/>
+            // fields re-render with the NEW values instead of the old posted ones.
+            // (asp-for reads ModelState over the model after a POST.)
+            ModelState.Remove(nameof(model.CurrentStep));
+            ModelState.Remove(nameof(model.UploadedFilePaths));
+
+            // Going "Back" never validates — just step back one.
+            var navForm = await Request.ReadFormAsync();
+            if (navForm["action"].ToString() == "back")
+            {
+                if (model.CurrentStep > 1) model.CurrentStep--;
+                await LoadLookupData(model);
+                return View(model);
+            }
+
             if (model.CurrentStep == 1)
             {
                 // Step 1: Reporter Data Validation
                 if (model.ReporterType == "Disclose")
                 {
-                    if (model.IsEmployee == "Yes")
+                    if (string.IsNullOrEmpty(model.IsEmployee))
+                    {
+                        ModelState.AddModelError("IsEmployee", "Please select your employment status");
+                    }
+                    else if (model.IsEmployee == "Yes")
                     {
                         
                         if (string.IsNullOrEmpty(model.EmpNum))
@@ -122,27 +142,23 @@ namespace ShareIT.Controllers
             }
             else if (model.CurrentStep == 2)
             {
-                // Step 2: Ticket Data Validation
-                //if (model.TicketTypeId == 0)
-                //    ModelState.AddModelError("TicketTypeId", "Ticket type is required");
+                // Step 2: Choose Type — TicketType always has a value, so just advance.
+                model.CurrentStep = 3;
+            }
+            else if (model.CurrentStep == 3)
+            {
+                // Step 3: Details validation (Title + Description required for every type).
+                if (string.IsNullOrEmpty(model.Title))
+                    ModelState.AddModelError("Title", "Title is required");
                 if (string.IsNullOrEmpty(model.Description))
                     ModelState.AddModelError("Description", "Description is required");
-                // "Concerning" party is only required for Complaints; suggestions
-                // and feedback are not filed against a company or department.
-                if (model.Kind == TicketKind.Complaint)
-                {
-                    if (model.ConcerningCompanyId == 0)
-                        ModelState.AddModelError("ConcerningCompanyId", "Company is required");
-                    if (model.ConcerningDepartmentId == 0)
-                        ModelState.AddModelError("ConcerningDepartmentId", "Department is required");
-                }
 
                 if (ModelState.IsValid)
                 {
-                    model.CurrentStep = 3;
+                    model.CurrentStep = 4;
                 }
             }
-            else if (model.CurrentStep == 3)
+            else if (model.CurrentStep == 4)
             {
                 var form = await Request.ReadFormAsync();
                 var action = form["action"].ToString();
@@ -190,7 +206,7 @@ namespace ShareIT.Controllers
                     {
                         // Store saved paths — join with pipe separator
                         model.UploadedFilePaths = string.Join("|", savedPaths);
-                        model.CurrentStep = 4;
+                        model.CurrentStep = 5;
                     }
                 }
                 else if (action == "back")
@@ -198,7 +214,7 @@ namespace ShareIT.Controllers
                     model.CurrentStep = 2;
                 }
             }
-            else if (model.CurrentStep == 4)
+            else if (model.CurrentStep == 5)
             {
                 bool hasErrors = false;
 
@@ -293,7 +309,7 @@ namespace ShareIT.Controllers
             [HttpGet]
             public async Task<JsonResult> GetSubTypes(int typeId)
             {
-                // This would query your SubTicketTypes table
+                // This would query your SubCategories table
                 var subTypes = new List<LookupItem>
             {
                 new LookupItem { Id = 1, Name = "Sub Type 1" },
@@ -421,8 +437,9 @@ namespace ShareIT.Controllers
                     var ticket = new Ticket
                     {
                         RefNo = model.RefNo,
-                        Kind = model.Kind,
-                        TicketTypeId = model.TicketTypeId,
+                        Title = model.Title,
+                        TicketType = model.TicketType,
+                        CategoryId = model.CategoryId,
                         ReporterId = reporter.Id,
                         Status = "Initiate",
                         Desc = model.Description,
@@ -438,7 +455,30 @@ namespace ShareIT.Controllers
                     _context.Tickets.Add(ticket);
                     await _context.SaveChangesAsync();
 
-                    // Update Reporter with Ticket Id
+                    // Save the detail row for the chosen type (System Request has none).
+                    switch (model.TicketType)
+                    {
+                        case TicketType.Issue:
+                            model.Issue.TicketId = ticket.Id;
+                            _context.IssueDetails.Add(model.Issue);
+                            break;
+                        case TicketType.Idea:
+                            model.Idea.TicketId = ticket.Id;
+                            _context.IdeaDetails.Add(model.Idea);
+                            break;
+                        case TicketType.ProjectProposal:
+                            model.ProjectProposal.TicketId = ticket.Id;
+                            _context.ProjectProposalDetails.Add(model.ProjectProposal);
+                            break;
+                        case TicketType.SafetyConcern:
+                            model.Safety.TicketId = ticket.Id;
+                            _context.SafetyDetails.Add(model.Safety);
+                            break;
+                        case TicketType.Feedback:
+                            model.Feedback.TicketId = ticket.Id;
+                            _context.FeedbackDetails.Add(model.Feedback);
+                            break;
+                    }
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
@@ -466,7 +506,7 @@ namespace ShareIT.Controllers
                 {
                     var subject = $"New Ticket with ref. {model.RefNo}";
                     var body = $"Dear,<br/>Kindly be informed that a new ticket has been inserted.<br/>" +
-                              $"Ticket concerning: {model.ConcerningCompanyId} in the category of {model.TicketTypeId}<br/>" +
+                              $"Ticket concerning: {model.ConcerningCompanyId} in the category of {model.CategoryId}<br/>" +
                               $"{(model.ReporterType == "Anonymous" ? "Note: User is Anonymous<br/>" : "")}" +
                               $"Thanks";
 
@@ -497,7 +537,7 @@ namespace ShareIT.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var ticket = await _context.Tickets
-                .Include(c => c.TicketType)
+                .Include(c => c.Category)
                 .Include(c => c.Reporter)
                 .Include(c => c.TicketChats)
                 .Include(c => c.TicketAttachments)
@@ -561,7 +601,7 @@ namespace ShareIT.Controllers
                 }
 
                 // تجهيز بيانات الـ dropdowns
-                ViewBag.TicketTypes = await _context.TicketTypes
+                ViewBag.Categories = await _context.Categories
                     .ToListAsync();
                 ViewBag.Companies = await _context.Companies
                     .ToListAsync();
@@ -587,7 +627,7 @@ namespace ShareIT.Controllers
                 // التحقق من صحة النموذج
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.TicketTypes = await _context.TicketTypes
+                    ViewBag.Categories = await _context.Categories
                        
                         .ToListAsync();
                     ViewBag.Companies = await _context.Companies
@@ -639,7 +679,7 @@ namespace ShareIT.Controllers
                     var ticket = new Ticket
                     {
                         RefNo = refNo,
-                        TicketTypeId = model.TicketTypeId,
+                        CategoryId = model.CategoryId,
                         ReporterId = reporter.Id,       // ✅ reporter.Id now exists
                         Status = "Initiate",
                         Desc = model.Desc ?? model.EmailBody,
@@ -758,7 +798,7 @@ namespace ShareIT.Controllers
             }
 
             // في حالة الخطأ، أعد تحميل الصفحة
-            ViewBag.TicketTypes = await _context.TicketTypes
+            ViewBag.Categories = await _context.Categories
                 .ToListAsync();
             ViewBag.Companies = await _context.Companies
                 .ToListAsync();
@@ -826,7 +866,7 @@ namespace ShareIT.Controllers
             <p><strong>Reference No:</strong> {ticket.RefNo}</p>
             <p><strong>Sender:</strong> {reporter.name} ({reporter.email1})</p>
             <p><strong>Date:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</p>
-            <p><strong>Type:</strong> {ticket.TicketType?.ComplainType}</p>
+            <p><strong>Type:</strong> {ticket.Category?.ComplainType}</p>
             <p><strong>Description:</strong> {ticket.Desc}</p>
             <p><a href='https://compliance.elsewedy.com/FollowTicket/Index/{ticket.Id}'>View Ticket</a></p>
         ";
