@@ -25,7 +25,6 @@
 
         // Lookup data
         public List<string> Statuses { get; set; } = new();  // Changed from List<TicketStatus>
-        public List<Category> Categories { get; set; } = new();
         public List<string> Priorities { get; set; } = new();
         public List<string> ReporterTypes { get; set; } = new();
         public List<string> AssignedDepartments { get; set; } = new();

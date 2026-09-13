@@ -46,7 +46,6 @@ namespace ShareIT.Controllers
                 RefNo = GenerateRefNo(),
                 Companies = await _context.Companies.ToListAsync(),
                 Departments = await _context.Departments.ToListAsync(),
-                Categories = await _context.Categories.ToListAsync(),
                 Relations = await GetRelationsAsync(), // Add this line
                 CurrentStep = 1
             };
@@ -73,8 +72,7 @@ namespace ShareIT.Controllers
         {
             model.Companies = await _context.Companies.ToListAsync();
             model.Departments = await _context.Departments.ToListAsync();
-            model.Categories = await _context.Categories.ToListAsync();
-            model.Relations = await GetRelationsAsync(); // Add this line
+            model.Relations = await GetRelationsAsync();
         }
         [HttpPost]
         public async Task<IActionResult> New(NewTicketViewModel model)
@@ -251,7 +249,10 @@ namespace ShareIT.Controllers
                     // ✅ await so ticket is Ticket not Task<Ticket>
                     var ticket = await SaveTicket(model);
 
-                    // Move temp files
+                    // Move temp files into the ticket's permanent folder AND register each
+                    // as an Attachment row. The admin panel and the reporter's tracking view
+                    // both render attachments from the Attachments table (compId == ticket.Id),
+                    // so without these rows the uploaded files exist on disk but show nowhere.
                     if (!string.IsNullOrEmpty(model.UploadedFilePaths))
                     {
                         var paths = model.UploadedFilePaths.Split('|', StringSplitOptions.RemoveEmptyEntries);
@@ -269,8 +270,18 @@ namespace ShareIT.Controllers
                                 var fileName = Path.GetFileName(tempFull);
                                 var finalPath = Path.Combine(finalFolder, fileName);
                                 System.IO.File.Move(tempFull, finalPath, overwrite: true);
+
+                                _context.Attachments.Add(new Attachment
+                                {
+                                    compId = ticket.Id,
+                                    filePath = $"/CompFiles/{model.RefNo}/{fileName}",
+                                    attachmentType = "Reporter",
+                                    CreatedOn = DateTime.Now,
+                                    CreatedBy = ticket.CreatedBy ?? "Reporter"
+                                });
                             }
                         }
+                        await _context.SaveChangesAsync();
                     }
 
                     await SendEmailNotification(model);
@@ -439,7 +450,6 @@ namespace ShareIT.Controllers
                         RefNo = model.RefNo,
                         Title = model.Title,
                         TicketType = model.TicketType,
-                        CategoryId = model.CategoryId,
                         ReporterId = reporter.Id,
                         Status = "Initiate",
                         Desc = model.Description,
@@ -506,7 +516,7 @@ namespace ShareIT.Controllers
                 {
                     var subject = $"New Ticket with ref. {model.RefNo}";
                     var body = $"Dear,<br/>Kindly be informed that a new ticket has been inserted.<br/>" +
-                              $"Ticket concerning: {model.ConcerningCompanyId} in the category of {model.CategoryId}<br/>" +
+                              $"Ticket concerning: {model.ConcerningCompanyId} of type {model.TicketType.GetDisplayName()}<br/>" +
                               $"{(model.ReporterType == "Anonymous" ? "Note: User is Anonymous<br/>" : "")}" +
                               $"Thanks";
 
@@ -537,7 +547,6 @@ namespace ShareIT.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var ticket = await _context.Tickets
-                .Include(c => c.Category)
                 .Include(c => c.Reporter)
                 .Include(c => c.TicketChats)
                 .Include(c => c.TicketAttachments)
@@ -601,8 +610,6 @@ namespace ShareIT.Controllers
                 }
 
                 // تجهيز بيانات الـ dropdowns
-                ViewBag.Categories = await _context.Categories
-                    .ToListAsync();
                 ViewBag.Companies = await _context.Companies
                     .ToListAsync();
                 ViewBag.Departments = await _context.Departments
@@ -627,9 +634,6 @@ namespace ShareIT.Controllers
                 // التحقق من صحة النموذج
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.Categories = await _context.Categories
-                       
-                        .ToListAsync();
                     ViewBag.Companies = await _context.Companies
                         .ToListAsync();
                     ViewBag.Departments = await _context.Departments
@@ -679,7 +683,7 @@ namespace ShareIT.Controllers
                     var ticket = new Ticket
                     {
                         RefNo = refNo,
-                        CategoryId = model.CategoryId,
+                        TicketType = model.TicketType,
                         ReporterId = reporter.Id,       // ✅ reporter.Id now exists
                         Status = "Initiate",
                         Desc = model.Desc ?? model.EmailBody,
@@ -798,8 +802,6 @@ namespace ShareIT.Controllers
             }
 
             // في حالة الخطأ، أعد تحميل الصفحة
-            ViewBag.Categories = await _context.Categories
-                .ToListAsync();
             ViewBag.Companies = await _context.Companies
                 .ToListAsync();
             ViewBag.Departments = await _context.Departments
@@ -866,7 +868,7 @@ namespace ShareIT.Controllers
             <p><strong>Reference No:</strong> {ticket.RefNo}</p>
             <p><strong>Sender:</strong> {reporter.name} ({reporter.email1})</p>
             <p><strong>Date:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</p>
-            <p><strong>Type:</strong> {ticket.Category?.ComplainType}</p>
+            <p><strong>Type:</strong> {ticket.TicketType.GetDisplayName()}</p>
             <p><strong>Description:</strong> {ticket.Desc}</p>
             <p><a href='https://compliance.elsewedy.com/FollowTicket/Index/{ticket.Id}'>View Ticket</a></p>
         ";

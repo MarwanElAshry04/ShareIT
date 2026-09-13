@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ShareIT.Models.ViewModel.UserGuideViewModel
+
+@{
     ViewData["Title"] = "User Guide - ELSEWEDY ELECTRIC";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -54,7 +56,7 @@
         .section-header i {
             font-size: 28px;
             color: #c4252a;
-            margin-right: 15px;
+            margin-inline-end: 15px;
             background: rgba(196, 37, 42, 0.1);
             width: 50px;
             height: 50px;
@@ -303,7 +305,7 @@
         }
 
             .section-header i {
-                margin-right: 0;
+                margin-inline-end: 0;
             }
 
         .guide-steps {
@@ -341,289 +343,94 @@
         <div class="page-header">
             <h1>
                 <i class="fas fa-graduation-cap me-2"></i>
-                User Guide
+                @L["User Guide"]
             </h1>
             <p>
-                Welcome to the ELSEWEDY ELECTRIC Compliance Portal User Guide. 
-                Here you'll find tutorials and resources to help you navigate our compliance system effectively.
+                Welcome to the ELSEWEDY ELECTRIC Reporting Portal User Guide. 
+                Here you'll find tutorials and resources to help you navigate our reporting system effectively.
             </p>
             <div class="quick-guide">
-                <h3>Quick Start Guide</h3>
+                <h3>@L["Quick Start Guide"]</h3>
                 <div class="guide-steps">
                   
                     <div class="step-item">
                         <i class="fas fa-file-upload"></i>
-                        <h4>Step 1: Report</h4>
-                        <p>Submit your compliance concern</p>
+                        <h4>@L["Step 1: Report"]</h4>
+                        <p>@L["Submit your compliance concern"]</p>
                     </div>
                     <div class="step-item">
                         <i class="fas fa-search"></i>
-                        <h4>Step 2: Track</h4>
-                        <p>Monitor your case status</p>
+                        <h4>@L["Step 2: Track"]</h4>
+                        <p>@L["Monitor your case status"]</p>
                     </div>
                     <div class="step-item">
                         <i class="fas fa-comments"></i>
-                        <h4>Step 3: Communicate</h4>
-                        <p>Chat with compliance team</p>
+                        <h4>@L["Step 3: Communicate"]</h4>
+                        <p>@L["Chat with compliance team"]</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- File New Case Section -->
-        <div class="guide-section">
-            <div class="section-header">
-                <i class="fas fa-plus-circle"></i>
-                <h2>How to File a New Case</h2>
-            </div>
-            
-            <div class="tutorial-grid">
-                <!-- Tutorial 1: File New Case -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>File New Case</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/ComSWD/ComSWD.png" alt="File New Case Tutorial" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Learn how to submit a new compliance concern through our secure system. Step-by-step guide for reporting.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="file-new-case">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
+        @foreach (var guideSection in Model.Sections)
+        {
+            <div class="guide-section">
+                <div class="section-header">
+                    <i class="@guideSection.IconClass"></i>
+                    <h2>@guideSection.Heading</h2>
                 </div>
-                
-                <!-- Tutorial 2: Document Upload -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>Document Upload</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/images/tutorials/document-upload.jpg" alt="Document Upload Tutorial" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            How to securely upload supporting documents and evidence for your case.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="document-upload">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tutorial 3: Confidential Reporting -->
-                <div class="tutorial-card">
-                    <span class="badge-new">New</span>
-                    <div class="card-header">
-                        <h3>Confidential Reporting</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/images/tutorials/confidential.jpg" alt="Confidential Reporting" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Understanding how our confidential reporting system protects your identity.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="confidential-reporting">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <hr class="hr-divider" />
+                @if (!guideSection.Videos.Any())
+                {
+                    <p class="tutorial-description">@L["No tutorials in this section yet."]</p>
+                }
+                else
+                {
+                    <div class="tutorial-grid">
+                        @foreach (var video in guideSection.Videos)
+                        {
+                            <div class="tutorial-card">
+                                <div class="card-header">
+                                    <h3>@video.Title</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="video-play-overlay">
+                                        <img src="@(string.IsNullOrEmpty(video.ThumbnailPath) ? "/images/tutorials/placeholder.svg" : video.ThumbnailPath)"
+                                             alt="@video.Title" class="tutorial-image" />
+                                    </div>
+                                    <p class="tutorial-description">@video.Description</p>
+                                    <div class="tutorial-action">
+                                        <a href="#" class="btn-tutorial" data-video-path="@video.VideoPath">
+                                            <i class="fas fa-play-circle"></i> @L["Watch Tutorial"]
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
 
-        <!-- Track Case Section -->
-        <div class="guide-section">
-            <div class="section-header">
-                <i class="fas fa-search"></i>
-                <h2>How to Track Your Case</h2>
-            </div>
-            
-            <div class="tutorial-grid">
-                <!-- Tutorial 1: Track Case -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>Track Your Case</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/TracCase/TracCase.png" alt="Track Case Tutorial" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Learn how to check the status of your submitted ticket using your reference number.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="track-case">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tutorial 2: Chat with Team -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>Chat with Compliance Team</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/images/tutorials/chat-system.jpg" alt="Chat System Tutorial" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            How to communicate with our compliance team through the secure chat system.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="chat-system">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tutorial 3: Case Updates -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>Receive Case Updates</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/images/tutorials/updates.jpg" alt="Case Updates Tutorial" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Setting up notifications and understanding case status updates.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="case-updates">
-                                <i class="fas fa-play-circle"></i> Watch Tutorial
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="hr-divider" />
-
-        <!-- ShareIT Videos Section -->
-        <div class="guide-section">
-            <div class="section-header">
-                <i class="fas fa-video"></i>
-                <h2>ShareIT Videos</h2>
-            </div>
-            
-            <div class="tutorial-grid">
-                <!-- Video 1 -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>ShareIT - Video 1</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/WB/whBlo.png" alt="ShareIT Video 1" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Introduction to our ShareIT program and commitment to ethical business practices.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="shareit-1">
-                                <i class="fas fa-play-circle"></i> Watch Video
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Video 2 -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>ShareIT - Video 2</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/WB/whBlo.png" alt="ShareIT Video 2" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Understanding the importance of reporting and how it helps maintain integrity.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="shareit-2">
-                                <i class="fas fa-play-circle"></i> Watch Video
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Video 3 -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>ShareIT - Video 3</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/WB/whBlo.png" alt="ShareIT Video 3" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Employee responsibilities and ethical decision-making in the workplace.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="shareit-3">
-                                <i class="fas fa-play-circle"></i> Watch Video
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Video 4 -->
-                <div class="tutorial-card">
-                    <div class="card-header">
-                        <h3>ShareIT - Video 4</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="video-play-overlay">
-                            <img src="~/Video/WB/whBlo.png" alt="ShareIT Video 4" class="tutorial-image" />
-                        </div>
-                        <p class="tutorial-description">
-                            Success stories and the positive impact of ethical reporting.
-                        </p>
-                        <div class="tutorial-action">
-                            <a href="#" class="btn-tutorial" data-video="shareit-4">
-                                <i class="fas fa-play-circle"></i> Watch Video
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <hr class="hr-divider" />
+        }
 
         <!-- FAQ Section -->
         <div class="guide-section">
             <div class="quick-guide">
                 <h3>
                     <i class="fas fa-question-circle me-2"></i>
-                    Frequently Asked Questions
+                    @L["Frequently Asked Questions"]
                 </h3>
                 <div class="accordion" id="faqAccordion">
                     <!-- FAQ 1 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq1">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                How long does it take to process a ticket?
+                                @L["How long does it take to process a ticket?"]
                             </button>
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Most tickets are acknowledged within 24 hours and undergo initial review within 3-5 business days. Complex cases may take longer.
-                            </div>
+                            <div class="accordion-body">@L["Most tickets are acknowledged within 24 hours and undergo initial review within 3-5 business days. Complex cases may take longer."]</div>
                         </div>
                     </div>
                     
@@ -631,13 +438,11 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq2">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                Is my report confidential?
+                                @L["Is my report confidential?"]
                             </button>
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Yes, all reports are handled with strict confidentiality. Your identity is protected according to our privacy policy.
-                            </div>
+                            <div class="accordion-body">@L["Yes, all reports are handled with strict confidentiality. Your identity is protected according to our privacy policy."]</div>
                         </div>
                     </div>
                     
@@ -645,13 +450,11 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="faq3">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-                                Can I submit a report anonymously?
+                                @L["Can I submit a report anonymously?"]
                             </button>
                         </h2>
                         <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Yes, you can choose to submit an anonymous report. However, providing contact information helps us follow up for additional details if needed.
-                            </div>
+                            <div class="accordion-body">@L["Yes, you can choose to submit an anonymous report. However, providing contact information helps us follow up for additional details if needed."]</div>
                         </div>
                     </div>
                 </div>
@@ -665,14 +468,14 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="videoModalTitle">Tutorial Video</h5>
+                <h5 class="modal-title" id="videoModalTitle">@L["Tutorial Video"]</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="ratio ratio-16x9">
                     <video id="tutorialVideo" controls>
                         <source src="" type="video/mp4">
-                        Your browser does not support the video tag.
+                        @L["Your browser does not support the video tag."]
                     </video>
                 </div>
             </div>
@@ -692,33 +495,22 @@
             const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
             const tutorialVideo = document.getElementById('tutorialVideo');
             
-            // Map video names to actual video files
-            const videoFiles = {
-                'file-new-case': '/videos/file-new-case.mp4',
-                'document-upload': '/videos/document-upload.mp4',
-                'confidential-reporting': '/videos/confidential.mp4',
-                'track-case': '/videos/track-case.mp4',
-                'chat-system': '/videos/chat-system.mp4',
-                'case-updates': '/videos/case-updates.mp4',
-                'shareit-1': '/videos/shareit-1.mp4',
-                'shareit-2': '/videos/shareit-2.mp4',
-                'shareit-3': '/videos/shareit-3.mp4',
-                'shareit-4': '/videos/shareit-4.mp4'
-            };
-            
-            // Handle tutorial button clicks
+            // Handle tutorial button clicks — each card carries its own video path
             $('.btn-tutorial').click(function (e) {
                 e.preventDefault();
-                const videoName = $(this).data('video');
-                const videoPath = videoFiles[videoName] || '/videos/default.mp4';
-                
+
+                const videoPath = $(this).data('video-path');
+                if (!videoPath) {
+                    return;
+                }
+
                 // Update video source
                 tutorialVideo.src = videoPath;
                 tutorialVideo.load();
-                
+
                 // Update modal title
                 $('#videoModalTitle').text($(this).closest('.tutorial-card').find('.card-header h3').text());
-                
+
                 // Show modal
                 videoModal.show();
             });

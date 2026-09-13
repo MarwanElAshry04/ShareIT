@@ -40,7 +40,7 @@ function printPage(refNo) {
             <body>
                 <div class="print-header">
                     <h2>ELSEWEDY ELECTRIC</h2>
-                    <h3>Compliance Report Summary</h3>
+                    <h3>Report Summary</h3>
                     <div class="ref-number">Reference: ${refNo}</div>
                     <p>Generated on: ${new Date().toLocaleString()}</p>
                 </div>

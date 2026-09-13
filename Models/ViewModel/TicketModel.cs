@@ -73,11 +73,6 @@ namespace ShareIT.Models.ViewModel
         public SafetyDetail Safety { get; set; } = new();
         public FeedbackDetail Feedback { get; set; } = new();
 
-        [Display(Name = "Ticket Type")]
-        public int? CategoryId { get; set; }
-
-        
-
         // Not [Required] here — the controller validates it at step 3 only.
         // (A [Required]/non-nullable field would make the whole model invalid on
         //  every earlier step and block the wizard from advancing.)
@@ -125,9 +120,7 @@ namespace ShareIT.Models.ViewModel
 
         public List<Company>? Companies { get; set; }
         public List<Department>? Departments { get; set; }
-        public List<Category>? Categories { get; set; }
         public List<LookupItem>? Relations { get; set; }
-        public List<LookupItem>? SubCategories { get; set; }
 
         // Current step tracking
         public int CurrentStep { get; set; } = 1; // 1=Reporter, 2=Ticket, 3=Attachments, 4=Review

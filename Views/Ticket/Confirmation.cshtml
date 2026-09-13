@@ -22,47 +22,47 @@
                             </div>
                         </div>
 
-                        <h2 class="fw-bold text-dark mb-2">Ticket Submitted Successfully</h2>
+                        <h2 class="fw-bold text-dark mb-2">@L["Ticket Submitted Successfully"]</h2>
                         <p class="text-muted mb-4">
-                            Your ticket has been received and is now under review by our Compliance team.
+                            @L["Your ticket has been received and is now under review by our Compliance team."]
                         </p>
 
                         <!-- Reference Number Box -->
                         <div class="ref-box mb-4">
-                            <div class="ref-label">YOUR CASE REFERENCE NUMBER</div>
+                            <div class="ref-label">@L["YOUR CASE REFERENCE NUMBER"]</div>
                             <div class="ref-number" id="refNumber">@refNo</div>
                             <button class="btn btn-sm btn-outline-danger mt-3" onclick="copyRef()">
-                                <i class="fas fa-copy me-1"></i> Copy Reference Number
+                                <i class="fas fa-copy me-1"></i> @L["Copy Reference Number"]
                             </button>
                             <div id="copyFeedback" class="copy-feedback d-none">
-                                <i class="fas fa-check-circle me-1"></i> Copied!
+                                <i class="fas fa-check-circle me-1"></i> @L["Copied!"]
                             </div>
                         </div>
 
                         <!-- What happens next -->
                         <div class="next-steps text-start mb-4">
                             <h6 class="fw-bold text-dark mb-3">
-                                <i class="fas fa-list-ol me-2 text-danger"></i>What Happens Next
+                                <i class="fas fa-list-ol me-2 text-danger"></i>@L["What Happens Next"]
                             </h6>
                             <div class="next-step-item">
                                 <div class="step-dot bg-danger">1</div>
                                 <div>
-                                    <strong>Case Assigned</strong>
-                                    <p class="text-muted mb-0">Your ticket will be assigned to a compliance Team.</p>
+                                    <strong>@L["Case Assigned"]</strong>
+                                    <p class="text-muted mb-0">@L["Your ticket will be assigned to a compliance Team."]</p>
                                 </div>
                             </div>
                             <div class="next-step-item">
                                 <div class="step-dot bg-dark">2</div>
                                 <div>
-                                    <strong>Investigation</strong>
-                                    <p class="text-muted mb-0">Our team will review all details and conduct a thorough investigation.</p>
+                                    <strong>@L["Investigation"]</strong>
+                                    <p class="text-muted mb-0">@L["Our team will review all details and conduct a thorough investigation."]</p>
                                 </div>
                             </div>
                             <div class="next-step-item">
                                 <div class="step-dot bg-danger">3</div>
                                 <div>
-                                    <strong>Resolution</strong>
-                                    <p class="text-muted mb-0">You will be notified of the outcome using your reference number and password.</p>
+                                    <strong>@L["Resolution"]</strong>
+                                    <p class="text-muted mb-0">@L["You will be notified of the outcome using your reference number and password."]</p>
                                 </div>
                             </div>
                         </div>
@@ -70,20 +70,19 @@
                         <!-- Important reminder -->
                         <div class="alert alert-warning border-danger text-start mb-4">
                             <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                            <strong>Important:</strong> Save your reference number and the password you created.
-                            You will need both to track your case status.
+                            <strong>@L["Important:"]</strong> @L["Save your reference number and the password you created. You will need both to track your case status."]
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="d-grid gap-2">
                             <a href="/Search?refNo=@refNo" class="btn btn-danger btn-lg">
-                                <i class="fas fa-search me-2"></i> Track My Case
+                                <i class="fas fa-search me-2"></i> @L["Track My Case"]
                             </a>
                             <a href="/Ticket/New" class="btn btn-outline-dark">
-                                <i class="fas fa-plus me-2"></i> Submit Another Ticket
+                                <i class="fas fa-plus me-2"></i> @L["Submit Another Ticket"]
                             </a>
                            @*  <button class="btn btn-outline-secondary" onclick="window.print()">
-                                <i class="fas fa-print me-2"></i> Print This Page
+                                <i class="fas fa-print me-2"></i> @L["Print This Page"]
                             </button> *@
                         </div>
                     </div>
@@ -95,7 +94,7 @@
                             <span class="text-white-50">|</span>
                             <small class="text-white-50">
                                 <i class="fas fa-shield-alt me-1"></i>
-                                All reports are handled with strict confidentiality
+                                @L["All reports are handled with strict confidentiality"]
                             </small>
                         </div>
                     </div>

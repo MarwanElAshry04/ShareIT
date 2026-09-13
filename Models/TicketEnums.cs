@@ -1,6 +1,16 @@
-﻿namespace ShareIT.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShareIT.Models
 {
-    public enum TicketType { Issue, Idea, ProjectProposal, SafetyConcern, Feedback, SystemRequest }
+    public enum TicketType
+    {
+        Issue,
+        Idea,
+        [Display(Name = "Project Proposal")] ProjectProposal,
+        [Display(Name = "Safety Concern")] SafetyConcern,
+        Feedback,
+        [Display(Name = "System Request")] SystemRequest
+    }
     // Issue
     public enum IssueImpactArea { Production, Quality, SLA, Cost, Delivery }
     public enum SolutionCategory { Operational, People, Process, Material, Equipment }

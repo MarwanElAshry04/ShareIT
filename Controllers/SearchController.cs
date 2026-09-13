@@ -46,7 +46,6 @@ namespace ShareIT.Controllers
 
             var ticket = await _context.Tickets
                 .Include(c => c.Reporter)
-                .Include(c => c.Category)
                 .Include(c => c.TicketChats)
                 .Include(c => c.TicketAttachments)
                 .FirstOrDefaultAsync(c => c.RefNo == model.TicketRef

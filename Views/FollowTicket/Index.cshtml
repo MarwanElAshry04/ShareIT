@@ -714,12 +714,11 @@
                         <div class="info-label">Case Type:</div>
                         <div class="info-value">
                             <select name="ticketTypeId" class="form-select form-select-sm">
-                                <option value="">-- Select Type --</option>
-                                @foreach (var type in ViewBag.Categories as List<Category> ?? new List<Category>())
+                                @foreach (var type in Enum.GetValues<TicketType>())
                                 {
-                                    <option value="@type.Id"
-                                            selected="@(ticket.CategoryId == type.Id)">
-                                        @type.ComplainType
+                                    <option value="@((int)type)"
+                                            selected="@(ticket.TicketType == type)">
+                                        @type.GetDisplayName()
                                     </option>
                                 }
                             </select>
@@ -902,14 +901,17 @@
             </form>
 
             @{
-                var audioFiles = Model.Attachments?.Where(a =>
-                a.filePath != null && (
-                a.filePath.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ||
-                a.filePath.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))).ToList();
-                var docFiles = Model.Attachments?.Where(a =>
-                a.filePath != null &&
-                !a.filePath.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) &&
-                !a.filePath.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase)).ToList();
+                var audioExtensions = new[] { ".wav", ".mp3", ".webm", ".ogg", ".m4a" };
+                Func<string, bool> isAudio = p => p != null &&
+                    audioExtensions.Any(ext => p.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+                Func<string, string> audioMime = p =>
+                    p.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ? "audio/wav" :
+                    p.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase) ? "audio/ogg" :
+                    p.EndsWith(".webm", StringComparison.OrdinalIgnoreCase) ? "audio/webm" :
+                    p.EndsWith(".m4a", StringComparison.OrdinalIgnoreCase) ? "audio/mp4" :
+                    "audio/mpeg";
+                var audioFiles = Model.Attachments?.Where(a => isAudio(a.filePath)).ToList();
+                var docFiles = Model.Attachments?.Where(a => a.filePath != null && !isAudio(a.filePath)).ToList();
             }
 
             <!-- Audio Files -->
@@ -929,7 +931,7 @@
                             <div class="file-info">
                             
                                 <audio controls>
-                                    <source src="@file.filePath" type="audio/mpeg">
+                                    <source src="@file.filePath" type="@audioMime(file.filePath)">
                                 </audio>
                             </div>
                             <div class="file-actions">

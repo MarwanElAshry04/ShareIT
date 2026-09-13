@@ -55,7 +55,6 @@ namespace ShareIT.Controllers
                 // Base query with includes
                 var query = _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Include(c => c.TicketChats)
                         .OrderByDescending(c => c.CreatedOn)
                     .AsQueryable();
@@ -193,7 +192,6 @@ namespace ShareIT.Controllers
                     TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
 
                     // Get lookup data for filters
-                    Categories = await _context.Categories.ToListAsync(),
                     AssignedDepartments = assignedDepartments ?? new List<string>(),
                     Priorities = new List<string> { "High", "Medium", "Low" },
                     ReporterTypes = new List<string> { "All", "Disclosed", "Anonymous" }
@@ -222,7 +220,6 @@ namespace ShareIT.Controllers
 
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Where(c => c.forwarding == userDepartment || c.UpdatedBy == currentUser)
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -245,7 +242,6 @@ namespace ShareIT.Controllers
             {
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Where(c => c.Status == "Initiate") // Open status
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -268,7 +264,6 @@ namespace ShareIT.Controllers
             {
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Where(c =>c.Status != "Closed")
                     .OrderByDescending(c => c.CreatedOn)
                     .ToListAsync();
@@ -292,7 +287,6 @@ namespace ShareIT.Controllers
                 var today = DateTime.Today;
                 var tickets = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Where(c => c.Status == "Closed" && c.closureDate.HasValue && c.closureDate.Value.Date == today)
                     .OrderByDescending(c => c.closureDate)
                     .ToListAsync();
@@ -314,7 +308,6 @@ namespace ShareIT.Controllers
             {
                 var query = _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(searchTerm))
@@ -338,7 +331,7 @@ namespace ShareIT.Controllers
                 foreach (var c in tickets)
                 {
                     var reporterName = c.Reporter?.reporterType == "Anonymous" ? "Anonymous" : c.Reporter?.name ?? "N/A";
-                    sb.AppendLine($"\"{c.RefNo}\",\"{c.CreatedOn:dd/MM/yyyy}\",\"{c.Category?.ComplainType}\",\"{c.Status}\",\"{reporterName}\",\"{c.ConcerningCompany}\",\"{c.ConcerningDepartment}\",\"{c.forwarding}\",\"{c.Desc?.Replace("\"", "\"\"")}\"");
+                    sb.AppendLine($"\"{c.RefNo}\",\"{c.CreatedOn:dd/MM/yyyy}\",\"{c.TicketType.GetDisplayName()}\",\"{c.Status}\",\"{reporterName}\",\"{c.ConcerningCompany}\",\"{c.ConcerningDepartment}\",\"{c.forwarding}\",\"{c.Desc?.Replace("\"", "\"\"")}\"");
                 }
 
                 var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
@@ -415,19 +408,17 @@ namespace ShareIT.Controllers
 
         private async Task<List<ChartData>> GetTypeDistribution()
         {
-            var distribution = await _context.Tickets
-                .Include(c => c.Category)
-                .GroupBy(c => c.Category!.ComplainType)
-                .Select(g => new ChartData
-                {
-                    Label = g.Key ?? "Unknown",
-                    Value = g.Count()
-                })
+            var grouped = await _context.Tickets
+                .GroupBy(c => c.TicketType)
+                .Select(g => new { Type = g.Key, Value = g.Count() })
                 .OrderByDescending(d => d.Value)
                 .Take(5)
                 .ToListAsync();
 
-            return distribution;
+            // Map enum -> friendly label in memory (GetDisplayName can't be translated to SQL).
+            return grouped
+                .Select(g => new ChartData { Label = g.Type.GetDisplayName(), Value = g.Value })
+                .ToList();
         }
 
         private async Task SendCommentNotificationEmail(Ticket ticket, string comment)
@@ -454,7 +445,7 @@ namespace ShareIT.Controllers
                     <div>
                         <h3>Dear User,</h3>
                         <p>You have received a new comment from Compliance Admin regarding your ticket <strong>{ticket.RefNo}</strong></p>
-                        <p>Please check the Compliance System for details.</p>
+                        <p>Please check the Reporting System for details.</p>
                         <hr />
                         <p><small>This is an automated message, please do not reply.</small></p>
                     </div>";
@@ -542,7 +533,7 @@ namespace ShareIT.Controllers
                         <div>
                             <h3>Dear User,</h3>
                             <p>Your ticket <strong>{ticket.RefNo}</strong> is now under investigation by <strong>{departmentName}</strong>.</p>
-                            <p>Please check the Compliance System for updates.</p>
+                            <p>Please check the Reporting System for updates.</p>
                             <hr />
                             <p><small>This is an automated message.</small></p>
                         </div>";
@@ -578,13 +569,13 @@ namespace ShareIT.Controllers
 
                 // Build description of what changed
                 var changes = new List<string>();
-                if (ticket.CategoryId != ticketTypeId) changes.Add("Ticket Type");
+                if ((int)ticket.TicketType != ticketTypeId) changes.Add("Ticket Type");
                 if (ticket.ConcerningCompany != concerningCompany) changes.Add("Concerning Company");
                 if (ticket.ConcerningDepartment != concerningDepartment) changes.Add("Concerning Department");
                 if (ticket.ConcerningPerson != concerningPerson) changes.Add("Concerning Person");
                 if (ticket.ConcerningOther != concerningOther) changes.Add("Concerning Other");
 
-                ticket.CategoryId = ticketTypeId;
+                ticket.TicketType = (TicketType)ticketTypeId;
                 ticket.ConcerningCompany = concerningCompany;
                 ticket.ConcerningDepartment = concerningDepartment;
                 ticket.ConcerningPerson = concerningPerson;
@@ -622,7 +613,6 @@ namespace ShareIT.Controllers
             {
                 var ticket = await _context.Tickets
                     .Include(c => c.Reporter)
-                    .Include(c => c.Category)
                     .Include(c => c.TicketChats)
                     .Include(c => c.TicketAttachments)
                     .FirstOrDefaultAsync(c => c.Id == id);
@@ -634,7 +624,6 @@ namespace ShareIT.Controllers
                 }
 
                 // ✅ Add this line
-                ViewBag.Categories = await _context.Categories.ToListAsync();
                 ViewBag.Company = await _context.Companies.ToListAsync();
                 ViewBag.Department = await _context.Departments.ToListAsync();
 

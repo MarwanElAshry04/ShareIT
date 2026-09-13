@@ -29,7 +29,6 @@ namespace ShareIT.Data
         public DbSet<Chats> Chats { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Recording> Recordings { get; set; }

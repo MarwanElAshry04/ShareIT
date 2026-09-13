@@ -6,8 +6,8 @@
         <div class="d-flex align-items-center">
             <i class="fas fa-user-secret fa-2x text-danger me-3"></i>
             <div>
-                <h6 class="mb-1">Anonymous Voice Recording</h6>
-                <p class="mb-0 text-muted">Your voice will be slightly deepened to protect your identity while keeping your message clear.</p>
+                <h6 class="mb-1">@L["Anonymous Voice Recording"]</h6>
+                <p class="mb-0 text-muted">@L["Your voice will be slightly deepened to protect your identity while keeping your message clear."]</p>
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@
     <!-- File Upload -->
     <div class="card mb-4 border-danger">
         <div class="card-header bg-danger text-white">
-            <h6 class="mb-0"><i class="fas fa-file-upload me-2"></i> Document Upload</h6>
+            <h6 class="mb-0"><i class="fas fa-file-upload me-2"></i> @L["Document Upload"]</h6>
         </div>
         <div class="card-body">
             <div class="file-upload-container mb-4">
@@ -24,7 +24,7 @@
                         <div class="col-md-6">
                             <div class="info-card bg-light p-3 border-start border-3 border-danger">
                                 <i class="fas fa-file-alt text-danger me-2"></i>
-                                <strong>Allowed Types:</strong>
+                                <strong>@L["Allowed Types:"]</strong>
                                 <div class="mt-1">
                                     <span class="badge bg-dark me-1 mb-1">DOCX</span>
                                     <span class="badge bg-dark me-1 mb-1">PDF</span>
@@ -41,9 +41,9 @@
                         <div class="col-md-6">
                             <div class="info-card bg-light p-3 border-start border-3 border-danger">
                                 <i class="fas fa-weight-hanging text-danger me-2"></i>
-                                <strong>Size Limit:</strong>
+                                <strong>@L["Size Limit:"]</strong>
                                 <div class="mt-1">
-                                    <span class="badge bg-danger">10 MB per file</span>
+                                    <span class="badge bg-danger">@L["10 MB per file"]</span>
                                 </div>
                             </div>
                         </div>
@@ -54,20 +54,20 @@
                 <div class="drop-zone" id="dropZone">
                     <div class="drop-content">
                         <i class="fas fa-cloud-upload-alt fa-3x text-danger mb-3"></i>
-                        <h4>Drag & Drop Files Here</h4>
-                        <p class="text-muted">or click to browse</p>
+                        <h4>@L["Drag & Drop Files Here"]</h4>
+                        <p class="text-muted">@L["or click to browse"]</p>
                         <input type="file" asp-for="Files" multiple class="d-none" id="fileInput" accept=".docx,.pdf,.doc,.wav,.mp3,.webm,.jpg,.jpeg,.png,.msg">
                         <button type="button" class="btn btn-danger mt-2" onclick="document.getElementById('fileInput').click()">
-                            <i class="fas fa-folder-open me-2"></i> Select Files
+                            <i class="fas fa-folder-open me-2"></i> @L["Select Files"]
                         </button>
                     </div>
                 </div>
 
                 <!-- Selected Files -->
                 <div id="fileList" class="mt-4">
-                    <h6 class="mb-3 text-dark"><i class="fas fa-list me-2"></i>Selected Files</h6>
+                    <h6 class="mb-3 text-dark"><i class="fas fa-list me-2"></i>@L["Selected Files"]</h6>
                     <div id="filesContainer" class="border rounded p-3 bg-light">
-                        <p class="text-muted mb-0 text-center" id="noFilesMessage">No files selected</p>
+                        <p class="text-muted mb-0 text-center" id="noFilesMessage">@L["No files selected"]</p>
                     </div>
                 </div>
             </div>
@@ -77,24 +77,24 @@
     <!-- Audio Recording with Voice Anonymization -->
     <div class="card mb-4 border-dark">
         <div class="card-header bg-dark text-white">
-            <h6 class="mb-0"><i class="fas fa-microphone me-2"></i> Anonymous Voice Recording</h6>
+            <h6 class="mb-0"><i class="fas fa-microphone me-2"></i> @L["Anonymous Voice Recording"]</h6>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="recorder-container p-4 border rounded bg-light">
                         <div class="recorder-header mb-4">
-                            <h6 class="text-dark"><i class="fas fa-headphones me-2 text-danger"></i>Record Anonymous Statement</h6>
-                            <p class="text-muted mb-0">Record a statement explaining the incident (max 1 minute) - Voice will be slightly deepened for privacy</p>
+                            <h6 class="text-dark"><i class="fas fa-headphones me-2 text-danger"></i>@L["Record Anonymous Statement"]</h6>
+                            <p class="text-muted mb-0">@L["Record a statement explaining the incident (max 1 minute) - Voice will be slightly deepened for privacy"]</p>
                         </div>
 
                         <!-- Voice Anonymization Toggle -->
-                        <div class="anonymization-toggle mb-4 p-3 rounded" style="background: linear-gradient(135deg, #e8f0fe, #d4e4f7); border-left: 4px solid #c4252a;">
+                        <div class="anonymization-toggle mb-4 p-3 rounded" style="background: linear-gradient(135deg, #e8f0fe, #d4e4f7); border-inline-start: 4px solid #c4252a;">
                             <div class="form-check form-switch d-flex align-items-center justify-content-between">
                                 <div>
                                     <i class="fas fa-user-secret fa-lg text-danger me-2"></i>
-                                    <strong class="text-dark">Protect My Identity</strong>
-                                    <p class="small text-muted mb-0 mt-1">Your voice will be slightly deepened - Clear and easy to understand</p>
+                                    <strong class="text-dark">@L["Protect My Identity"]</strong>
+                                    <p class="small text-muted mb-0 mt-1">@L["Your voice will be slightly deepened - Clear and easy to understand"]</p>
                                 </div>
                                 <input class="form-check-input" type="checkbox" id="voiceAnonymizerToggle" style="width: 3em; height: 1.5em;" checked>
                             </div>
@@ -103,10 +103,10 @@
                         <div class="recorder-controls">
                             <div class="d-flex gap-3 mb-4">
                                 <button type="button" id="recordButton" class="btn btn-danger btn-lg">
-                                    <i class="fas fa-microphone me-2"></i> Start Recording
+                                    <i class="fas fa-microphone me-2"></i> @L["Start Recording"]
                                 </button>
                                 <button type="button" id="stopButton" class="btn btn-dark btn-lg" disabled>
-                                    <i class="fas fa-stop me-2"></i> Stop
+                                    <i class="fas fa-stop me-2"></i> @L["Stop"]
                                 </button>
                             </div>
 
@@ -117,7 +117,7 @@
                                             <span class="recording-dot"></span>
                                         </div>
                                         <div>
-                                            <strong><i class="fas fa-broadcast-tower me-2"></i>Recording in progress...</strong>
+                                            <strong><i class="fas fa-broadcast-tower me-2"></i>@L["Recording in progress..."]</strong>
                                             <div class="small mt-1" id="recordingTimer">00:00</div>
                                         </div>
                                     </div>
@@ -126,9 +126,9 @@
                         </div>
 
                         <div id="recordingsList" class="mt-4">
-                            <h6 class="text-dark mb-3"><i class="fas fa-history me-2"></i>Recorded Files</h6>
+                            <h6 class="text-dark mb-3"><i class="fas fa-history me-2"></i>@L["Recorded Files"]</h6>
                             <div id="recordingsContainer" class="border rounded p-3">
-                                <p class="text-muted mb-0 text-center">No recordings yet</p>
+                                <p class="text-muted mb-0 text-center">@L["No recordings yet"]</p>
                             </div>
                         </div>
                     </div>
@@ -136,48 +136,48 @@
 
                 <div class="col-lg-4">
                     <div class="instructions-card p-4 border rounded text-white" style="background:var(--dark-gray)">
-                        <h5 class="mb-3"><i class="fas fa-shield-alt me-2"></i>Privacy + Clarity</h5>
+                        <h5 class="mb-3"><i class="fas fa-shield-alt me-2"></i>@L["Privacy + Clarity"]</h5>
                         <div class="mb-4">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-check-circle text-success me-2"></i>
-                                <strong>Identity Protected</strong>
+                                <strong>@L["Identity Protected"]</strong>
                             </div>
-                            <p class="small text-white-50">Voice is slightly deepened for anonymity</p>
+                            <p class="small text-white-50">@L["Voice is slightly deepened for anonymity"]</p>
                         </div>
                         <div class="mb-4">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-volume-up text-info me-2"></i>
-                                <strong>Crystal Clear Audio</strong>
+                                <strong>@L["Crystal Clear Audio"]</strong>
                             </div>
-                            <p class="small text-white-50">No noise, no distortion - Just clear speech</p>
+                            <p class="small text-white-50">@L["No noise, no distortion - Just clear speech"]</p>
                         </div>
                         <div class="mb-3">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-lock text-warning me-2"></i>
-                                <strong>100% Anonymous</strong>
+                                <strong>@L["100% Anonymous"]</strong>
                             </div>
-                            <p class="small text-white-50">Your identity remains protected</p>
+                            <p class="small text-white-50">@L["Your identity remains protected"]</p>
                         </div>
                         <hr class="border-secondary">
                         <div class="instruction-step mt-3">
                             <div class="step-number">1</div>
                             <div class="step-content">
-                                <strong>Enable Voice Protection</strong>
-                                <p class="small mb-0">Toggle is ON by default</p>
+                                <strong>@L["Enable Voice Protection"]</strong>
+                                <p class="small mb-0">@L["Toggle is ON by default"]</p>
                             </div>
                         </div>
                         <div class="instruction-step mt-3">
                             <div class="step-number">2</div>
                             <div class="step-content">
-                                <strong>Press Start Recording</strong>
-                                <p class="small mb-0">Speak normally into your microphone</p>
+                                <strong>@L["Press Start Recording"]</strong>
+                                <p class="small mb-0">@L["Speak normally into your microphone"]</p>
                             </div>
                         </div>
                         <div class="instruction-step mt-3">
                             <div class="step-number">3</div>
                             <div class="step-content">
-                                <strong>Press Stop when done</strong>
-                                <p class="small mb-0">Your clear recording will be saved</p>
+                                <strong>@L["Press Stop when done"]</strong>
+                                <p class="small mb-0">@L["Your clear recording will be saved"]</p>
                             </div>
                         </div>
                     </div>
@@ -253,7 +253,7 @@
         background-color: #c4252a;
         border-radius: 50%;
         animation: pulse 1.5s infinite;
-        margin-right: 8px;
+        margin-inline-end: 8px;
     }
 
     @@keyframes pulse {
@@ -277,7 +277,7 @@
     }
 
     .instructions-card {
-        border-left: 4px solid #c4252a;
+        border-inline-start: 4px solid #c4252a;
         height: 100%;
     }
 
@@ -641,7 +641,7 @@
                             <div class="fw-bold text-dark">${audioName}</div>
                             <div class="small text-muted">
                                 ${formatFileSize(audioBlob.size)} &bull; ${Math.floor(seconds)} seconds &bull;
-                                <span class="text-danger"><i class="fas fa-shield-alt me-1"></i>Voice Anonymous</span>
+                                <span class="text-danger"><i class="fas fa-shield-alt me-1"></i>@L["Voice Anonymous"]</span>
                             </div>
                         </div>
                     </div>
@@ -777,7 +777,7 @@
         if (totalSize > 10485760) {
             showNotification('Total file size exceeds 10MB limit', 'error');
             fileInput.value = '';
-            filesContainer.innerHTML = '<p class="text-muted mb-0 text-center">No files selected</p>';
+            filesContainer.innerHTML = '<p class="text-muted mb-0 text-center">@L["No files selected"]</p>';
         }
     }
 

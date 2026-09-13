@@ -104,7 +104,11 @@ namespace ShareIT.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/Home/Dashboard");
+            // Track whether the caller asked for a specific destination. If they did,
+            // it wins — an admin sent here from a protected page goes back to that page,
+            // not to the dashboard.
+            var hasExplicitReturnUrl = !string.IsNullOrEmpty(returnUrl);
+            returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -116,6 +120,15 @@ namespace ShareIT.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Admins land in the admin panel dashboard; everyone else goes
+                    // to the public site. Dashboard is [Authorize(Roles=Admin,SuperAdmin)],
+                    // so sending non-admins there would just bounce them to access-denied.
+                    if (!hasExplicitReturnUrl && await IsAdminAsync(Input.Email))
+                    {
+                        return LocalRedirect(Url.Content("~/Home/Dashboard"));
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -136,6 +149,24 @@ namespace ShareIT.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        /// <summary>
+        /// True when the signing-in account is an Admin or SuperAdmin. Looks the user up by
+        /// name first (PasswordSignInAsync resolves by user name) and falls back to email.
+        /// </summary>
+        private async Task<bool> IsAdminAsync(string userNameOrEmail)
+        {
+            var user = await _signInManager.UserManager.FindByNameAsync(userNameOrEmail)
+                    ?? await _signInManager.UserManager.FindByEmailAsync(userNameOrEmail);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            return await _signInManager.UserManager.IsInRoleAsync(user, "Admin")
+                || await _signInManager.UserManager.IsInRoleAsync(user, "SuperAdmin");
         }
     }
 }

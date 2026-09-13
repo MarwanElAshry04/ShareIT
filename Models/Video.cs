@@ -10,10 +10,24 @@ namespace ShareIT.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Section is required")]
-        [Display(Name = "Section/Category")]
-        [StringLength(100, ErrorMessage = "Section name cannot exceed 100 characters")]
-        public string Section { get; set; }
+        [Display(Name = "User Guide Section")]
+        public VideoSection Section { get; set; }
 
+        [Required(ErrorMessage = "Title is required")]
+        [Display(Name = "Title")]
+        [StringLength(120)]
+        public string Title { get; set; }                  
+
+        [Display(Name = "Description")]
+        [StringLength(400)]
+        public string? Description { get; set; }           
+
+        [Display(Name = "Thumbnail Image")]
+        public string? ThumbnailPath { get; set; }         
+
+        [NotMapped]
+        [Display(Name = "Thumbnail Image")]
+        public IFormFile? ThumbnailFile { get; set; }
         [Display(Name = "Video Path")]
         public string? VideoPath { get; set; }  // Fixed naming: vedPath -> VideoPath
 

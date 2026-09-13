@@ -6,8 +6,8 @@
         <div class="d-flex align-items-center">
             <i class="fas fa-clipboard-check fa-2x text-danger me-3"></i>
             <div>
-                <h6 class="mb-1">Final Review Before Submission</h6>
-                <p class="mb-0 text-muted">Please review all information carefully. Once submitted, changes cannot be made.</p>
+                <h6 class="mb-1">@L["Final Review Before Submission"]</h6>
+                <p class="mb-0 text-muted">@L["Please review all information carefully. Once submitted, changes cannot be made."]</p>
             </div>
         </div>
     </div>
@@ -20,22 +20,22 @@
             <!-- Reporter Summary -->
             <div class="card border-danger mb-4">
                 <div class="card-header bg-danger text-white">
-                    <h6 class="mb-0"><i class="fas fa-user me-2"></i> Reporter Information</h6>
+                    <h6 class="mb-0"><i class="fas fa-user me-2"></i> @L["Reporter Information"]</h6>
                 </div>
                 <div class="card-body">
                     <div class="summary-item mb-3">
-                        <div class="summary-label text-muted">Reporter Type</div>
+                        <div class="summary-label text-muted">@L["Reporter Type"]</div>
                         <div class="summary-value">
                             @if (Model.ReporterType == "Disclose")
                             {
                                 <span class="badge bg-danger">
-                                    <i class="fas fa-user-check me-1"></i> Disclosed Identity
+                                    <i class="fas fa-user-check me-1"></i> @L["Disclosed Identity"]
                                 </span>
                             }
                             else
                             {
                                 <span class="badge bg-dark">
-                                    <i class="fas fa-user-secret me-1"></i> Anonymous
+                                    <i class="fas fa-user-secret me-1"></i> @L["Anonymous"]
                                 </span>
                             }
                         </div>
@@ -46,7 +46,7 @@
                         if (Model.IsEmployee == "Yes")
                         {
                             <div class="summary-item mb-3">
-                                <div class="summary-label text-muted">Employee Details</div>
+                                <div class="summary-label text-muted">@L["Employee Details"]</div>
                                 <div class="summary-content">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="fas fa-id-card text-danger me-2"></i>
@@ -72,7 +72,7 @@
                         else
                         {
                             <div class="summary-item mb-3">
-                                <div class="summary-label text-muted">External Party Details</div>
+                                <div class="summary-label text-muted">@L["External Party Details"]</div>
                                 <div class="summary-content">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="fas fa-user text-danger me-2"></i>
@@ -100,7 +100,7 @@
                     {
                         <div class="text-center py-3">
                             <i class="fas fa-user-secret fa-3x text-dark mb-2"></i>
-                            <p class="text-muted mb-0">Anonymous Reporter</p>
+                            <p class="text-muted mb-0">@L["Anonymous Reporter"]</p>
                         </div>
                     }
                 </div>
@@ -109,18 +109,18 @@
             <!-- Case Tracking Password — inputs submit via the OUTER form in New.cshtml -->
             <div class="card border-dark">
                 <div class="card-header bg-dark text-white">
-                    <h6 class="mb-0"><i class="fas fa-lock me-2"></i> Case Tracking Password</h6>
+                    <h6 class="mb-0"><i class="fas fa-lock me-2"></i> @L["Case Tracking Password"]</h6>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-warning border-danger mb-3">
                         <i class="fas fa-key me-2"></i>
-                        <strong>Important:</strong> This password is required to track your case status.
+                        <strong>@L["Important:"]</strong> @L["This password is required to track your case status."]
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="Password" class="form-label">
-                                <i class="fas fa-key me-2 text-danger"></i>Password
+                                <i class="fas fa-key me-2 text-danger"></i>@L["Password"]
                             </label>
                             <span class="text-danger">*</span>
                             <input asp-for="Password" type="password" class="form-control" id="passwordInput" />
@@ -128,7 +128,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ConfirmPassword" class="form-label">
-                                <i class="fas fa-key me-2 text-danger"></i>Confirm Password
+                                <i class="fas fa-key me-2 text-danger"></i>@L["Confirm Password"]
                             </label>
                             <span class="text-danger">*</span>
                             <input asp-for="ConfirmPassword" type="password" class="form-control" />
@@ -137,12 +137,12 @@
                     </div>
 
                     <div class="password-requirements mt-3">
-                        <small class="text-muted d-block mb-2">Password must contain:</small>
+                        <small class="text-muted d-block mb-2">@L["Password must contain:"]</small>
                         <ul class="list-unstyled mb-0 small">
-                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>At least 8 characters</li>
-                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>One uppercase letter</li>
-                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>One number</li>
-                            <li><i class="fas fa-check-circle text-success me-2"></i>One special character</li>
+                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>@L["At least 8 characters"]</li>
+                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>@L["One uppercase letter"]</li>
+                            <li class="mb-1"><i class="fas fa-check-circle text-success me-2"></i>@L["One number"]</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>@L["One special character"]</li>
                         </ul>
                     </div>
                 </div>
@@ -154,11 +154,11 @@
             <!-- Ticket Summary -->
             <div class="card border-danger mb-4">
                 <div class="card-header bg-danger text-white">
-                    <h6 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i> Ticket Details</h6>
+                    <h6 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i> @L["Ticket Details"]</h6>
                 </div>
                 <div class="card-body">
                     <div class="summary-item mb-3">
-                        <div class="summary-label text-muted">Ticket Concerning</div>
+                        <div class="summary-label text-muted">@L["Ticket Concerning"]</div>
                         <div class="summary-content">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-building text-danger me-2"></i>
@@ -185,7 +185,7 @@
                     </div>
 
                     <div class="summary-item">
-                        <div class="summary-label text-muted">Description</div>
+                        <div class="summary-label text-muted">@L["Description"]</div>
                         <div class="summary-content">
                             <div class="description-review p-3 bg-light rounded">
                                 @if (!string.IsNullOrEmpty(Model.Description))
@@ -194,7 +194,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">No description provided</span>
+                                    <span class="text-muted">@L["No description provided"]</span>
                                 }
                             </div>
                         </div>
@@ -207,7 +207,7 @@
             {
                 <div class="card border-dark">
                     <div class="card-header bg-dark text-white">
-                        <h6 class="mb-0"><i class="fas fa-paperclip me-2"></i> Supporting Documents</h6>
+                        <h6 class="mb-0"><i class="fas fa-paperclip me-2"></i> @L["Supporting Documents"]</h6>
                     </div>
                     <div class="card-body">
                         <div class="attachments-list">
@@ -234,7 +234,7 @@
     <!-- Reference Number -->
     <div class="card border-danger">
         <div class="card-header bg-danger text-white">
-            <h6 class="mb-0"><i class="fas fa-hashtag me-2"></i> Your Case Reference</h6>
+            <h6 class="mb-0"><i class="fas fa-hashtag me-2"></i> @L["Your Case Reference"]</h6>
         </div>
         <div class="card-body">
             <div class="row align-items-center">
@@ -243,7 +243,7 @@
                         <h2 class="display-4 fw-bold text-danger mb-2">@Model.RefNo</h2>
                         <p class="text-muted mb-0">
                             <i class="fas fa-info-circle me-1"></i>
-                            Save this number along with your password to track your case status.
+                            @L["Save this number along with your password to track your case status."]
                         </p>
                     </div>
                 </div>
@@ -251,10 +251,10 @@
                     <div class="d-grid gap-2">
                         <button type="button" class="btn btn-dark"
                                 onclick="copyToClipboard('@Model.RefNo')">
-                            <i class="fas fa-copy me-2"></i> Copy Reference
+                            <i class="fas fa-copy me-2"></i> @L["Copy Reference"]
                         </button>
                         <button type="button" class="btn btn-outline-danger" onclick="printPage()">
-                            <i class="fas fa-print me-2"></i> Print Summary
+                            <i class="fas fa-print me-2"></i> @L["Print Summary"]
                         </button>
                     </div>
                 </div>
@@ -269,12 +269,12 @@
                 <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
             </div>
             <div class="flex-grow-1 ms-3">
-                <h5 class="alert-heading">Before You Submit</h5>
+                <h5 class="alert-heading">@L["Before You Submit"]</h5>
                 <ul class="mb-0">
-                    <li>All information provided is accurate to the best of your knowledge</li>
-                    <li>You understand that false reporting may have consequences</li>
-                    <li>You have saved your reference number and password</li>
-                    <li>You will receive confirmation once the ticket is processed</li>
+                    <li>@L["All information provided is accurate to the best of your knowledge"]</li>
+                    <li>@L["You understand that false reporting may have consequences"]</li>
+                    <li>@L["You have saved your reference number and password"]</li>
+                    <li>@L["You will receive confirmation once the ticket is processed"]</li>
                 </ul>
             </div>
         </div>
@@ -358,7 +358,7 @@
     
     @@media (min-width: 768px) {
         .ref-number-display {
-            text-align: left;
+            text-align: start;
         }
     }
     
@@ -382,8 +382,8 @@
 
 <!-- Update buttons to call correct functions -->
 <button type="button" class="btn btn-dark" onclick="copyRefNumber()">
-    <i class="fas fa-copy me-2"></i> Copy Reference
+    <i class="fas fa-copy me-2"></i> @L["Copy Reference"]
 </button>
 <button type="button" class="btn btn-outline-danger" onclick="printSummary()">
-    <i class="fas fa-print me-2"></i> Print Summary
+    <i class="fas fa-print me-2"></i> @L["Print Summary"]
 </button>

@@ -15,7 +15,10 @@ public class VideosController : Controller
     private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly string[] _allowedVideoExtensions = { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
+    private readonly string[] _allowedImageExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+
     private readonly long _maxFileSize = 500 * 1024 * 1024; // 500MB max file size
+    private readonly long _maxImageSize = 5 * 1024 * 1024;  // 5MB max thumbnail size
 
     public VideosController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
     {
@@ -24,28 +27,20 @@ public class VideosController : Controller
     }
 
     // GET: Videos
-    public async Task<IActionResult> Index(string searchString, string sectionFilter)
+    public async Task<IActionResult> Index(string searchString, VideoSection? sectionFilter)
     {
         var videos = from v in _context.Videos select v;
 
-        // Search by section or filename
         if (!String.IsNullOrEmpty(searchString))
         {
-            videos = videos.Where(s => s.Section.Contains(searchString) ||
-                                       s.FileName.Contains(searchString));
+            videos = videos.Where(v => v.Title.Contains(searchString) ||
+                                       v.FileName.Contains(searchString));
         }
 
-        // Filter by section
-        if (!String.IsNullOrEmpty(sectionFilter))
+        if (sectionFilter.HasValue)
         {
-            videos = videos.Where(s => s.Section == sectionFilter);
+            videos = videos.Where(v => v.Section == sectionFilter.Value);
         }
-
-        // Get distinct sections for filter dropdown
-        ViewBag.Sections = await _context.Videos
-            .Select(v => v.Section)
-            .Distinct()
-            .ToListAsync();
 
         ViewBag.CurrentFilter = searchString;
         ViewBag.CurrentSection = sectionFilter;
@@ -87,53 +82,46 @@ public class VideosController : Controller
         ModelState.Remove("FileSize");
         ModelState.Remove("Duration");
         ModelState.Remove("UploadDate");
+        ModelState.Remove("ThumbnailPath");
+        ModelState.Remove("ThumbnailFile");
 
         if (ModelState.IsValid)
         {
             if (video.VideoFile != null && video.VideoFile.Length > 0)
             {
-                // Validate file extension
-                var fileExtension = Path.GetExtension(video.VideoFile.FileName).ToLowerInvariant();
-                if (!_allowedVideoExtensions.Contains(fileExtension))
+                // Save the video file
+                var videoPath = await UploadFileAsync(
+                    video.VideoFile, "videos", _allowedVideoExtensions, _maxFileSize);
+
+                if (videoPath == null)
                 {
-                    ModelState.AddModelError("VideoFile", "Invalid file type. Please upload a video file.");
+                    ModelState.AddModelError("VideoFile",
+                        $"Invalid file type, or size exceeds {_maxFileSize / (1024 * 1024)}MB limit.");
                     return View(video);
                 }
 
-                // Validate file size
-                if (video.VideoFile.Length > _maxFileSize)
-                {
-                    ModelState.AddModelError("VideoFile", $"File size exceeds {_maxFileSize / (1024 * 1024)}MB limit.");
-                    return View(video);
-                }
-
-                // Create unique filename
-                string fileName = $"{Guid.NewGuid()}{fileExtension}";
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "videos");
-
-                // Create directory if it doesn't exist
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                string filePath = Path.Combine(uploadsFolder, fileName);
-
-                // Save file
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await video.VideoFile.CopyToAsync(fileStream);
-                }
-
-                // Set video properties
-                video.VideoPath = $"/uploads/videos/{fileName}";
-                video.FileType = fileExtension.Replace(".", "").ToUpper();
+                video.VideoPath = videoPath;
+                video.FileType = Path.GetExtension(video.VideoFile.FileName)
+                                     .TrimStart('.').ToUpperInvariant();
                 video.FileName = video.VideoFile.FileName;
                 video.FileSize = video.VideoFile.Length;
                 video.CreatedOn = DateTime.Now;
 
-                // You can add video duration here using a library like FFmpeg
-                // video.Duration = await GetVideoDuration(filePath);
+                // Save the thumbnail if one was provided (optional)
+                if (video.ThumbnailFile != null && video.ThumbnailFile.Length > 0)
+                {
+                    var thumbnailPath = await UploadFileAsync(
+                        video.ThumbnailFile, "thumbnails", _allowedImageExtensions, _maxImageSize);
+
+                    if (thumbnailPath == null)
+                    {
+                        ModelState.AddModelError("ThumbnailFile",
+                            "Thumbnail must be a JPG, PNG or WEBP under 5MB.");
+                        return View(video);
+                    }
+
+                    video.ThumbnailPath = thumbnailPath;
+                }
 
                 _context.Add(video);
                 await _context.SaveChangesAsync();
@@ -180,6 +168,31 @@ public class VideosController : Controller
             return $"{totalBytes} bytes";
         }
     }
+
+    /// Validates extension + size, saves under wwwroot/uploads/{folder},
+    /// returns the web path, or null if the file was rejected.
+    private async Task<string?> UploadFileAsync(
+        IFormFile file, string folder, string[] allowedExtensions, long maxBytes)
+    {
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(ext) || file.Length > maxBytes) return null;
+
+        var name = $"{Guid.NewGuid()}{ext}";
+        var dir = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", folder);
+        Directory.CreateDirectory(dir);
+
+        using var stream = new FileStream(Path.Combine(dir, name), FileMode.Create);
+        await file.CopyToAsync(stream);
+
+        return $"/uploads/{folder}/{name}";
+    }
+
+    private void DeleteFile(string? webPath)
+    {
+        if (string.IsNullOrEmpty(webPath)) return;
+        var full = Path.Combine(_webHostEnvironment.WebRootPath, webPath.TrimStart('/'));
+        if (System.IO.File.Exists(full)) System.IO.File.Delete(full);
+    }
     // GET: Videos/Details/5
     public async Task<IActionResult> Details(int? id)
     {
@@ -214,6 +227,83 @@ public class VideosController : Controller
         return View(video);
     }
 
+    // POST: Videos/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Video video)
+    {
+        if (id != video.Id)
+        {
+            return NotFound();
+        }
+
+        // These are never posted by the edit form
+        ModelState.Remove("VideoFile");
+        ModelState.Remove("ThumbnailFile");
+        ModelState.Remove("FileType");
+
+        if (!ModelState.IsValid)
+        {
+            return View(video);
+        }
+
+        // Load the tracked entity and copy onto it, so fields the form doesn't
+        // post (VideoPath, FileSize, CreatedOn) aren't blanked out.
+        var existing = await _context.Videos.FindAsync(id);
+        if (existing == null)
+        {
+            return NotFound();
+        }
+
+        existing.Section = video.Section;
+        existing.Title = video.Title;
+        existing.Description = video.Description;
+        existing.UpdatedOn = DateTime.Now;
+
+        // Optional replacement video
+        if (video.VideoFile != null && video.VideoFile.Length > 0)
+        {
+            var videoPath = await UploadFileAsync(
+                video.VideoFile, "videos", _allowedVideoExtensions, _maxFileSize);
+
+            if (videoPath == null)
+            {
+                ModelState.AddModelError("VideoFile",
+                    $"Invalid file type, or size exceeds {_maxFileSize / (1024 * 1024)}MB limit.");
+                return View(video);
+            }
+
+            DeleteFile(existing.VideoPath);
+            existing.VideoPath = videoPath;
+            existing.FileType = Path.GetExtension(video.VideoFile.FileName)
+                                    .TrimStart('.').ToUpperInvariant();
+            existing.FileName = video.VideoFile.FileName;
+            existing.FileSize = video.VideoFile.Length;
+        }
+
+        // Optional replacement thumbnail
+        if (video.ThumbnailFile != null && video.ThumbnailFile.Length > 0)
+        {
+            var thumbnailPath = await UploadFileAsync(
+                video.ThumbnailFile, "thumbnails", _allowedImageExtensions, _maxImageSize);
+
+            if (thumbnailPath == null)
+            {
+                ModelState.AddModelError("ThumbnailFile",
+                    "Thumbnail must be a JPG, PNG or WEBP under 5MB.");
+                return View(video);
+            }
+
+            DeleteFile(existing.ThumbnailPath);
+            existing.ThumbnailPath = thumbnailPath;
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Video updated successfully!";
+        return RedirectToAction(nameof(Index));
+    }
+
     // GET: Videos/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
@@ -239,21 +329,19 @@ public class VideosController : Controller
     {
         var video = await _context.Videos.FindAsync(id);
 
-        if (video != null && !string.IsNullOrEmpty(video.VideoPath))
+        if (video == null)
         {
-            // Delete physical file
-            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, video.VideoPath.TrimStart('/'));
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
-
-            _context.Videos.Remove(video);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Video deleted successfully!";
+            return RedirectToAction(nameof(Index));
         }
 
+        // Delete physical files (no-ops when the path is empty or missing)
+        DeleteFile(video.VideoPath);
+        DeleteFile(video.ThumbnailPath);
+
+        _context.Videos.Remove(video);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Video deleted successfully!";
         return RedirectToAction(nameof(Index));
     }
     // Rest of your controller methods (Edit, Delete, Details) remain the same

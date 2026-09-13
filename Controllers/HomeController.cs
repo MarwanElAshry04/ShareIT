@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using ShareIT;
 using ShareIT.Data;
 using ShareIT.Models;
 using ShareIT.Models.ViewModel;
@@ -12,12 +14,14 @@ namespace ShareIT.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context,
+            IStringLocalizer<SharedResource> localizer)
         {
             _logger = logger;
             _context = context;
-
+            _localizer = localizer;
         }
         // GET: Home page with documents
         public async Task<IActionResult> Index()
@@ -34,11 +38,10 @@ namespace ShareIT.Controllers
 
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Dashboard()
         {
             var tickets = await _context.Tickets
-                .Include(c => c.Category)
                 .ToListAsync();
 
             var model = new DashboardViewModel
@@ -111,9 +114,37 @@ namespace ShareIT.Controllers
             return View(document);
         }
 
-        public async Task<IActionResult> Guid() 
+        // GET: Public User Guide — tutorial videos grouped by section
+        public async Task<IActionResult> Guid()
         {
-            return View ();
+            var videos = await _context.Videos
+                .OrderBy(v => v.CreatedOn)
+                .ToListAsync();
+
+            var icons = new Dictionary<VideoSection, string>
+            {
+                [VideoSection.NewCase] = "fas fa-plus-circle",
+                [VideoSection.TrackCase] = "fas fa-search",
+                [VideoSection.ShareITVideos] = "fas fa-video"
+            };
+
+            // Built from the enum, not from the data, so the three headings always
+            // render in a fixed order even when a section has no videos.
+            var model = new UserGuideViewModel
+            {
+                Sections = Enum.GetValues<VideoSection>()
+                    .Select(s => new GuideSectionViewModel
+                    {
+                        Section = s,
+                        // Localized: the User Guide is employee-facing and in the ar scope.
+                        Heading = _localizer[s.GetDisplayName()],
+                        IconClass = icons[s],
+                        Videos = videos.Where(v => v.Section == s).ToList()
+                    })
+                    .ToList()
+            };
+
+            return View(model);
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

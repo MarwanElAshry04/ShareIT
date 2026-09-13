@@ -4,11 +4,11 @@
     ViewData["Title"] = "New Ticket - ELSEWEDY ELECTRIC";
     var steps = new List<(string Title, string Icon)>
     {
-        ("Reporter Data", "fas fa-user"),
-        ("Choose Type", "fas fa-tags"),
-        ("Details", "fas fa-file-alt"),
-        ("Attachments", "fas fa-paperclip"),
-        ("Review", "fas fa-check-circle")
+        (L["Reporter Data"].Value, "fas fa-user"),
+        (L["Choose Type"].Value, "fas fa-tags"),
+        (L["Details"].Value, "fas fa-file-alt"),
+        (L["Attachments"].Value, "fas fa-paperclip"),
+        (L["Review"].Value, "fas fa-check-circle")
     };
 }
 <!-- Add this to your head section -->
@@ -20,17 +20,17 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex align-items-center mb-3">
-                    <div class="logo-icon"style="margin-right:20px">
+                    <div class="logo-icon"style="margin-inline-end:20px">
                         <img src="~/ShareIt-logo.png"style="width:120px;" alt="Alternate Text" />
                     </div>
                 <div>
-                    <h1 class="h3 mb-0 fw-bold" style="color: #c4252a;">Compliance Reporting System</h1>
+                    <h1 class="h3 mb-0 fw-bold" style="color: #c4252a;">@L["Reporting System"]</h1>
                     <p class="text-muted mb-0">ELSEWEDY ELECTRIC</p>
                 </div>
             </div>
             <div class="alert alert-dark" role="alert">
                 <i class="fas fa-shield-alt me-2"></i>
-                <strong>Confidential & Secure:</strong> All reports are handled with strict confidentiality.
+                <strong>@L["Confidential & Secure:"]</strong> @L["All reports are handled with strict confidentiality."]
             </div>
         </div>
     </div>
@@ -72,15 +72,15 @@
                                 <div class="step-status">
                                     @if (isCompleted)
                                     {
-                                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>@L["Completed"]</span>
                                     }
                                     else if (isActive)
                                     {
-                                        <span class="text-danger">Current</span>
+                                        <span class="text-danger">@L["Current"]</span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">Pending</span>
+                                        <span class="text-muted">@L["Pending"]</span>
                                     }
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                 "Reporter Information")
                         </h4>
                         <span class="badge text-white">
-                            Step @Model.CurrentStep of 5
+                            @L["Step {0} of 5", Model.CurrentStep]
                         </span>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                         <div class="d-flex align-items-center">
                             <i class="fas fa-hashtag fs-4 text-danger me-3"></i>
                             <div>
-                                <small class="text-muted d-block">CASE REFERENCE</small>
+                                <small class="text-muted d-block">@L["CASE REFERENCE"]</small>
                                 <h5 class="mb-0 text-dark fw-bold">@Model.RefNo</h5>
                             </div>
                         </div>
@@ -232,7 +232,7 @@
                         {
                             <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 108, 117, 125; --bs-link-hover-color-rgb: 196, 37, 42;"
                                href="javascript:void(0)" onclick="goToStep(@Model.CurrentStep - 1)">
-                                <i class="fas fa-arrow-left me-2"></i> Back
+                                <i class="fas fa-arrow-left me-2"></i> @L["Back"]
                                
                             </a>
                         }
@@ -245,7 +245,7 @@
                         {
                             <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 196, 37, 42; --bs-link-hover-color-rgb: 166, 30, 35;"
                                href="javascript:void(0)" onclick="goToStep(@Model.CurrentStep + 1)">
-                                Continue @Model.CurrentStep
+                                @L["Continue"]
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                 </svg>
@@ -255,7 +255,7 @@
                         {
                             <a class="icon-link icon-link-hover" style="--bs-link-color-rgb: 25, 135, 84; --bs-link-hover-color-rgb: 20, 108, 67;"
                                href="javascript:void(0)" onclick="document.getElementById('ticketForm').submit()">
-                                <i class="fas fa-paper-plane me-2"></i> Submit Ticket @Model.CurrentStep
+                                <i class="fas fa-paper-plane me-2"></i> @L["Submit Ticket"]
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                 </svg>
@@ -529,7 +529,7 @@
 
         /* Submit link specific styling */
         .icon-link:nth-child(2) .fas.fa-paper-plane {
-            margin-right: 8px;
+            margin-inline-end: 8px;
         }
 
         .icon-link:nth-child(2):hover {

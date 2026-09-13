@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ShareIT.Models;
 
 namespace ShareIT.Models.ViewModel
 {
@@ -7,11 +8,7 @@ namespace ShareIT.Models.ViewModel
         public int TempEmailId { get; set; }
 
         [Display(Name = "Ticket Type")]
-        [Required(ErrorMessage = "Ticket type is required")]
-        public int CategoryId { get; set; }
-
-        [Display(Name = "Sub Type")]
-        public int? ComSubTypeId { get; set; }
+        public TicketType TicketType { get; set; } = TicketType.Issue;
 
         [Display(Name = "Concerning Company")]
         public string ConcerningCompany { get; set; }

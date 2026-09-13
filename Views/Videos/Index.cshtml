@@ -30,13 +30,20 @@
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                         <input type="text" name="searchString" class="form-control"
-                               value="@ViewBag.CurrentFilter" placeholder="Search by section or filename..." />
+                               value="@ViewBag.CurrentFilter" placeholder="Search by title or filename..." />
                     </div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Filter by Section</label>
-                    <select name="sectionFilter" class="form-select" asp-items="@(new SelectList(ViewBag.Sections, ViewBag.CurrentSection))">
+                    @{ var currentSection = ViewBag.CurrentSection as VideoSection?; }
+                    <select name="sectionFilter" class="form-select">
                         <option value="">All Sections</option>
+                        @foreach (var opt in Enum.GetValues<VideoSection>())
+                        {
+                            <option value="@((int)opt)" selected="@(currentSection == opt)">
+                                @opt.GetDisplayName()
+                            </option>
+                        }
                     </select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
@@ -121,6 +128,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Preview</th>
+                                <th>Title</th>
                                 <th>Section</th>
                                 <th>File Name</th>
                                 <th>File Type</th>
@@ -147,7 +155,17 @@
                                         }
                                     </td>
                                     <td>
-                                        <span class="badge bg-info">@item.Section</span>
+                                        @if (string.IsNullOrWhiteSpace(item.Title))
+                                        {
+                                            <span class="text-muted fst-italic">Untitled</span>
+                                        }
+                                        else
+                                        {
+                                            <strong>@item.Title</strong>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@item.Section.GetDisplayName()</span>
                                     </td>
                                     <td>
                                         <small title="@item.FileName">@(item.FileName?.Length > 30 ? item.FileName.Substring(0, 27) + "..." : item.FileName)</small>

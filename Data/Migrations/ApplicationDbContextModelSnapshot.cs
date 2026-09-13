@@ -193,47 +193,6 @@ namespace ShareIT.Data.Migrations
                     b.ToTable("Attachments");
                 });
 
-            modelBuilder.Entity("ShareIT.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ComplainType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ComplainType_ar")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("definition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("priority")
-                        .HasColumnType("float");
-
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("ShareIT.Models.Chats", b =>
                 {
                     b.Property<int>("Id")
@@ -729,9 +688,6 @@ namespace ShareIT.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcerningCompany")
                         .HasColumnType("nvarchar(max)");
 
@@ -806,8 +762,6 @@ namespace ShareIT.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ReporterId")
                         .IsUnique()
@@ -944,6 +898,10 @@ namespace ShareIT.Data.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
                     b.Property<string>("Duration")
                         .HasColumnType("nvarchar(max)");
 
@@ -957,10 +915,16 @@ namespace ShareIT.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Section")
+                    b.Property<int>("Section")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ThumbnailPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -1156,15 +1120,9 @@ namespace ShareIT.Data.Migrations
 
             modelBuilder.Entity("ShareIT.Models.Ticket", b =>
                 {
-                    b.HasOne("ShareIT.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
                     b.HasOne("ShareIT.Models.Reporter", "Reporter")
                         .WithOne("Ticket")
                         .HasForeignKey("ShareIT.Models.Ticket", "ReporterId");
-
-                    b.Navigation("Category");
 
                     b.Navigation("Reporter");
                 });

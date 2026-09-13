@@ -67,7 +67,7 @@
     }
 
     .input-with-icon {
-        padding-left: 45px;
+        padding-inline-start: 45px;
     }
 
     .btn-search {
@@ -102,7 +102,7 @@
 
     .alert-custom {
         border-radius: 10px;
-        border-left: 4px solid;
+        border-inline-start: 4px solid;
         padding: 15px;
         margin-bottom: 20px;
     }
@@ -339,7 +339,7 @@
     /* Timeline */
     .timeline-vertical {
         position: relative;
-        padding-left: 30px;
+        padding-inline-start: 30px;
     }
 
         .timeline-vertical::before {
@@ -514,7 +514,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 15px;
+        margin-inline-end: 15px;
         font-size: 18px;
     }
 
@@ -619,11 +619,11 @@
     }
 
     .message-user {
-        margin-left: auto;
+        margin-inline-start: auto;
     }
 
     .message-compliance {
-        margin-right: auto;
+        margin-inline-end: auto;
     }
 
     .message-content {
@@ -692,7 +692,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 10px;
+        margin-inline-end: 10px;
     }
 
     .attachment-info-chat {
@@ -889,7 +889,7 @@
 
     .security-note {
         background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        border-left: 4px solid var(--primary-red);
+        border-inline-start: 4px solid var(--primary-red);
         padding: 15px;
         border-radius: 8px;
         margin-top: 20px;
@@ -943,7 +943,7 @@
         }
 
         .timeline-vertical {
-            padding-left: 20px;
+            padding-inline-start: 20px;
         }
 
         .timeline-point {
@@ -974,8 +974,8 @@
                 <!-- Header -->
                 <div class="search-header text-center">
                     <img src="~/ShareIt-logo.png" alt="ELSEWEDY ELECTRIC" class="brand-logo" />
-                    <h2 class="h4 mb-2">Track Your Ticket</h2>
-                    <p class="mb-0 opacity-75">Enter your ticket reference and password to check status</p>
+                    <h2 class="h4 mb-2">@L["Track Your Ticket"]</h2>
+                    <p class="mb-0 opacity-75">@L["Enter your ticket reference and password to check status"]</p>
                 </div>
 
                 <!-- Search Form -->
@@ -1001,13 +1001,13 @@
                             <!-- Ticket Reference -->
                             <div class="col-12">
                                 <label asp-for="TicketRef" class="form-label fw-bold mb-2">
-                                    <i class="fas fa-hashtag text-danger me-2"></i>Ticket Reference Number
+                                    <i class="fas fa-hashtag text-danger me-2"></i>@L["Ticket Reference Number"]
                                 </label>
                                 <div class="input-group-custom">
                                     <i class="fas fa-file-invoice input-icon"></i>
                                     <input asp-for="TicketRef"
                                            class="form-control form-control-custom input-with-icon"
-                                           placeholder="Enter your ticket reference number"
+                                           placeholder="@L["Enter your ticket reference number"]"
                                            required />
                                 </div>
                                 <span asp-validation-for="TicketRef" class="text-danger small mt-1"></span>
@@ -1016,14 +1016,14 @@
                             <!-- Password -->
                             <div class="col-12">
                                 <label asp-for="Password" class="form-label fw-bold mb-2">
-                                    <i class="fas fa-key text-danger me-2"></i>Password
+                                    <i class="fas fa-key text-danger me-2"></i>@L["Password"]
                                 </label>
                                 <div class="input-group-custom">
                                     <i class="fas fa-lock input-icon"></i>
                                     <input asp-for="Password"
                                            type="password"
                                            class="form-control form-control-custom input-with-icon password-field"
-                                           placeholder="Enter your password"
+                                           placeholder="@L["Enter your password"]"
                                            required
                                            id="passwordInput" />
                                     <button type="button" class="password-toggle" id="togglePassword">
@@ -1041,7 +1041,7 @@
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="ticketRef" value="@Model.TicketRef" />
                                         <button type="submit" class="forgot-password-link">
-                                            <i class="fas fa-question-circle me-1"></i>Forgot your password?
+                                            <i class="fas fa-question-circle me-1"></i>@L["Forgot your password?"]
                                         </button>
                                     </form>
                                 </div>
@@ -1051,10 +1051,10 @@
                             <div class="col-12">
                                 <button type="submit" class="btn-search" id="searchButton">
                                     <span id="buttonText">
-                                        <i class="fas fa-search me-2"></i>Search Ticket
+                                        <i class="fas fa-search me-2"></i>@L["Search Ticket"]
                                     </span>
                                     <span id="loadingSpinner" class="d-none">
-                                        <span class="loading-spinner me-2"></span>Searching...
+                                        <span class="loading-spinner me-2"></span>@L["Searching..."]
                                     </span>
                                 </button>
                             </div>
@@ -1066,8 +1066,7 @@
                         <div class="d-flex align-items-center">
                             <i class="fas fa-shield-alt text-danger me-3"></i>
                             <div class="small">
-                                <strong>Security Notice:</strong> Your information is protected with 256-bit encryption.
-                                All data transmission is secure and confidential.
+                                <strong>@L["Security Notice:"]</strong> @L["Your information is protected with 256-bit encryption. All data transmission is secure and confidential."]
                             </div>
                         </div>
                     </div>
@@ -1090,7 +1089,7 @@
                                             <i class="fas fa-file-invoice"></i>
                                         </div>
                                         <div>
-                                            <h4 class="mb-1 fw-bold">Ticket Case Details</h4>
+                                            <h4 class="mb-1 fw-bold">@L["Ticket Case Details"]</h4>
                                             <p class="mb-0 small opacity-75">
                                                 <i class="fas fa-calendar-alt me-1"></i>
                                                 Created: @ticket.CreatedOn.ToString()
@@ -1098,7 +1097,7 @@
                                                 {
                                                     <span class="ms-3">
                                                         <i class="fas fa-clock me-1"></i>
-                                                        Updated: @ticket.UpdatedOn.Value.ToString()
+                                                        @L["Updated:"] @ticket.UpdatedOn.Value.ToString()
                                                     </span>
                                                 }
                                             </p>
@@ -1133,12 +1132,12 @@
                                         <i class="fas fa-hashtag me-2"></i>
                                         @ticket.RefNo
                                     </h2>
-                                    <small class="text-muted">Case Reference Number</small>
+                                    <small class="text-muted">@L["Case Reference Number"]</small>
                                 </div>
                                 <div class="col-md-4 text-md-end">
                                     <div class="case-info-box">
                                         <div class="case-info-item">
-                                            <span class="label">Case ID</span>
+                                            <span class="label">@L["Case ID"]</span>
                                             <span class="value">#@ticket.RefNo</span>
                                         </div>
                                       
@@ -1156,30 +1155,19 @@
                                     <div class="detail-card">
                                         <div class="detail-card-header">
                                             <i class="fas fa-info-circle me-2"></i>
-                                            Ticket Information
+                                            @L["Ticket Information"]
                                         </div>
                                         <div class="detail-card-body">
                                             <div class="detail-row">
-                                                <div class="detail-label">Ticket Type:</div>
+                                                <div class="detail-label">@L["Ticket Type:"]</div>
                                                 <div class="detail-value">
                                                     <i class="fas fa-folder text-danger me-1"></i>
-                                                    @ticket.Category?.ComplainType
+                                                    @ticket.TicketType.GetDisplayName()
                                                 </div>
                                             </div>
 
-                                            @if (ticket.Status!=null)
-                                            {
-                                                <div class="detail-row">
-                                                    <div class="detail-label">Sub Category:</div>
-                                                    <div class="detail-value">
-                                                        <i class="fas fa-layer-group text-danger me-1"></i>
-                                                        @ticket.Category?.ComplainType
-                                                    </div>
-                                                </div>
-                                            }
-
                                             <div class="detail-row">
-                                                <div class="detail-label">Language:</div>
+                                                <div class="detail-label">@L["Language:"]</div>
                                                 <div class="detail-value">
                                                     @if (ticket.langFlag == "E")
                                                     {
@@ -1205,13 +1193,13 @@
                                     <div class="detail-card">
                                         <div class="detail-card-header">
                                             <i class="fas fa-user-slash me-2"></i>
-                                            Ticket Concerning
+                                            @L["Ticket Concerning"]
                                         </div>
                                         <div class="detail-card-body">
                                             @if (!string.IsNullOrEmpty(ticket.ConcerningCompany))
                                             {
                                                 <div class="detail-row">
-                                                    <div class="detail-label">Company:</div>
+                                                    <div class="detail-label">@L["Company:"]</div>
                                                     <div class="detail-value">
                                                         <i class="fas fa-building text-danger me-1"></i>
                                                         @ticket.ConcerningCompany
@@ -1222,7 +1210,7 @@
                                             @if (!string.IsNullOrEmpty(ticket.ConcerningDepartment))
                                             {
                                                 <div class="detail-row">
-                                                    <div class="detail-label">Department:</div>
+                                                    <div class="detail-label">@L["Department:"]</div>
                                                     <div class="detail-value">
                                                         <i class="fas fa-sitemap text-danger me-1"></i>
                                                         @ticket.ConcerningDepartment
@@ -1233,7 +1221,7 @@
                                             @if (!string.IsNullOrEmpty(ticket.ConcerningPerson))
                                             {
                                                 <div class="detail-row">
-                                                    <div class="detail-label">Person Involved:</div>
+                                                    <div class="detail-label">@L["Person Involved:"]</div>
                                                     <div class="detail-value">
                                                         <i class="fas fa-user text-danger me-1"></i>
                                                         @ticket.ConcerningPerson
@@ -1247,7 +1235,7 @@
                                             {
                                                 <div class="text-center py-3">
                                                     <i class="fas fa-users fa-2x text-muted mb-2"></i>
-                                                    <p class="text-muted mb-0">No specific party mentioned</p>
+                                                    <p class="text-muted mb-0">@L["No specific party mentioned"]</p>
                                                 </div>
                                             }
                                         </div>
@@ -1261,7 +1249,7 @@
                                     <div class="detail-card">
                                         <div class="detail-card-header">
                                             <i class="fas fa-align-left me-2"></i>
-                                            Ticket Description
+                                            @L["Ticket Description"]
                                         </div>
                                         <div class="detail-card-body">
                                             @if (!string.IsNullOrEmpty(ticket.Desc))
@@ -1274,7 +1262,7 @@
                                             {
                                                 <div class="empty-state">
                                                     <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                                                    <p class="text-muted mb-0">No description provided</p>
+                                                    <p class="text-muted mb-0">@L["No description provided"]</p>
                                                 </div>
                                             }
                                         </div>
@@ -1289,7 +1277,7 @@
                                     <div class="detail-card h-100">
                                         <div class="detail-card-header">
                                             <i class="fas fa-history me-2"></i>
-                                            Case Timeline
+                                            @L["Case Timeline"]
                                             <span class="badge bg-light text-dark ms-2">
                                                 @(Model.TicketDetails.Timeline?.Count ?? 0) events
                                             </span>
@@ -1325,7 +1313,7 @@
                                             {
                                                 <div class="empty-state">
                                                     <i class="fas fa-history fa-3x text-muted mb-3"></i>
-                                                    <p class="text-muted mb-0">No timeline events available</p>
+                                                    <p class="text-muted mb-0">@L["No timeline events available"]</p>
                                                 </div>
                                             }
                                         </div>
@@ -1371,7 +1359,7 @@
                                             {
                                                 <div class="empty-state">
                                                     <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                                    <p class="text-muted mb-0">No updates available</p>
+                                                    <p class="text-muted mb-0">@L["No updates available"]</p>
                                                 </div>
                                             }
                                         </div>
@@ -1387,7 +1375,7 @@
                                         <div class="detail-card">
                                             <div class="detail-card-header">
                                                 <i class="fas fa-paperclip me-2"></i>
-                                                Attachments
+                                                @L["Attachments"]
                                                 <span class="badge bg-light text-dark ms-2">
                                                     @Model.TicketDetails.Attachments.Count files
                                                 </span>
@@ -1430,8 +1418,8 @@
                                     <div class="detail-card">
                                         <div class="detail-card-header">
                                             <i class="fas fa-comments me-2"></i>
-                                            Chat with Compliance Team
-                                            <span class="badge bg-danger ms-2" id="unreadCount" style="display: none;">0 new</span>
+                                            @L["Chat with Compliance Team"]
+                                            <span class="badge bg-danger ms-2" id="unreadCount" style="display: none;">0 @L["new"]</span>
                                         </div>
                                         <div class="detail-card-body p-0">
                                             <!-- Chat Container -->
@@ -1440,9 +1428,9 @@
                                                 <div class="chat-messages" id="chatMessages">
                                                     <div class="chat-loading text-center py-4">
                                                         <div class="spinner-border text-danger" role="status">
-                                                            <span class="visually-hidden">Loading...</span>
+                                                            <span class="visually-hidden">@L["Loading..."]</span>
                                                         </div>
-                                                        <p class="text-muted mt-2">Loading messages...</p>
+                                                        <p class="text-muted mt-2">@L["Loading messages..."]</p>
                                                     </div>
                                                 </div>
 
@@ -1451,7 +1439,7 @@
                                                     <div class="row g-2">
                                                         <div class="col-auto">
                                                             <div class="file-upload-wrapper">
-                                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="attachFileBtn" title="Attach file">
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="attachFileBtn" title="@L["Attach file"]">
                                                                     <i class="fas fa-paperclip"></i>
                                                                 </button>
                                                                 <input type="file" id="fileInput" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.txt">
@@ -1461,13 +1449,13 @@
                                                             <div class="input-group">
                                                                 <textarea class="form-control chat-input"
                                                                       id="messageInput"
-                                                                      placeholder="Type your message here..."
+                                                                      placeholder="@L["Type your message here..."]"
                                                                       rows="1"></textarea>
                                                                 <button class="btn btn-danger" type="button" id="sendMessageBtn">
                                                                     <i class="fas fa-paper-plane"></i>
                                                                 </button>
                                                             </div>
-                                                            <small class="text-muted">Press Enter to send, Shift+Enter for new line</small>
+                                                            <small class="text-muted">@L["Press Enter to send, Shift+Enter for new line"]</small>
                                                         </div>
                                                     </div>
 
@@ -1478,7 +1466,7 @@
                                                                  role="progressbar"
                                                                  style="width: 0%"></div>
                                                         </div>
-                                                        <small class="text-muted">Uploading...</small>
+                                                        <small class="text-muted">@L["Uploading..."]</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1494,19 +1482,19 @@
                                 <div class="col-md-6">
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Last refreshed: @DateTime.Now.ToString("dd MMM yyyy HH:mm:ss")
+                                        @L["Last refreshed:"] @DateTime.Now.ToString("dd MMM yyyy HH:mm:ss")
                                     </small>
                                 </div>
                                 <div class="col-md-6 text-md-end">
                                     <div class="action-buttons">
                                         <button class="btn btn-outline-secondary btn-sm" onclick="printTicket()">
-                                            <i class="fas fa-print me-1"></i>Print
+                                            <i class="fas fa-print me-1"></i>@L["Print"]
                                         </button>
                                         <button class="btn btn-outline-danger btn-sm ms-2" onclick="scrollToTop()">
-                                            <i class="fas fa-arrow-up me-1"></i>Top
+                                            <i class="fas fa-arrow-up me-1"></i>@L["Top"]
                                         </button>
                                         <button class="btn btn-danger btn-sm ms-2" onclick="newSearch()">
-                                            <i class="fas fa-search me-1"></i>New Search
+                                            <i class="fas fa-search me-1"></i>@L["New Search"]
                                         </button>
                                     </div>
                                 </div>
@@ -1521,7 +1509,7 @@
                 <div class="card border-0 bg-light">
                     <div class="card-body p-4">
                         <h5 class="card-title text-dark mb-3">
-                            <i class="fas fa-circle-question me-2 text-danger"></i>Need Help?
+                            <i class="fas fa-circle-question me-2 text-danger"></i>@L["Need Help?"]
                         </h5>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -1530,7 +1518,7 @@
                                         <i class="fas fa-phone text-danger"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1">Contact Support</h6>
+                                        <h6 class="mb-1">@L["Contact Support"]</h6>
                                         <p class="small text-muted mb-0">+20 123 456 7890</p>
                                     </div>
                                 </div>
@@ -1541,7 +1529,7 @@
                                         <i class="fas fa-envelope text-danger"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1">Email Support</h6>
+                                        <h6 class="mb-1">@L["Email Support"]</h6>
                                         <p class="small text-muted mb-0">compliance@elsewedyelectric.com</p>
                                     </div>
                                 </div>
@@ -1652,9 +1640,9 @@
                 $('#chatMessages').html(`
                     <div class="chat-loading text-center py-4">
                         <div class="spinner-border text-danger" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">@L["Loading..."]</span>
                         </div>
-                        <p class="text-muted mt-2">Loading messages...</p>
+                        <p class="text-muted mt-2">@L["Loading messages..."]</p>
                     </div>
                 `);
 
@@ -1673,8 +1661,8 @@
                         $('#chatMessages').html(`
                             <div class="empty-chat">
                                 <i class="fas fa-comment-slash"></i>
-                                <h5>Failed to load messages</h5>
-                                <p>Please try again later</p>
+                                <h5>@L["Failed to load messages"]</h5>
+                                <p>@L["Please try again later"]</p>
                             </div>
                         `);
                     }
@@ -1687,8 +1675,8 @@
                     $('#chatMessages').html(`
                         <div class="empty-chat">
                             <i class="fas fa-comments"></i>
-                            <h5>No messages yet</h5>
-                            <p>Start the conversation with compliance team</p>
+                            <h5>@L["No messages yet"]</h5>
+                            <p>@L["Start the conversation with compliance team"]</p>
                         </div>
                     `);
                     return;

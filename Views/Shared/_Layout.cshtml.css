@@ -39,10 +39,9 @@ button.accept-policy {
   line-height: inherit;
 }
 
+/* Footer is a normal-flow element; its visual styling lives in _Layout.cshtml.
+   The old absolute-positioned "sticky footer" rule overlapped tall page content
+   (it covered the wizard's Back/Continue bar), so it was removed. */
 .footer {
-  position: absolute;
-  bottom: 0;
   width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
 }

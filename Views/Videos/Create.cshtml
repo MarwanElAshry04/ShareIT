@@ -29,15 +29,26 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control"
+                                   placeholder="e.g. How to submit a Safety Concern" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <small class="form-text text-muted">Shown as the card heading on the User Guide page.</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="One or two sentences describing what this video covers."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
                             <label asp-for="Section" class="control-label fw-bold"></label>
-                            <select
-                                asp-for="Section" class="form-control" placeholder="e.g., Tutorials, Movies, Music Videos">
-                                <option value="NewCase">New Case</option>
-                                <option value="TrackCase">Track Case</option>
-                                <option value="ShareITVideos"> ShareIT Videos</option>
-                            </select>
+                            <select asp-for="Section" class="form-control"
+                                    asp-items="Html.GetEnumSelectList<VideoSection>()"></select>
                             <span asp-validation-for="Section" class="text-danger"></span>
-                            <small class="form-text text-muted">Enter the category or section for this video</small>
+                            <small class="form-text text-muted">Which User Guide section this video appears under.</small>
                         </div>
 
                         <div class="form-group mb-3">
@@ -48,6 +59,15 @@
                             <span asp-validation-for="VideoFile" class="text-danger"></span>
                             <small class="form-text text-muted">
                                 Supported formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM (Max size: 500MB)
+                            </small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ThumbnailFile" class="control-label fw-bold"></label>
+                            <input asp-for="ThumbnailFile" class="form-control" type="file" accept="image/*" />
+                            <span asp-validation-for="ThumbnailFile" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Optional. JPG, PNG or WEBP (Max size: 5MB). A placeholder is used if omitted.
                             </small>
                         </div>
 
@@ -101,8 +121,8 @@
     }
 
     <script>
-        // Display selected filename
-        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+        // Display selected filename (video input only — the thumbnail input is separate)
+        document.querySelector('input[name="VideoFile"]').addEventListener('change', function(e) {
             var fileName = e.target.files[0]?.name;
             var fileSize = e.target.files[0]?.size;
 

@@ -69,6 +69,15 @@ tickets) plus the default accounts below.
 
 ## Notes
 
-- Tickets carry a `Kind` (`Complaint` / `Suggestion` / `Feedback`); the "Concerning
-  company/department" fields are only required for complaints.
+- A ticket is one of six types (`Models/TicketEnums.cs`): **Issue**, **Idea**, **Project
+  Proposal**, **Safety Concern**, **Feedback**, **System Request**. The submission wizard shows
+  a different details step per type, so the fields required depend on the type chosen.
+- The employee-facing site switches between English and Arabic (with right-to-left layout) via
+  `CultureController`; the admin panel stays English.
 - If you drop the database, re-run `dotnet ef database update` then `dotnet run` to reseed.
+
+## Further reading
+
+`docs/WHAT-WE-CHANGED.md` is a plain-language walkthrough of the most recent work (tutorial
+videos, admin/employee separation, the language toggle, the account page) and the bugs found
+along the way. `docs/ShareIT-presentation.pptx` is the slide deck.

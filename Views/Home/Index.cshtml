@@ -1,6 +1,6 @@
 ﻿@model ShareIT.Models.ViewModel.HomeViewModel
 @{
-    ViewData["Title"] = "Compliance Portal - ELSEWEDY ELECTRIC";
+    ViewData["Title"] = "Reporting Portal - ELSEWEDY ELECTRIC";
 }
 
 <style>
@@ -139,7 +139,7 @@
     }
 
     .section-header {
-        text-align: left;
+        text-align: start;
         margin-bottom: 40px;
     }
 
@@ -200,7 +200,7 @@
         width: 60px;
         height: 60px;
         min-width: 60px;
-        margin-right: 15px;
+        margin-inline-end: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -405,12 +405,9 @@
 <div class="hero-section">
    
     <div class="section-header">
-        <h2 class="section-title">HR Documents</h2>
+        <h2 class="section-title">@L["HR Documents"]</h2>
         <p class="section-subtitle">
-            For 80 years it has been our strong belief that an essential part of business success is integrity.
-            We are firmly and unequivocally concerning the violation of laws, regulations and internal policies.
-            We have no tolerance for unethical behavior and business misconducts.
-            We encourage you to read our employee policies and guidelines.
+            @L["For 80 years it has been our strong belief that an essential part of business success is integrity. We are firmly and unequivocally concerning the violation of laws, regulations and internal policies. We have no tolerance for unethical behavior and business misconducts. We encourage you to read our employee policies and guidelines."]
         </p>
     </div>
 
@@ -447,11 +444,11 @@
                                 <div class="document-actions">
                                     <a href="@Url.Action("View", "Document", new { id = document.Id })"
                                        class="btn-action btn-view" target="_blank">
-                                        <i class="fas fa-eye"></i> View
+                                        <i class="fas fa-eye"></i> @L["View"]
                                     </a>
                                     <a href="@Url.Action("Download", "Document", new { id = document.Id })"
                                        class="btn-action btn-download">
-                                        <i class="fas fa-download"></i> Download
+                                        <i class="fas fa-download"></i> @L["Download"]
                                     </a>
                                 </div>
                             </div>
@@ -463,12 +460,12 @@
             {
                 <div class="empty-state">
                     <i class="fas fa-file-alt"></i>
-                    <h4>No Documents Available</h4>
-                    <p>No HR documents have been uploaded yet. Please check back later.</p>
+                    <h4>@L["No Documents Available"]</h4>
+                    <p>@L["No HR documents have been uploaded yet. Please check back later."]</p>
                     @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("ComplianceManager")))
                     {
                         <a asp-controller="Document" asp-action="Create" class="nav-card-btn">
-                            <i class="fas fa-upload me-2"></i>Upload First Document
+                            <i class="fas fa-upload me-2"></i>@L["Upload First Document"]
                         </a>
                     }
                 </div>
@@ -489,12 +486,12 @@
                         <i class="fas fa-plus-circle"></i>
                     </div>
                     <div class="nav-card-content">
-                        <h3 class="nav-card-title">Report New Case</h3>
+                        <h3 class="nav-card-title">@L["Report New Case"]</h3>
                         <p class="nav-card-desc">
-                            Submit a new compliance concern or report unethical behavior through our secure and confidential system.
+                            @L["Submit a new compliance concern or report unethical behavior through our secure and confidential system."]
                         </p>
                         <a asp-controller="Ticket" asp-action="Create" class="nav-card-btn">
-                            <i class="fas fa-plus me-2"></i>Report Now
+                            <i class="fas fa-plus me-2"></i>@L["Report Now"]
                         </a>
                     </div>
                 </div>
@@ -507,12 +504,12 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <div class="nav-card-content">
-                        <h3 class="nav-card-title">Track Your Case</h3>
+                        <h3 class="nav-card-title">@L["Track Your Case"]</h3>
                         <p class="nav-card-desc">
-                            Check the status of your submitted ticket and communicate with our compliance team.
+                            @L["Check the status of your submitted ticket and communicate with our compliance team."]
                         </p>
                         <a asp-controller="Search" asp-action="Index" class="nav-card-btn">
-                            <i class="fas fa-search me-2"></i>Track Case
+                            <i class="fas fa-search me-2"></i>@L["Track Case"]
                         </a>
                     </div>
                 </div>
@@ -525,12 +522,12 @@
                         <i class="fas fa-book-open"></i>
                     </div>
                     <div class="nav-card-content">
-                        <h3 class="nav-card-title">User Guide</h3>
+                        <h3 class="nav-card-title">@L["User Guide"]</h3>
                         <p class="nav-card-desc">
-                            Learn how to use our compliance portal, understand policies, and get answers to frequently asked questions.
+                            @L["Learn how to use our compliance portal, understand policies, and get answers to frequently asked questions."]
                         </p>
                         <a asp-controller="Guide" asp-action="Index" class="nav-card-btn">
-                            <i class="fas fa-question-circle me-2"></i>View Guide
+                            <i class="fas fa-question-circle me-2"></i>@L["View Guide"]
                         </a>
                     </div>
                 </div>

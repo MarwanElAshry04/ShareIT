@@ -524,6 +524,9 @@
 
 
             <div class="nav-section">System</div>
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="menu-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.StartsWith("/Account/Manage") == true ? "active" : "")">
+                <i class="fas fa-user-cog"></i><span>My Account</span>
+            </a>
             <a asp-controller="Home" asp-action="Index" class="menu-item">
                 <i class="fas fa-globe"></i><span>Back to Site</span>
             </a>
@@ -615,7 +618,7 @@
         <!-- FOOTER -->
         <footer class="footer">
             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <span>© 2026 ELSEWEDY Compliance System — v3.0</span>
+                <span>© 2026 ELSEWEDY Reporting System — v3.0</span>
                 <span><i class="far fa-heart text-danger"></i> Secure & Compliant</span>
             </div>
         </footer>

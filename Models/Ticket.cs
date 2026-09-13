@@ -8,11 +8,9 @@ namespace ShareIT.Models
     {
         public int Id { get; set; }
         public string? Title { get; set; }
-        // Which of the 6 types this ticket is.
+        // Which of the 6 types this ticket is. This enum is the single source of
+        // truth for a ticket's type (the old Category lookup table was retired).
         public TicketType TicketType { get; set; } = TicketType.Issue;
-        [ForeignKey("Category")]
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
         [ForeignKey("Reporter")]
         public int? ReporterId { get; set; }
         public Reporter? Reporter { get; set; }
